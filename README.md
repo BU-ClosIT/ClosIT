@@ -6,4 +6,8 @@ This repo is split into 2 parts -
 
 ## Frontend
 
+The frontend NextJS React App
+
 ## Backend
+
+The backend server built using Firebase functions. Written in Python, using the Firebase Python SDK
