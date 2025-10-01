@@ -1,16 +1,16 @@
+import Layout from "@/components/shared/layout";
 import { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
 
 interface PageProps {
   slug: string;
 }
 
-const SlugPage: React.FC<PageProps> = ({ slug }) => {
+const ClosetItemPage: React.FC<PageProps> = ({ slug }) => {
   return (
-    <div>
-      <h1>Page: {slug}</h1>
-      <p>This is a dynamic page for the slug: {slug}</p>
-    </div>
+    <Layout>
+      <h1>Page</h1>
+      <p>This is ClosetItemPage for {slug}</p>
+    </Layout>
   );
 };
 
@@ -23,4 +23,4 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 };
 
-export default SlugPage;
+export default ClosetItemPage;
