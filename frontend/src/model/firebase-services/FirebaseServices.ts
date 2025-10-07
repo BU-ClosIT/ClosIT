@@ -8,17 +8,18 @@ export default interface IFirebaseServices {
   updateItemInCloset(
     userId: string,
     itemId: string,
-    updatedItem: any
+    updatedItem: Partial<ClosetItem>
   ): Promise<void>;
-  getItemById(userId: string, itemId: string): Promise<ClosetItem>;
 
   // AI interactions
   aiAgentQuery(prompt: string): Promise<string>;
   getRecommendation({
     userId,
     location,
+    event
   }: {
     userId: string;
     location?: string;
+    event?: string;
   }): Promise<string>;
 }

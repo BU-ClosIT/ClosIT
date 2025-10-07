@@ -11,7 +11,7 @@ import {
 
 const firebaseConfig = {
 
-  apiKey: "AIzaSyDSKHxlK2sSpGtwSjsABMs3m4eJ5uyaI68",
+  apiKey: "key placeholder",
   authDomain: "closit-db-test.firebaseapp.com",
   projectId: "ClosIT-db-test",
   storageBucket: "closit-db-test.firebasestorage.app",

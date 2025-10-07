@@ -1,13 +1,16 @@
+import { Timestamp } from "firebase/firestore";
 import JsonBlob from "../JsonBlon";
 
 export default class ClosetItem {
   public id: string;
   public name: string;
   public category: string;
+  public subCategory?: string; // new!
   public color: string;
+  public material?: string; // new!
   public size: string;
   public brand?: string;
-  public purchaseDate?: string;
+  public purchaseDate?: Timestamp;
   public imageUrl?: string;
   public notes?: string;
 
@@ -15,7 +18,9 @@ export default class ClosetItem {
     id,
     name,
     category,
+    subCategory,
     color,
+    material,
     size,
     brand,
     purchaseDate,
@@ -25,17 +30,21 @@ export default class ClosetItem {
     id: string;
     name: string;
     category: string;
+    subCategory?: string;
     color: string;
+    material?: string;
     size: string;
     brand?: string;
-    purchaseDate?: string;
+    purchaseDate?: Timestamp;
     imageUrl?: string;
     notes?: string;
   }) {
     this.id = id;
     this.name = name;
     this.category = category;
+    this.subCategory = subCategory;
     this.color = color;
+    this.material = material;
     this.size = size;
     this.brand = brand;
     this.purchaseDate = purchaseDate;
@@ -59,7 +68,9 @@ export default class ClosetItem {
       id: json.id,
       name: json.name,
       category: json.category,
+      subCategory: json.subCategory,
       color: json.color,
+      material: json.material,
       size: json.size,
       brand: json.brand,
       purchaseDate: json.purchaseDate,
