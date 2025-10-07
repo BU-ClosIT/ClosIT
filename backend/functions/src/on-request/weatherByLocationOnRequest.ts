@@ -7,6 +7,7 @@ import {
 } from "../services/accuweather-services";
 import { getGeoPositionFromIp, getIpFromReq } from "../services/geoip-services";
 import { isOriginAllowed } from "../util/originUtil";
+import { CityKeyResponse, CurrentWeatherResponse } from "../model/AccuWeather";
 
 const weatherByLocationOnRequest = async ({
   request,
@@ -17,7 +18,8 @@ const weatherByLocationOnRequest = async ({
   response: Response;
   app: admin.app.App;
 }) => {
-  const origin = request.headers.origin;
+  const origin = `${request.header("x-closit-referrer")}`;
+  functions.logger.log("weatherByLocation invoked by - " + origin);
   if (!origin || !isOriginAllowed(origin)) {
     response.status(400).send("Unauthorized");
     return;
@@ -30,13 +32,23 @@ const weatherByLocationOnRequest = async ({
   }
 
   try {
-    const geoPosition = await getGeoPositionFromIp({ ip: clientIp });
-    const cityKey = await getCityKeyByGeoPosition({ geoPosition, app });
-    const currentWeather = await getCurrentWeatherByCityKey({ cityKey, app });
+    const geoPosition: string = await getGeoPositionFromIp({ ip: clientIp });
+    const cityKeyResponse: CityKeyResponse = await getCityKeyByGeoPosition({
+      geoPosition,
+      app,
+    });
+    const currentWeather: CurrentWeatherResponse =
+      await getCurrentWeatherByCityKey({ cityKey: cityKeyResponse.Key, app });
 
-    response
-      .status(200)
-      .send(`Current Weather JSON: ${JSON.stringify(currentWeather)}`);
+    response.status(200).send(
+      JSON.stringify({
+        ...currentWeather,
+        city: cityKeyResponse.EnglishName,
+        region: cityKeyResponse.Region.EnglishName,
+        country: cityKeyResponse.Country.EnglishName,
+        adminArea: cityKeyResponse.AdministrativeArea,
+      })
+    );
   } catch (error: any) {
     functions.logger.error("Error fetching weather data", error);
     response.status(500).send(`Error fetching weather data: ${error.message}`);

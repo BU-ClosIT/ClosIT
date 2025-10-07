@@ -16,7 +16,9 @@ const AiChatPage: React.FC<PageProps> = ({ slug }) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
-    props: {},
+    props: {
+      slug: "ai-chat",
+    },
   };
 };
 

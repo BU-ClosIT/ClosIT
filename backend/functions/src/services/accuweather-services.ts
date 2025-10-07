@@ -12,7 +12,7 @@ export const getCityKeyByGeoPosition = async ({
 }: {
   geoPosition: string;
   app: admin.app.App;
-}): Promise<string> => {
+}): Promise<CityKeyResponse> => {
   // call AccuWeather endpoint
   const key = await tokenByName({ name: "accuweather-api-key", app });
   const resp = await fetch(
@@ -28,7 +28,7 @@ export const getCityKeyByGeoPosition = async ({
   const respJson = await resp.json();
   const cityKeyResponse = respJson as CityKeyResponse;
   functions.logger.log("fetched city key:", JSON.stringify(respJson));
-  return cityKeyResponse.Key;
+  return cityKeyResponse;
 };
 
 /** Call accuweather api to get the current weather by city key */
@@ -52,7 +52,7 @@ export const getCurrentWeatherByCityKey = async ({
     }
   );
   const respJson = await resp.json();
-  const currentWeatherResponse = respJson as CurrentWeatherResponse;
+  const currentWeatherResponse = respJson[0] as CurrentWeatherResponse;
 
   functions.logger.log(
     "fetched current weather:",

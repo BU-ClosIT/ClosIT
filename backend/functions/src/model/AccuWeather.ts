@@ -6,8 +6,36 @@ export type CityKeyResponse = {
     Code: string;
     Name: string;
   };
+  Region: {
+    ID: string;
+    LocalizedName: string;
+    EnglishName: string;
+  };
+  EnglishName: string;
+  Country: {
+    ID: string;
+    LocalizedName: string;
+    EnglishName: string;
+  };
+  AdministrativeArea: {
+    Level: number;
+    LocalizedType: object;
+    EnglishType: object;
+    CountryID: string;
+    ID: string;
+    LocalizedName: string;
+    EnglishName: string;
+  };
+  SupplementalAdminAreas: [
+    {
+      Level: number;
+      LocalizedName: string;
+      EnglishName: string;
+    }
+  ];
 };
 
+// Theres a lot more to these responses that might make sense to send to Gemini for more detailed recomendations
 export type CurrentWeatherResponse = {
   LocalObservationDateTime: string;
   EpochTime: number;

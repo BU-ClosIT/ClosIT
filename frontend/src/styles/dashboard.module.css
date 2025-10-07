@@ -1,0 +1,47 @@
+.recommendationCard {
+  background-color: aliceblue;
+  border: 2pt solid black;
+  height: 20rem;
+  padding: 20px;
+  display: flex;
+  flex-flow: column;
+  /* justify-content: center; */
+  align-items: center;
+}
+
+.locationDetails {
+  align-self: flex-start;
+  justify-self: flex-start;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+/* HTML: <div class="loader"></div> FROM: https://css-loaders.com/dots-bars/*/
+.loader {
+  width: 40px;
+  aspect-ratio: 1;
+  --c: linear-gradient(#000 0 0);
+  --m: radial-gradient(farthest-side, #000 92%, #0000);
+  background: var(--c), var(--m), var(--c), var(--m), var(--c), var(--m);
+  background-size: 8px 15px, 8px 8px;
+  background-repeat: no-repeat;
+  animation: l14 1s infinite alternate;
+}
+@keyframes l14 {
+  0%,
+  10% {
+    background-position: 0 0, 0 100%, 50% 0, 50% 100%, 100% 0, 100% 100%;
+  }
+  33% {
+    background-position: 0 100%, 0 0, 50% 0, 50% 100%, 100% 0, 100% 100%;
+  }
+  66% {
+    background-position: 0 100%, 0 0, 50% 100%, 50% 0, 100% 0, 100% 100%;
+  }
+  90%,
+  100% {
+    background-position: 0 100%, 0 0, 50% 100%, 50% 0, 100% 100%, 100% 0;
+  }
+}

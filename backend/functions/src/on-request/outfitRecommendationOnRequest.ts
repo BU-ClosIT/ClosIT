@@ -8,6 +8,7 @@ import {
   getCurrentWeatherByCityKey,
 } from "../services/accuweather-services";
 import { isOriginAllowed } from "../util/originUtil";
+import { CityKeyResponse, CurrentWeatherResponse } from "../model/AccuWeather";
 
 const outfitRecommendationOnRequest = async ({
   request,
@@ -19,7 +20,8 @@ const outfitRecommendationOnRequest = async ({
   app: admin.app.App;
 }) => {
   // get users closet information from the database using the userId in the query
-  const origin = request.headers.origin;
+  const origin = `${request.headers["x-closit-referrer"]}`;
+  functions.logger.log("outfitRecommendationOnRequest invoked by - " + origin);
   if (!origin || !isOriginAllowed(origin)) {
     response.status(400).send("Unauthorized");
     return;
@@ -33,15 +35,23 @@ const outfitRecommendationOnRequest = async ({
 
   try {
     const geoPosition = await getGeoPositionFromIp({ ip: clientIp });
-    const cityKey = await getCityKeyByGeoPosition({ geoPosition, app });
-    const currentWeather = await getCurrentWeatherByCityKey({ cityKey, app });
+    const cityKeyResponse: CityKeyResponse = await getCityKeyByGeoPosition({
+      geoPosition,
+      app,
+    });
+    const currentWeather: CurrentWeatherResponse =
+      await getCurrentWeatherByCityKey({
+        cityKey: cityKeyResponse.Key,
+        app,
+      });
     const resp = await queryGemini({
       query: JSON.stringify({
+        prompt: "You are a helpful assistant for picking clothes",
         currentWeather,
-        userPreferences: "",
+        userPreferences: "", // future feature
         currentUserCloset:
           "placeholder for now, just make up some clothing elements that might work for the current weather",
-      }),
+      }), // get from DB eventually
       app,
     });
 
@@ -51,7 +61,6 @@ const outfitRecommendationOnRequest = async ({
     response.status(500).send(`Error fetching user closet data: ${e}`);
     return;
   }
-  // call Gemini endpoint
 };
 
 export default outfitRecommendationOnRequest;

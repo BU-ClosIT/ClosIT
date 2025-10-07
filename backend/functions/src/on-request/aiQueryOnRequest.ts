@@ -21,7 +21,8 @@ const aiQueryOnRequest = ({
   const { body } = request;
   const query = body.query; // The user's query
 
-  const origin = request.headers.origin;
+  const origin = `${request.headers["x-closit-referrer"]}`;
+  functions.logger.log("aiQueryOnRequest invoked by - " + origin);
   if (!origin || !isOriginAllowed(origin)) {
     response.status(400).send("Unauthorized");
     return;
