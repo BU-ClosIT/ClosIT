@@ -1,6 +1,7 @@
 // methods for interacting with the accuweather API
 import * as admin from "firebase-admin";
 import { tokenByName } from "../util/dbUtil";
+import * as functions from "firebase-functions";
 import { CityKeyResponse, CurrentWeatherResponse } from "../model/AccuWeather";
 
 /** Call accuweather api to get the city key */
@@ -13,7 +14,7 @@ export const getCityKeyByGeoPosition = async ({
   app: admin.app.App;
 }): Promise<string> => {
   // call AccuWeather endpoint
-  const key = tokenByName({ name: "accuweather-api-key", app });
+  const key = await tokenByName({ name: "accuweather-api-key", app });
   const resp = await fetch(
     `https://dataservice.accuweather.com/locations/v1/cities/geoposition/search?q=${geoPosition}`,
     {
@@ -24,8 +25,9 @@ export const getCityKeyByGeoPosition = async ({
     }
   );
 
-  const cityKeyResponse = (await resp.json())[0] as CityKeyResponse;
-
+  const respJson = await resp.json();
+  const cityKeyResponse = respJson as CityKeyResponse;
+  functions.logger.log("fetched city key:", JSON.stringify(respJson));
   return cityKeyResponse.Key;
 };
 
@@ -39,7 +41,7 @@ export const getCurrentWeatherByCityKey = async ({
   app: admin.app.App;
 }) => {
   // call AccuWeather endpoint
-  const key = tokenByName({ name: "accuweather-api-key", app });
+  const key = await tokenByName({ name: "accuweather-api-key", app });
   const resp = await fetch(
     `https://dataservice.accuweather.com/currentconditions/v1/${cityKey}`,
     {
@@ -49,9 +51,13 @@ export const getCurrentWeatherByCityKey = async ({
       },
     }
   );
-  const currentWeatherResponse = (
-    await resp.json()
-  )[0] as CurrentWeatherResponse;
+  const respJson = await resp.json();
+  const currentWeatherResponse = respJson as CurrentWeatherResponse;
+
+  functions.logger.log(
+    "fetched current weather:",
+    JSON.stringify(currentWeatherResponse)
+  );
 
   return currentWeatherResponse;
 };
