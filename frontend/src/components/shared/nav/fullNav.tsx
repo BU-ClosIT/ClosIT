@@ -13,6 +13,9 @@ const FullNav: React.FC = () => {
         <li>
           <Link href="/ai-chat">AI Chat</Link>
         </li>
+        <li>
+          <Link href="/test-display">Test Display</Link>
+        </li>
       </ul>
     </div>
   );
