@@ -1,6 +1,7 @@
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import ClosetItem from "../model/ClosetItem";
+import JsonBlob from "../model/JsonBlob";
 // a bunch of utils for interacting with the database
 type SupportedTokenName = "gemini-api-key" | "accuweather-api-key";
 
@@ -43,4 +44,31 @@ export const setClosetItem = async ({
 
   const newItem = dbRef.child(`${userId}`).child("item").push(closetItem);
   return newItem.key;
+};
+
+export const getClosetByUserId = async ({
+  userId,
+  app,
+}: {
+  userId: string;
+  app: admin.app.App;
+}): Promise<ClosetItem[]> => {
+  functions.logger.log(`running getClosetByUserId for userId: ${userId}`);
+  const db = app.database();
+  const dbRef = db.ref("closets");
+  const userClosetSnap = await dbRef.child(`${userId}/item`).get();
+  if (!userClosetSnap.exists()) {
+    functions.logger.log(`no closet found for userId: ${userId}`);
+    return [];
+  }
+
+  const itemsJson: JsonBlob = userClosetSnap.val() as JsonBlob;
+  const closetItems: ClosetItem[] = [];
+  Object.keys(itemsJson).forEach((key) => {
+    const itemJson = itemsJson[key];
+    const closetItem = ClosetItem.buildClosetItemFromJson(itemJson);
+    closetItems.push(closetItem);
+  });
+
+  return closetItems;
 };
