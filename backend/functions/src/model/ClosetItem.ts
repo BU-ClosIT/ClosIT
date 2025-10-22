@@ -1,5 +1,6 @@
 import JsonBlob from "./JsonBlob";
 
+/** Closet Item */
 export default class ClosetItem {
   public id: string;
   public name: string;
