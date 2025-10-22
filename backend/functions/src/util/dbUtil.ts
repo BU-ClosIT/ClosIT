@@ -1,5 +1,6 @@
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
+import ClosetItem from "../model/ClosetItem";
 // a bunch of utils for interacting with the database
 type SupportedTokenName = "gemini-api-key" | "accuweather-api-key";
 
@@ -21,4 +22,25 @@ export const tokenByName = async ({
   }
 
   return snap.val() as string;
+};
+
+export const setClosetItem = async ({
+  userId,
+  closetItem,
+  app,
+}: {
+  userId: string;
+  closetItem: ClosetItem;
+  app: admin.app.App;
+}) => {
+  functions.logger.log(`running setClosetItem`);
+  const db = app.database();
+  const dbRef = db.ref("closets");
+  const userClosetSnap = await dbRef.child(`${userId}`).get();
+  if (!userClosetSnap.exists()) {
+    dbRef.push(`${userId}`);
+  }
+
+  const newItem = dbRef.child(`${userId}`).child("item").push(closetItem);
+  return newItem.key;
 };

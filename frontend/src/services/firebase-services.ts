@@ -22,7 +22,6 @@ export class FirebaseServices {
   }: {
     query: string;
   }): Promise<string> {
-    if (typeof window === "undefined") return "unavailable";
     try {
       const url = "/api/aiQuery";
       const resp = await fetch(url, {
@@ -43,7 +42,6 @@ export class FirebaseServices {
   }: {
     userId?: string;
   }): Promise<string> {
-    if (typeof window === "undefined") return "unavailable";
     try {
       const url = "/api/getRecommendation";
       const resp = await fetch(url, {
@@ -63,6 +61,28 @@ export class FirebaseServices {
     } catch (e) {
       console.error(e);
       return "Error Fetching Outfit Rec";
+    }
+  }
+
+  public static async getClosetByUserId({ userId }: { userId: string }) {
+    try {
+      const url = "/api/getClosetByUserId";
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+        }),
+      });
+
+      const json = await resp.json();
+
+      return json;
+    } catch (e) {
+      console.error(e);
+      return "Error Fetching User Closet";
     }
   }
 }

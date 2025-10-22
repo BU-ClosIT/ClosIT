@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { usePathname } from "next/navigation";
 
-const ENDPOINT_URL = "https://getoutfitrecommendation-6p7lfy6g4a-uc.a.run.app/";
+const ENDPOINT_URL = "https://";
 
 export default async function handler(
   req: NextApiRequest,
@@ -16,7 +17,7 @@ export default async function handler(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-closit-referrer": `http://localhost:3000`,
+        "x-closit-referrer": `http://localhost:3000`, // TOOD: change for production
       },
       body: JSON.stringify(req.body),
     });
@@ -31,7 +32,7 @@ export default async function handler(
       return res.status(response.status).send(text);
     }
   } catch (err: any) {
-    console.error("Error proxying to Cloud Run recommendation service:", err);
+    console.error("Error proxying to getClosetByUserId", err);
     return res
       .status(500)
       .json({ error: "proxy_error", message: err?.message });
