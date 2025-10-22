@@ -9,6 +9,7 @@ import {
 } from "../services/accuweather-services";
 import { isOriginAllowed } from "../util/originUtil";
 import { CityKeyResponse, CurrentWeatherResponse } from "../model/AccuWeather";
+import { getClosetByUserId } from "../util/dbUtil";
 
 const outfitRecommendationOnRequest = async ({
   request,
@@ -44,14 +45,15 @@ const outfitRecommendationOnRequest = async ({
         cityKey: cityKeyResponse.Key,
         app,
       });
+    const {userId} = request.body;
+    const userCloset = await getClosetByUserId({userId, app});
     const resp = await queryGemini({
       query: JSON.stringify({
         prompt: "You are a helpful assistant for picking clothes",
         currentWeather,
         userPreferences: "", // future feature
-        currentUserCloset:
-          "placeholder for now, just make up some clothing elements that might work for the current weather",
-      }), // get from DB eventually
+        userCloset,
+      }),
       app,
     });
 

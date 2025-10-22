@@ -34,7 +34,7 @@ export const setClosetItem = async ({
   closetItem: ClosetItem;
   app: admin.app.App;
 }) => {
-  functions.logger.log(`running setClosetItem`);
+  functions.logger.log("running setClosetItem");
   const db = app.database();
   const dbRef = db.ref("closets");
   const userClosetSnap = await dbRef.child(`${userId}`).get();
@@ -72,3 +72,4 @@ export const getClosetByUserId = async ({
 
   return closetItems;
 };
+

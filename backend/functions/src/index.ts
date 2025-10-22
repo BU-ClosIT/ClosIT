@@ -19,6 +19,7 @@ export const getWeatherByLocation = functions.https.onRequest(
   }
 );
 
+// Frontend-dashboard
 export const getOutfitRecommendation = functions.https.onRequest(
   (request, response) => {
     return outfitRecommendationOnRequest({ request, response, app });
