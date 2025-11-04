@@ -1,15 +1,12 @@
+"use client";
+
 import Layout from "@/components/shared/layout";
 import { FirebaseServices } from "@/services/firebase-services";
-import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
-import styles from "../styles/dashboard.module.css";
 import { CurrentWeatherResponse } from "@/model/CurrentWeatherResponse";
+import styles from "./page.module.css";
 
-interface PageProps {
-  slug?: string;
-}
-
-const DashboardPage: React.FC<PageProps> = ({ slug = "dashboard" }) => {
+export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentWeatherRec, setCurrentWeatherRec] = useState<string[]>([]);
   const [currentWeather, setCurrentWeather] =
@@ -45,7 +42,6 @@ const DashboardPage: React.FC<PageProps> = ({ slug = "dashboard" }) => {
 
   return (
     <Layout>
-      <h1>Page: {slug}</h1>
       <div className={styles.recommendationCard}>
         <div className={styles.locationDetails}>
           {currentWeather && (
@@ -75,15 +71,4 @@ const DashboardPage: React.FC<PageProps> = ({ slug = "dashboard" }) => {
       </div>
     </Layout>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  // Provide a stable slug prop so server-rendered markup matches client.
-  return {
-    props: {
-      slug: "dashboard",
-    },
-  };
-};
-
-export default DashboardPage;
+}

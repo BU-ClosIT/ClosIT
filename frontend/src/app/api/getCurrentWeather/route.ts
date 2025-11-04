@@ -1,17 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { usePathname } from "next/navigation";
 
 const ENDPOINT_URL = "https://getweatherbylocation-6p7lfy6g4a-uc.a.run.app/";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method !== "GET") {
-    res.setHeader("Allow", "GET");
-    return res.status(405).end("Method Not Allowed");
-  }
-
+export async function GET(req: NextApiRequest, res: NextApiResponse) {
   try {
     const response = await fetch(ENDPOINT_URL, {
       method: "GET",

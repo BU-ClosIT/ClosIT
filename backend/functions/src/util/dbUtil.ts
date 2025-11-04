@@ -43,6 +43,7 @@ export const setClosetItem = async ({
   }
 
   const newItem = dbRef.child(`${userId}`).child("item").push(closetItem);
+  newItem.child("id").set(newItem.key);
   return newItem.key;
 };
 
@@ -72,4 +73,3 @@ export const getClosetByUserId = async ({
 
   return closetItems;
 };
-

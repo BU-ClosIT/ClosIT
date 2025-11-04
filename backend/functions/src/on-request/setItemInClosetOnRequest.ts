@@ -26,7 +26,7 @@ const setItemInClosetOnRequest = ({
 
   try {
     const { userId, item } = request.body;
-    const cleanItem = ClosetItem.buildClosetItemFromJson(item);
+    const cleanItem = ClosetItem.buildClosetItemFromJson({ ...item, id: "" });
 
     const itemId = setClosetItem({ userId, closetItem: cleanItem, app });
 
