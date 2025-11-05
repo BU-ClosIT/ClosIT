@@ -1,39 +1,95 @@
-import ClosetItem from "@/model/closet/ClosetItem";
-import IFirebaseServices from "@/model/firebase-services/FirebaseServices";
+// import ClosetItem from "@/model/closet/ClosetItem";
+// import IFirebaseServices from "@/model/firebase-services/FirebaseServices";
 
-export class FirebaseServices implements IFirebaseServices {
-  private static baseUrl: string =
-    process.env.NEXT_PUBLIC_FIREBASE_FUNCTIONS_URL || "";
+import JsonBlob from "../model/JsonBlon";
 
-  public static async getUserCloset(userId: string): Promise<ClosetItem[]> {}
+export class FirebaseServices {
+  public static async getCurrentWeather() {
+    try {
+      const url = "/api/getCurrentWeather";
+      const resp = await fetch(url, {
+        method: "GET",
+      });
 
-  public static async addItemToCloset(
-    userId: string,
-    item: any
-  ): Promise<void> {}
+      const respJson = await resp.json();
+      return respJson;
+    } catch (e) {
+      console.error("Error fetching current weather");
+      return "Error Fetching current weather";
+    }
+  }
 
-  public static async removeItemFromCloset(
-    userId: string,
-    itemId: string
-  ): Promise<void> {}
+  public static async aiAgentQuery({
+    query,
+  }: {
+    query: string;
+  }): Promise<string> {
+    try {
+      const url = "/api/aiQuery";
+      const resp = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify({ query }),
+      });
 
-  public static async updateItemInCloset(
-    userId: string,
-    itemId: string,
-    updatedItem: any
-  ): Promise<void> {}
+      const respJson = await resp.json();
 
-  public static async getItemById(
-    userId: string,
-    itemId: string
-  ): Promise<ClosetItem> {}
+      return respJson;
+    } catch (e) {
+      return "Error Fetching Outfit Rec";
+    }
+  }
 
-  public static async aiAgentQuery(prompt: string): Promise<string> {}
   public static async getRecommendation({
     userId,
-    location,
+    userPreferences,
+    context,
   }: {
-    userId: string;
-    location?: string;
-  }): Promise<string> {}
+    userId?: string;
+    userPreferences?: string;
+    context?: JsonBlob;
+  }): Promise<string> {
+    try {
+      const url = "/api/getRecommendation";
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userPreferences,
+          userId,
+          context,
+        }),
+      });
+
+      const text = await resp.text();
+
+      return text;
+    } catch (e) {
+      console.error(e);
+      return "Error Fetching Outfit Rec";
+    }
+  }
+
+  public static async getClosetByUserId({ userId }: { userId: string }) {
+    try {
+      const url = "/api/getClosetByUserId";
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+        }),
+      });
+
+      const json = await resp.json();
+
+      return json;
+    } catch (e) {
+      console.error(e);
+      return "Error Fetching User Closet";
+    }
+  }
 }

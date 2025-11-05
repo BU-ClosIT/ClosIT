@@ -1,6 +1,10 @@
 {
   "rules": {
     ".read": false,
-    ".write": false
+    ".write": false,
+    "tokens": {
+      ".read": "auth != null",
+      ".write": false
+    }
   }
 }

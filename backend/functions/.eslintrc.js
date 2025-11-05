@@ -21,13 +21,24 @@ module.exports = {
     "/lib/**/*", // Ignore built files.
     "/generated/**/*", // Ignore generated files.
   ],
-  plugins: [
-    "@typescript-eslint",
-    "import",
-  ],
+  plugins: ["@typescript-eslint", "import"],
   rules: {
-    "quotes": ["error", "double"],
+    quotes: ["error", "double"],
     "import/no-unresolved": 0,
-    "indent": ["error", 2],
+    indent: ["error", 2],
+    "require-jsdoc": [
+      "warn",
+      {
+        require: {
+          FunctionDeclaration: false,
+          MethodDefinition: false,
+          ClassDeclaration: false,
+          ArrowFunctionExpression: false,
+        },
+      },
+    ],
+    "object-curly-spacing": ["warn", "always"],
+    "max-len": ["error", { code: 120 }],
+    "quote-props": ["warn", "consistent-as-needed"],
   },
 };
