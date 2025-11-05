@@ -1,4 +1,4 @@
-import { CurrentWeatherResponse } from "./AccuWeather";
+import { CurrentWeatherResponse } from "./VisualCrossing";
 
 /** The shape of the request from the frontend when
  * the app asks for current weather outfit recommendation */

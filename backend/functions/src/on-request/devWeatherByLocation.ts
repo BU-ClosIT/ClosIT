@@ -2,11 +2,10 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import { Response } from "express";
 import { getGeoPositionFromIp, getIpFromReq } from "../services/geoip-services";
-import { isOriginAllowed } from "../util/originUtil";
+// import { isOriginAllowed } from "../util/originUtil";
 import { getCurrentWeatherByLatLong } from "../services/visualcrossing-services";
-import { CurrentWeatherResponse } from "../model/VisualCrossing";
 
-const weatherByLocationOnRequest = async ({
+const devWeatherByLocationOnRequest = async ({
   request,
   response,
   app,
@@ -15,13 +14,12 @@ const weatherByLocationOnRequest = async ({
   response: Response;
   app: admin.app.App;
 }) => {
-  const selectedUnit = request.query.selectedUnit || "F";
-  const origin = `${request.header("x-closit-referrer")}`;
-  functions.logger.log("weatherByLocation invoked by - " + origin);
-  if (!origin || !isOriginAllowed(origin)) {
-    response.status(400).send("Unauthorized");
-    return;
-  }
+  //   const origin = `${request.header("x-closit-referrer")}`;
+  //   functions.logger.log("weatherByLocation invoked by - " + origin);
+  //   if (!origin || !isOriginAllowed(origin)) {
+  //     response.status(400).send("Unauthorized");
+  //     return;
+  //   }
 
   const clientIp = getIpFromReq({ request });
   if (!clientIp) {
@@ -34,24 +32,17 @@ const weatherByLocationOnRequest = async ({
     functions.logger.log("Geo position fetched:", geoPosition);
     const currentWeather = await getCurrentWeatherByLatLong({
       latLong: `${geoPosition.lat},${geoPosition.lon}`,
-      selectedUnit: selectedUnit as "F" | "C",
+      selectedUnit: "F",
       app,
     });
     functions.logger.log("Current weather fetched:", currentWeather);
     response.status(200).send(
       JSON.stringify({
-        latitude: currentWeather.latitude,
-        longitude: currentWeather.longitude,
-        timezone: currentWeather.timezone,
-        tzoffset: currentWeather.tzoffset,
-        description: currentWeather.description,
-        alerts: currentWeather.alerts,
-        currentConditions: currentWeather.currentConditions,
+        ...currentWeather,
         city: geoPosition.city,
         region: geoPosition.region,
         country: geoPosition.country,
-        selectedUnit,
-      } as CurrentWeatherResponse)
+      })
     );
   } catch (error: any) {
     functions.logger.error("Error fetching weather data", error);
@@ -59,4 +50,4 @@ const weatherByLocationOnRequest = async ({
   }
 };
 
-export default weatherByLocationOnRequest;
+export default devWeatherByLocationOnRequest;
