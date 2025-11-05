@@ -1,8 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-
 const ENDPOINT_URL = "https://getweatherbylocation-6p7lfy6g4a-uc.a.run.app/";
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(req: Request) {
   try {
     const response = await fetch(ENDPOINT_URL, {
       method: "GET",
@@ -13,18 +11,28 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
     });
 
     const text = await response.text();
+    console.log("Response from weather service:", text);
 
-    // Try to parse JSON, otherwise return the raw text
+    let body: unknown;
     try {
-      const json = JSON.parse(text);
-      return res.status(response.status).json(json);
+      body = JSON.parse(text);
     } catch {
-      return res.status(response.status).send(text);
+      // If response isn't JSON, return the raw text
+      body = text;
     }
+
+    return new Response(JSON.stringify(body), {
+      status: response.status,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (err: any) {
     console.error("Error proxying to getWeather", err);
-    return res
-      .status(500)
-      .json({ error: "proxy_error", message: err?.message });
+    return new Response(
+      JSON.stringify({ error: "proxy_error", message: err?.message }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 }

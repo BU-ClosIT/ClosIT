@@ -1,4 +1,6 @@
-import UserProvider from "@/components/UserProvider";
+import UserProvider from "../components/providers/UserProvider";
+import WeatherProvider from "../components/providers/WeatherProvider";
+import "./globals.css";
 
 export const metadata = {
   title: "ClosIT",
@@ -16,7 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <UserProvider>{children}</UserProvider>
+        <WeatherProvider>
+          <UserProvider>{children}</UserProvider>
+        </WeatherProvider>
       </body>
     </html>
   );

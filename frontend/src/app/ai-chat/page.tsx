@@ -1,12 +1,12 @@
 "use client";
 
-import Layout from "@/components/shared/layout";
+import PageLayout from "../../components/shared/PageLayout";
 
 export default function AiChatPage() {
   return (
-    <Layout>
+    <PageLayout>
       <h1>Page</h1>
       <p>This is AiChatPage</p>
-    </Layout>
+    </PageLayout>
   );
 }

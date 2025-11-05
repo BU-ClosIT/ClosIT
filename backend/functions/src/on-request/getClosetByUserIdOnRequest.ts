@@ -13,7 +13,7 @@ const getClosetByUserIdOnRequest = async ({
   response: Response;
   app: admin.app.App;
 }) => {
-  if (request.method !== "POST") {
+  if (request.method !== "GET") {
     response.status(401).send("Invalid");
     return;
   }

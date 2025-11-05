@@ -1,6 +1,8 @@
 // import ClosetItem from "@/model/closet/ClosetItem";
 // import IFirebaseServices from "@/model/firebase-services/FirebaseServices";
 
+import JsonBlob from "../model/JsonBlon";
+
 export class FirebaseServices {
   public static async getCurrentWeather() {
     try {
@@ -39,8 +41,12 @@ export class FirebaseServices {
 
   public static async getRecommendation({
     userId,
+    userPreferences,
+    context,
   }: {
     userId?: string;
+    userPreferences?: string;
+    context?: JsonBlob;
   }): Promise<string> {
     try {
       const url = "/api/getRecommendation";
@@ -50,8 +56,9 @@ export class FirebaseServices {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userPreferences: "none",
+          userPreferences,
           userId,
+          context,
         }),
       });
 

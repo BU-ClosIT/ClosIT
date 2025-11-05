@@ -35,23 +35,43 @@ const outfitRecommendationOnRequest = async ({
   }
 
   try {
-    const geoPosition = await getGeoPositionFromIp({ ip: clientIp });
-    const cityKeyResponse: CityKeyResponse = await getCityKeyByGeoPosition({
-      geoPosition,
-      app,
-    });
-    const currentWeather: CurrentWeatherResponse =
-      await getCurrentWeatherByCityKey({
+    const { userId, context, userPreferences } = request.body;
+
+    functions.logger.log(
+      `Outfit Recommendation requested for userId: ${userId} 
+      with preferences: ${userPreferences} 
+      and context: ${JSON.stringify(context)}`
+    );
+
+    if (!userId) {
+      response.status(400).send("Missing userId in request body");
+      return;
+    }
+
+    let currentWeather: CurrentWeatherResponse | null =
+      context.currentWeather.weather;
+
+    if (!currentWeather) {
+      functions.logger.log(
+        "Outfit Recommendation: Fetching current weather as none was provided"
+      );
+      const geoPosition = await getGeoPositionFromIp({ ip: clientIp });
+      const cityKeyResponse: CityKeyResponse = await getCityKeyByGeoPosition({
+        geoPosition,
+        app,
+      });
+      currentWeather = await getCurrentWeatherByCityKey({
         cityKey: cityKeyResponse.Key,
         app,
       });
-    const {userId} = request.body;
-    const userCloset = await getClosetByUserId({userId, app});
+    }
+
+    const userCloset = await getClosetByUserId({ userId, app });
     const resp = await queryGemini({
       query: JSON.stringify({
         prompt: "You are a helpful assistant for picking clothes",
         currentWeather,
-        userPreferences: "", // future feature
+        userPreferences,
         userCloset,
       }),
       app,

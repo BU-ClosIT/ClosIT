@@ -1,12 +1,11 @@
 "use client";
 
-import Layout from "@/components/shared/layout";
-import { useUser } from "@/components/UserProvider";
-import ClosetItem from "@/model/closet/ClosetItem";
-import { User } from "@/model/User";
-import { FirebaseServices } from "@/services/firebase-services";
-import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
+import { FirebaseServices } from "../../services/firebase-services";
+import { useUser } from "../../components/providers/UserProvider";
+import ClosetItem from "../../model/closet/ClosetItem";
+import PageLayout from "../../components/shared/PageLayout";
+import AddButton from "../../components/closet-management/AddButton";
 
 interface PageProps {
   slug: string;
@@ -26,11 +25,13 @@ const ManageClosetPage: React.FC<PageProps> = ({ slug }: { slug: string }) => {
   }, [user]);
 
   return (
-    <Layout>
-      <h1>Page: {slug}</h1>
+    <PageLayout>
+      <h1 className="">Page: {slug}</h1>
 
       <p>This is ManageClosetPage</p>
-    </Layout>
+
+      <AddButton />
+    </PageLayout>
   );
 };
 

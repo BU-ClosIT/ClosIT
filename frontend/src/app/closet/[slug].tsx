@@ -1,4 +1,4 @@
-import Layout from "@/components/shared/layout";
+import Layout from "@/components/shared/pageLayout";
 import { GetServerSideProps } from "next";
 
 interface PageProps {
