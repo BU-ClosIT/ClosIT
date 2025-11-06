@@ -1,4 +1,4 @@
-import Layout from "@/components/shared/pageLayout";
+import PageLayout from "../../components/shared/PageLayout";
 import { GetServerSideProps } from "next";
 
 interface PageProps {
@@ -7,20 +7,11 @@ interface PageProps {
 
 const ClosetItemPage: React.FC<PageProps> = ({ slug }) => {
   return (
-    <Layout>
+    <PageLayout>
       <h1>Page</h1>
       <p>This is ClosetItemPage for {slug}</p>
-    </Layout>
+    </PageLayout>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { slug } = context.params as { slug: string };
-  return {
-    props: {
-      slug,
-    },
-  };
 };
 
 export default ClosetItemPage;

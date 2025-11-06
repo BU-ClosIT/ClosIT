@@ -24,6 +24,19 @@ const ManageClosetPage: React.FC<PageProps> = ({ slug }: { slug: string }) => {
     getClosetItems();
   }, [user]);
 
+  const handleAddItem = () => {
+    const promise = FirebaseServices.setItemInCloset({
+      userId: user?.id || "",
+      item: {
+        id: "",
+        name: "New Item",
+        category: "Shirt",
+        color: "Blue",
+        size: "M",
+        imageUrl: "https://via.placeholder.com/150",
+      },
+    });
+  };
   return (
     <PageLayout>
       <h1 className="">Page: {slug}</h1>
