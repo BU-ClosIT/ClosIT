@@ -3,12 +3,10 @@ import * as admin from "firebase-admin";
 import { Response } from "express";
 import { queryGemini } from "../services/gemini-services";
 import { getGeoPositionFromIp, getIpFromReq } from "../services/geoip-services";
-import {
-  getCityKeyByGeoPosition,
-  getCurrentWeatherByCityKey,
-} from "../services/accuweather-services";
 import { isOriginAllowed } from "../util/originUtil";
-import { CityKeyResponse, CurrentWeatherResponse } from "../model/AccuWeather";
+import { getClosetByUserId } from "../util/dbUtil";
+import { CurrentWeatherResponse } from "../model/VisualCrossing";
+import { getCurrentWeatherByLatLong } from "../services/visualcrossing-services";
 
 const outfitRecommendationOnRequest = async ({
   request,
@@ -27,15 +25,6 @@ const outfitRecommendationOnRequest = async ({
     return;
   }
 
-
-  const userId = (request.query.userId as string) || request.body?.userId;
-  if (!userId) {
-    response.status(400).send("Missing userId");
-    return;
-  }
-  const db = admin.firestore();
-  const items = db.collection("users").doc(userId).collection("items");
-
   const clientIp = getIpFromReq({ request });
   if (!clientIp) {
     response.status(500).send("Could not determine client IP");
@@ -43,28 +32,47 @@ const outfitRecommendationOnRequest = async ({
   }
 
   try {
-    const geoPosition = await getGeoPositionFromIp({ ip: clientIp });
-    const cityKeyResponse: CityKeyResponse = await getCityKeyByGeoPosition({
-      geoPosition,
-      app,
-    });
-    const currentWeather: CurrentWeatherResponse =
-      await getCurrentWeatherByCityKey({
-        cityKey: cityKeyResponse.Key,
+    const { userId, context, userPreferences, selectedUnit } = request.body;
+
+    functions.logger.log(
+      `Outfit Recommendation requested for userId: ${userId} 
+      with preferences: ${userPreferences} 
+      and context: ${JSON.stringify(context)}`
+    );
+
+    if (!userId) {
+      response.status(400).send("Missing userId in request body");
+      return;
+    }
+
+    let currentWeather: CurrentWeatherResponse | null =
+      context.currentWeather.weather;
+
+    if (!currentWeather) {
+      functions.logger.log(
+        "Outfit Recommendation: Fetching current weather as none was provided"
+      );
+      const geoPosition = await getGeoPositionFromIp({ ip: clientIp });
+      currentWeather = await getCurrentWeatherByLatLong({
+        latLong: `${geoPosition.lat},${geoPosition.lon}`,
+        selectedUnit: selectedUnit || "F",
         app,
       });
+    }
+
+    const userCloset = await getClosetByUserId({ userId, app });
     const resp = await queryGemini({
       query: JSON.stringify({
-        prompt: "You are a helpful assistant for picking clothes. Please generate an outfit considering fashionable color and style combinations that match the current season and forecast, and return a response as a list of items in a parseable JSON format. If you pick multiple items from the same category (i.e. 2 outerwears), make sure they don't conflict unless stylistically fitting.",
-        currentWeather,
-        userPreferences: "", // future feature
-        currentUserCloset:
-          "Placeholder for now, just make up some clothing elements that might work for the current weather. The json fields are id, name, category, subCategory, color, material, size, brand, purchaseDate, imageUrl, notes",
-      }), // get from DB eventually
+        prompt: `You are a helpful assistant for picking clothes, 
+          please respond in the format: { content: "anything you want to say here", outfit: [itemId1, itemId2, ...] }`,
+        currentWeather: currentWeather?.currentConditions || null,
+        userPreferences,
+        userCloset,
+      }),
       app,
     });
 
-    response.send(`Outfit Recommendation: ${resp}`);
+    response.send(resp);
   } catch (e) {
     functions.logger.error("Error fetching user closet data", e);
     response.status(500).send(`Error fetching user closet data: ${e}`);

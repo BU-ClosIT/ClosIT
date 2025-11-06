@@ -1,6 +1,8 @@
 // import ClosetItem from "@/model/closet/ClosetItem";
 // import IFirebaseServices from "@/model/firebase-services/FirebaseServices";
 
+import JsonBlob from "../model/JsonBlon";
+
 export class FirebaseServices {
   public static async getCurrentWeather() {
     try {
@@ -10,10 +12,11 @@ export class FirebaseServices {
       });
 
       const respJson = await resp.json();
+      console.log("Fetched current weather:", respJson);
       return respJson;
     } catch (e) {
       console.error("Error fetching current weather");
-      return "Error Fetching current weather";
+      return null;
     }
   }
 
@@ -22,7 +25,6 @@ export class FirebaseServices {
   }: {
     query: string;
   }): Promise<string> {
-    if (typeof window === "undefined") return "unavailable";
     try {
       const url = "/api/aiQuery";
       const resp = await fetch(url, {
@@ -34,16 +36,19 @@ export class FirebaseServices {
 
       return respJson;
     } catch (e) {
-      return "Error Fetching Outfit Rec";
+      return "Error Fetching AI Response";
     }
   }
 
   public static async getRecommendation({
     userId,
+    userPreferences,
+    context,
   }: {
     userId?: string;
-  }): Promise<string> {
-    if (typeof window === "undefined") return "unavailable";
+    userPreferences?: string;
+    context?: JsonBlob;
+  }): Promise<{ content: string; outfit: string[] }> {
     try {
       const url = "/api/getRecommendation";
       const resp = await fetch(url, {
@@ -52,17 +57,41 @@ export class FirebaseServices {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userPreferences: "none",
+          userPreferences,
           userId,
+          context,
         }),
       });
 
       const text = await resp.text();
+      const cleanText = text.replace("```json", "").replace("```", "");
 
-      return text;
+      return JSON.parse(cleanText);
     } catch (e) {
       console.error(e);
-      return "Error Fetching Outfit Rec";
+      return { content: "Error Fetching Outfit Rec", outfit: [] };
+    }
+  }
+
+  public static async getClosetByUserId({ userId }: { userId: string }) {
+    try {
+      const url = "/api/getClosetByUserId";
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+        }),
+      });
+
+      const json = await resp.json();
+
+      return json;
+    } catch (e) {
+      console.error(e);
+      return null;
     }
   }
 }
