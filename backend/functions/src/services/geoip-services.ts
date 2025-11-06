@@ -27,9 +27,8 @@ export const getGeoPositionFromIp = async ({
   ip,
 }: {
   ip: string;
-}): Promise<string> => {
-  const geoResp = await fetch(`http://ip-api.com/json/${ip}`);
+}): Promise<GeoIpResp> => {
+  const geoResp = await fetch(`http://ip-api.com/json/${ip}?fields=61439`);
   const geoJson: GeoIpResp = await geoResp.json();
-  const geoPosition = `${geoJson.lat},${geoJson.lon}`;
-  return geoPosition;
+  return geoJson;
 };

@@ -12,10 +12,11 @@ export class FirebaseServices {
       });
 
       const respJson = await resp.json();
+      console.log("Fetched current weather:", respJson);
       return respJson;
     } catch (e) {
       console.error("Error fetching current weather");
-      return "Error Fetching current weather";
+      return null;
     }
   }
 
@@ -35,7 +36,7 @@ export class FirebaseServices {
 
       return respJson;
     } catch (e) {
-      return "Error Fetching Outfit Rec";
+      return "Error Fetching AI Response";
     }
   }
 
@@ -47,7 +48,7 @@ export class FirebaseServices {
     userId?: string;
     userPreferences?: string;
     context?: JsonBlob;
-  }): Promise<string> {
+  }): Promise<{ content: string; outfit: string[] }> {
     try {
       const url = "/api/getRecommendation";
       const resp = await fetch(url, {
@@ -63,11 +64,12 @@ export class FirebaseServices {
       });
 
       const text = await resp.text();
+      const cleanText = text.replace("```json", "").replace("```", "");
 
-      return text;
+      return JSON.parse(cleanText);
     } catch (e) {
       console.error(e);
-      return "Error Fetching Outfit Rec";
+      return { content: "Error Fetching Outfit Rec", outfit: [] };
     }
   }
 
@@ -89,7 +91,7 @@ export class FirebaseServices {
       return json;
     } catch (e) {
       console.error(e);
-      return "Error Fetching User Closet";
+      return null;
     }
   }
 }
