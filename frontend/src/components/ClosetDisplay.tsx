@@ -1,32 +1,20 @@
 import React from "react";
-
-export interface ClosetItem {
-  id: string;
-  name: string;
-  category: string;
-  subCategory?: string;
-  color: string;
-  material?: string;
-  size: string;
-  brand?: string;
-  purchaseDate?: string;
-  imageUrl?: string;
-  notes?: string;
-}
+import ClosetItem from "@/model/closet/ClosetItem";
 
 interface ClosetDisplayProps {
   items: ClosetItem[];
+  onItemClick?: (item: ClosetItem) => void;
 }
 
 const categories = [
-  "outerwear",
-  "tops",
-  "bottoms",
-  "legwear",
-  "footwear",
-  "accessories",
-  "bags",
-  "misc",
+  "Outerwear",
+  "Tops",
+  "Bottoms",
+  "Legwear",
+  "Footwear",
+  "Accessories",
+  "Bags",
+  "Misc",
 ];
 
 // Determine if text should be black or white based on background color
@@ -39,7 +27,7 @@ function getTextColor(bgColor: string) {
   return brightness > 125 ? "#000000" : "#ffffff";
 }
 
-export const ClosetDisplay: React.FC<ClosetDisplayProps> = ({ items }) => {
+export const ClosetDisplay: React.FC<ClosetDisplayProps> = ({ items, onItemClick }) => {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
       {categories.map((category) => {
@@ -64,6 +52,7 @@ export const ClosetDisplay: React.FC<ClosetDisplayProps> = ({ items }) => {
                   return (
                     <div
                       key={item.id}
+                      onClick={() => onItemClick?.(item)}
                       style={{
                         position: "relative",
                         width: "80px",

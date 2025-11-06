@@ -27,6 +27,15 @@ const outfitRecommendationOnRequest = async ({
     return;
   }
 
+
+  const userId = (request.query.userId as string) || request.body?.userId;
+  if (!userId) {
+    response.status(400).send("Missing userId");
+    return;
+  }
+  const db = admin.firestore();
+  const items = db.collection("users").doc(userId).collection("items");
+
   const clientIp = getIpFromReq({ request });
   if (!clientIp) {
     response.status(500).send("Could not determine client IP");
@@ -46,11 +55,11 @@ const outfitRecommendationOnRequest = async ({
       });
     const resp = await queryGemini({
       query: JSON.stringify({
-        prompt: "You are a helpful assistant for picking clothes",
+        prompt: "You are a helpful assistant for picking clothes. Please generate an outfit considering fashionable color and style combinations that match the current season and forecast, and return a response as a list of items in a parseable JSON format. If you pick multiple items from the same category (i.e. 2 outerwears), make sure they don't conflict unless stylistically fitting.",
         currentWeather,
         userPreferences: "", // future feature
         currentUserCloset:
-          "placeholder for now, just make up some clothing elements that might work for the current weather",
+          "Placeholder for now, just make up some clothing elements that might work for the current weather. The json fields are id, name, category, subCategory, color, material, size, brand, purchaseDate, imageUrl, notes",
       }), // get from DB eventually
       app,
     });
