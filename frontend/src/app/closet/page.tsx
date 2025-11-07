@@ -1,21 +1,13 @@
 "use client"
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { HexColorPicker } from "react-colorful";
 import ClosetItem from "@/src/model/closet/ClosetItem";
 import { ClosetItemCard } from "@/src/components/closet-management/ClosetItemCard";
 import PageLayout from "@/src/components/shared/PageLayout";
-
-const categories = [
-    "Outerwear",
-    "Tops",
-    "Bottoms",
-    "Legwear",
-    "Footwear",
-    "Accessories",
-    "Bags",
-    "Misc",
-];
+import { FirebaseServices } from "@/src/services/firebase-services";
+import { useUser } from "@/src/components/providers/UserProvider";
+import { categories, ClosetItemCategory } from "@/src/model/closet/ClosetItemCategories";
 
 export default function ClosetPage() {
     const [selectedCategory, setSelectedCategory] = useState<string>("All");
@@ -31,6 +23,21 @@ export default function ClosetPage() {
         { id: "6", name: "Beanie", category: "Accessories", color: "#ff0000", size: "One Size" },
         { id: "7", name: "Denim Jacket", category: "Outerwear", color: "#8eb1e6ff", size: "M", brand: "Levi's" },
     ]);
+
+    const user = useUser();
+
+    useEffect(() => {
+      const getCloset = async () => {
+        if (!user) { setCloset([]); return; }
+        const response = await FirebaseServices.getClosetByUserId({userId:user.id});
+        setCloset(response.items);
+        return;
+      } 
+
+      getCloset();
+
+    }, [user]
+  )
 
     const handleSave = () => {
         if (!selectedItem) return;
