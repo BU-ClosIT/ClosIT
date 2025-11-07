@@ -94,4 +94,33 @@ export class FirebaseServices {
       return null;
     }
   }
+
+  public static async setItemInCloset({
+    userId,
+    item,
+  }: {
+    userId: string;
+    item: any;
+  }) {
+    try {
+      const url = "/api/setItemInCloset";
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          item,
+        }),
+      });
+
+      const json = await resp.json();
+
+      return json;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  }
 }

@@ -13,6 +13,8 @@ const getClosetByUserIdOnRequest = async ({
   response: Response;
   app: admin.app.App;
 }) => {
+  const origin = `${request.header("x-closit-referrer")}`;
+
   if (request.method !== "GET") {
     response.status(401).send("Invalid");
     return;
