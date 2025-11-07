@@ -189,7 +189,7 @@ export default function ClosetPage() {
 
                         {/* Color Field */}
                         <p>
-                            <strong>Color:</strong>{" "}
+                            <strong>Color: </strong>{" "}
                             <>
                                 <span
                                     style={{
