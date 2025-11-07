@@ -30,6 +30,7 @@ export async function POST(request: Request) {
       },
       body: JSON.stringify(reqBody),
     });
+    return response;
   } catch (err: any) {
     console.error("Error proxying to setItemInCloset service:", err);
     return new Response(
