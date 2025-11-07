@@ -1,6 +1,6 @@
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
-import ClosetItem from "../model/ClosetItem";
+import { ClosetItem } from "../model/ClosetItem";
 import JsonBlob from "../model/JsonBlob";
 // a bunch of utils for interacting with the database
 type SupportedTokenName =
@@ -69,9 +69,8 @@ export const getClosetByUserId = async ({
   const itemsJson: JsonBlob = userClosetSnap.val() as JsonBlob;
   const closetItems: ClosetItem[] = [];
   Object.keys(itemsJson).forEach((key) => {
-    const itemJson = itemsJson[key];
-    const closetItem = ClosetItem.buildClosetItemFromJson(itemJson);
-    closetItems.push(closetItem);
+    const itemJson = itemsJson[key] as ClosetItem;
+    closetItems.push(itemJson);
   });
 
   return closetItems;
