@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import { HexColorPicker } from "react-colorful";
-import ClosetItem from "@/src/model/closet/ClosetItem";
-import { ClosetItemCard } from "@/src/components/closet-management/ClosetItemCard";
-import PageLayout from "@/src/components/shared/PageLayout";
+import ClosetItem from "../../model/closet/ClosetItem";
+import { ClosetItemCard } from "../../components/closet-management/ClosetItemCard";
+import PageLayout from "../../components/shared/PageLayout";
 
 const categories = [
   "Outerwear",

@@ -1,6 +1,3 @@
-// import ClosetItem from "@/model/closet/ClosetItem";
-// import IFirebaseServices from "@/model/firebase-services/FirebaseServices";
-
 import JsonBlob from "../model/JsonBlon";
 
 export class FirebaseServices {
