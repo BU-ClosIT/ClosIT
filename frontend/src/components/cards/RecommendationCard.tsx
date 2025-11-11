@@ -22,14 +22,14 @@ export default function RecommendationCard() {
       context?: string;
     }) => {
       if (!isReady) return;
-      const response = await FirebaseServices.getRecommendation({
-        userId: user ? user.id : "",
-        userPreferences: preferences,
-        context: { context, currentWeather: JSON.stringify(currentWeather) },
-      });
+      const response: { content: string; outfit: string[] } =
+        await FirebaseServices.getRecommendation({
+          userId: user ? user.id : "",
+          userPreferences: preferences,
+          context: { context, currentWeather: JSON.stringify(currentWeather) },
+        });
       setIsLoading(false);
-
-      const respArr = response.split("");
+      const respArr = response.content.split("");
 
       respArr.forEach((letter, idx) => {
         setTimeout(() => {
@@ -37,7 +37,7 @@ export default function RecommendationCard() {
         }, idx * 5);
       });
     },
-    [user?.id, setIsLoading, isReady]
+    [user?.id, setIsLoading]
   );
 
   useEffect(() => {
@@ -60,12 +60,15 @@ export default function RecommendationCard() {
     <div className="flex flex-col w-full min-h-[200px] p-4 border rounded-lg shadow-lg my-4 justify-center max-h-screen">
       {isLoading && <Loader />}
       <div>{currentWeatherRec.length ? currentWeatherRec.join("") : ""}</div>
-      <button
-        className="w-40 bg-blue-500 text-white px-4 py-2 rounded mt-4 justify-center align-middle"
-        onClick={() => handleTryAgain()}
-      >
-        Try Again
-      </button>
+
+      <div className="flex justify-center">
+        <button
+          className="w-40 bg-blue-500 text-white px-4 py-2 rounded mt-4 justify-center align-middle"
+          onClick={() => handleTryAgain()}
+        >
+          Try Again
+        </button>
+      </div>
     </div>
   );
 }

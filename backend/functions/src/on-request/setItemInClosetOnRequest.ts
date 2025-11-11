@@ -2,10 +2,10 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import { Response } from "express";
 import { isOriginAllowed } from "../util/originUtil";
-import ClosetItem from "../model/ClosetItem";
+import { ClosetItem } from "../model/ClosetItem";
 import { setClosetItem } from "../util/dbUtil";
 
-const setItemInClosetOnRequest = ({
+const setItemInClosetOnRequest = async ({
   request,
   response,
   app,
@@ -14,6 +14,8 @@ const setItemInClosetOnRequest = ({
   response: Response;
   app: admin.app.App;
 }) => {
+  const origin = `${request.header("x-closit-referrer")}`;
+
   if (request.method !== "POST") {
     response.status(401).send("Invalid");
     return;
@@ -26,9 +28,9 @@ const setItemInClosetOnRequest = ({
 
   try {
     const { userId, item } = request.body;
-    const cleanItem = ClosetItem.buildClosetItemFromJson({ ...item, id: "" });
+    const cleanItem = { ...item, id: "" } as ClosetItem;
 
-    const itemId = setClosetItem({ userId, closetItem: cleanItem, app });
+    const itemId = await setClosetItem({ userId, closetItem: cleanItem, app });
 
     response.status(200).send(`Item set in closet: ${itemId}`);
   } catch (error) {

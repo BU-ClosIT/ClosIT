@@ -1,6 +1,3 @@
-// import ClosetItem from "@/model/closet/ClosetItem";
-// import IFirebaseServices from "@/model/firebase-services/FirebaseServices";
-
 import JsonBlob from "../model/JsonBlon";
 
 export class FirebaseServices {
@@ -12,10 +9,11 @@ export class FirebaseServices {
       });
 
       const respJson = await resp.json();
+      console.log("Fetched current weather:", respJson);
       return respJson;
     } catch (e) {
       console.error("Error fetching current weather");
-      return "Error Fetching current weather";
+      return null;
     }
   }
 
@@ -35,7 +33,7 @@ export class FirebaseServices {
 
       return respJson;
     } catch (e) {
-      return "Error Fetching Outfit Rec";
+      return "Error Fetching AI Response";
     }
   }
 
@@ -47,7 +45,7 @@ export class FirebaseServices {
     userId?: string;
     userPreferences?: string;
     context?: JsonBlob;
-  }): Promise<string> {
+  }): Promise<{ content: string; outfit: string[] }> {
     try {
       const url = "/api/getRecommendation";
       const resp = await fetch(url, {
@@ -63,11 +61,12 @@ export class FirebaseServices {
       });
 
       const text = await resp.text();
+      const cleanText = text.replace("```json", "").replace("```", "");
 
-      return text;
+      return JSON.parse(cleanText);
     } catch (e) {
       console.error(e);
-      return "Error Fetching Outfit Rec";
+      return { content: "Error Fetching Outfit Rec", outfit: [] };
     }
   }
 
@@ -89,7 +88,68 @@ export class FirebaseServices {
       return json;
     } catch (e) {
       console.error(e);
-      return "Error Fetching User Closet";
+      return null;
+    }
+  }
+
+  public static async setItemInCloset({
+    userId,
+    item,
+  }: {
+    userId: string;
+    item: any;
+    itemId?: string;
+  }) {
+    try {
+      const url = "/api/setItemInCloset";
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          item,
+        }),
+      });
+
+      const json = await resp.json();
+
+      return json;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  }
+
+  public static async updateItemInCloset({
+    userId,
+    itemId,
+    updatedFields,
+  }: {
+    userId: string;
+    itemId: string;
+    updatedFields: any;
+  }) {
+    try {
+      const url = "/api/updateItemInCloset";
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          itemId,
+          updatedFields,
+        }),
+      });
+
+      const text = await resp.text();
+      return text;
+    } catch (e) {
+      console.error(e);
+      return null;
     }
   }
 }

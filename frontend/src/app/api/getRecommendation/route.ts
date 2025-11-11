@@ -33,7 +33,6 @@ export async function POST(req: Request) {
     });
 
     const text = await response.text();
-    console.log("Response from recommendation service:", text);
 
     // Try to parse JSON, otherwise return the raw text
     try {
