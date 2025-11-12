@@ -1,7 +1,7 @@
 "use client";
 
 import PageLayout from "../../components/shared/PageLayout";
-import RecommendationCard from "@/src/components/cards/RecommendationCard";
+import RecommendationCard from "../../components/cards/RecommendationCard";
 
 export default function Dashboard() {
   return (

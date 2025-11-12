@@ -1,12 +1,15 @@
 import React from "react";
-import ClosetItem from "@/src/model/closet/ClosetItem";
+import ClosetItem from "../../model/closet/ClosetItem";
 
 interface ClosetItemCardProps {
   item: ClosetItem;
   onClick?: (item: ClosetItem) => void;
 }
 
-export const ClosetItemCard: React.FC<ClosetItemCardProps> = ({ item, onClick }) => {
+export const ClosetItemCard: React.FC<ClosetItemCardProps> = ({
+  item,
+  onClick,
+}) => {
   const { name, subCategory, category, color } = item;
 
   const fallbackColor = color || "#cccccc";
@@ -15,9 +18,13 @@ export const ClosetItemCard: React.FC<ClosetItemCardProps> = ({ item, onClick })
     if (!bgColor.startsWith("#")) return "#000";
 
     const hex = bgColor.replace("#", "");
-    const fullHex = hex.length === 3
-      ? hex.split("").map(c => c + c).join("")
-      : hex;
+    const fullHex =
+      hex.length === 3
+        ? hex
+            .split("")
+            .map((c) => c + c)
+            .join("")
+        : hex;
 
     const r = parseInt(fullHex.substring(0, 2), 16) || 0;
     const g = parseInt(fullHex.substring(2, 4), 16) || 0;
@@ -73,9 +80,7 @@ export const ClosetItemCard: React.FC<ClosetItemCardProps> = ({ item, onClick })
                 ? "drop-shadow(0 0 3px rgba(0,0,0,0.3))"
                 : "drop-shadow(0 0 3px rgba(255,255,255,0.5))",
           }}
-          onError={(e) => {
-            
-          }}
+          onError={(e) => {}}
         />
       </div>
 
@@ -114,8 +119,6 @@ export const ClosetItemCard: React.FC<ClosetItemCardProps> = ({ item, onClick })
           </span>
         )}
       </div>
-
-      
     </div>
   );
 };
