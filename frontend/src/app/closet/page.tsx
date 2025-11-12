@@ -2,15 +2,15 @@
 
 import React, { useEffect, useState } from "react";
 import { HexColorPicker } from "react-colorful";
-import ClosetItem from "@/src/model/closet/ClosetItem";
-import { ClosetItemCard } from "@/src/components/closet-management/ClosetItemCard";
-import PageLayout from "@/src/components/shared/PageLayout";
-import { FirebaseServices } from "@/src/services/firebase-services";
-import { useUser } from "@/src/components/providers/UserProvider";
+import ClosetItem from "../../model/closet/ClosetItem";
+import { ClosetItemCard } from "../../components/closet-management/ClosetItemCard";
+import PageLayout from "../../components/shared/PageLayout";
+import { FirebaseServices } from "../../services/firebase-services";
+import { useUser } from "../../components/providers/UserProvider";
 import {
   categories,
   ClosetItemCategory,
-} from "@/src/model/closet/ClosetItemCategories";
+} from "../../model/closet/ClosetItemCategories";
 
 export default function ClosetPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
