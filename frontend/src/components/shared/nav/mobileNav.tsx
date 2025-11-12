@@ -1,9 +1,79 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useUser } from "../../providers/UserProvider";
+import Link from "next/link";
+import { PageName } from "@/src/model/PageName";
+import Logo from "../Logo";
 
-const MobileNav: React.FC = () => {
+const MobileNav: React.FC<{ currentPage: PageName }> = ({ currentPage }) => {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const user = useUser();
+
+  useEffect(() => {
+    if (!isOpen) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setIsOpen(false);
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [isOpen]);
+
   return (
-    <div>
-      <p>Mobile Navigation</p>
+    <div className="flex flex-row items-center justify-between w-full">
+      <Logo />
+      <button
+        className="flex items-center gap-3 focus:outline-none h-10 w-10 transition-transform duration-200 hover:scale-110 rounded-md p-2"
+        aria-haspopup="true"
+        aria-expanded={isOpen}
+        onClick={() => setIsOpen((s) => !s)}
+      >
+        {isOpen ? (
+          <img src="/icons/Close.svg" />
+        ) : (
+          <img src="/icons/BurgerMenu.svg" />
+        )}
+      </button>
+
+      <div
+        className={`absolute top-15 right-0 w-50 h-full bg-gray-200 transition-opacity duration-200 border-solid shadow-md rounded ${
+          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+      >
+        <ul className="flex flex-col items-center justify-center h-full">
+          <li>
+            <Link
+              href="/dashboard"
+              className={`py-2 hover:underline ${
+                currentPage === "Dashboard" ? "font-bold" : ""
+              }`}
+              onClick={() => setIsOpen(false)}
+            >
+              Dashboard
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/closet"
+              className={`py-2 hover:underline ${
+                currentPage === "Closet" ? "font-bold" : ""
+              }`}
+              onClick={() => setIsOpen(false)}
+            >
+              Closet Management
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/ai-chat"
+              className={`py-2 hover:underline ${
+                currentPage === "AI Chat" ? "font-bold" : ""
+              }`}
+              onClick={() => setIsOpen(false)}
+            >
+              AI Chat
+            </Link>
+          </li>
+        </ul>
+      </div>
     </div>
   );
 };
