@@ -103,6 +103,7 @@ export default function ClosetPage() {
           maxWidth: "700px",
           padding: "20px",
           gap: "20px",
+          justifySelf: "center",
         }}
       >
         {/* Left Panel */}

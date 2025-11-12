@@ -7,7 +7,7 @@ const PageLayout: React.FC<{
   children: React.ReactNode;
 }> = ({ currentPage, children }) => {
   return (
-    <div className="font-sans min-h-screen flex flex-col items-center w-full">
+    <div className="font-sans min-h-screen flex flex-col items-center w-full justify-center">
       <header className="w-full sticky top-0 z-40 backdrop-blur-sm ">
         <Nav currentPage={currentPage} />
       </header>

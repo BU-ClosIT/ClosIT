@@ -5,9 +5,17 @@ import { useEffect, useState, useCallback } from "react";
 import { useUser, useUserReady } from "../providers/UserProvider";
 import Loader from "../shared/Loader";
 import { useWeather } from "../providers/WeatherProvider";
+import ClosetItem from "@/src/model/closet/ClosetItem";
+import { ClosetItemCard } from "../closet-management/ClosetItemCard";
 
 export default function RecommendationCard() {
-  const [currentWeatherRec, setCurrentWeatherRec] = useState<string[]>([]);
+  const [currentWeatherRecArr, setCurrentWeatherRecArr] = useState<string[]>(
+    []
+  );
+  const [recResponse, setRecResponse] = useState<{
+    content: string;
+    outfit: ClosetItem[];
+  }>();
   const currentWeather = useWeather();
   const [isLoading, setIsLoading] = useState(true);
   const user = useUser();
@@ -22,18 +30,20 @@ export default function RecommendationCard() {
       context?: string;
     }) => {
       if (!isReady) return;
-      const response: { content: string; outfit: string[] } =
+      const response: { content: string; outfit: ClosetItem[] } =
         await FirebaseServices.getRecommendation({
           userId: user ? user.id : "",
           userPreferences: preferences,
           context: { context, currentWeather: JSON.stringify(currentWeather) },
         });
       setIsLoading(false);
+      console.log("Recommendation response:", response);
+      setRecResponse(response);
       const respArr = response.content.split("");
 
       respArr.forEach((letter, idx) => {
         setTimeout(() => {
-          setCurrentWeatherRec((prev) => [...prev, letter]);
+          setCurrentWeatherRecArr((prev) => [...prev, letter]);
         }, idx * 5);
       });
     },
@@ -47,8 +57,8 @@ export default function RecommendationCard() {
   }, [isReady, getRec]);
 
   const handleTryAgain = () => {
-    const previous = currentWeatherRec.join("");
-    setCurrentWeatherRec([]);
+    const previous = currentWeatherRecArr.join("");
+    setCurrentWeatherRecArr([]);
     setIsLoading(true);
     getRec({
       preferences: "the following was your last suggestion, please try again",
@@ -57,9 +67,17 @@ export default function RecommendationCard() {
   };
 
   return (
-    <div className="flex flex-col w-full min-h-[200px] p-4 border rounded-lg shadow-lg my-4 justify-center max-h-screen">
+    <div className="flex flex-col w-full min-h-[200px] p-4 border rounded-lg shadow-lg my-4 justify-center align-middle max-h-screen">
       {isLoading && <Loader />}
-      <div>{currentWeatherRec.length ? currentWeatherRec.join("") : ""}</div>
+      <div className="whitespace-pre-wrap mb-4 italic">
+        {currentWeatherRecArr.length ? currentWeatherRecArr.join("") : ""}
+      </div>
+
+      <div>
+        {recResponse?.outfit.map((item) => (
+          <ClosetItemCard key={item.id} item={item} />
+        ))}
+      </div>
 
       <div className="flex justify-center">
         <button

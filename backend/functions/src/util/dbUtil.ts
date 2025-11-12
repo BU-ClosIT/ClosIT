@@ -5,8 +5,8 @@ import JsonBlob from "../model/JsonBlob";
 // a bunch of utils for interacting with the database
 type SupportedTokenName =
   | "gemini-api-key"
-  | "accuweather-api-key"
-  | "visual-crossing-api-key";
+  | "visual-crossing-api-key"
+  | "closit-web-app-token";
 
 /** Get a secure key from the DB by passing the name of the token */
 export const tokenByName = async ({
