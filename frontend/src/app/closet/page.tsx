@@ -9,12 +9,14 @@ import { FirebaseServices } from "../../services/firebase-services";
 import { useUser } from "../../components/providers/UserProvider";
 import {
   categories,
-  ClosetItemCategory,
+  type ClosetItemCategory,
 } from "../../model/closet/ClosetItemCategories";
-import { sampleClosetData } from "@/src/services/sample-closet-data";
+import { sampleClosetData } from "../../services/sample-closet-data";
 
 export default function ClosetPage() {
-  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [selectedCategory, setSelectedCategory] = useState<
+    ClosetItemCategory | "All"
+  >("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedItem, setSelectedItem] = useState<ClosetItem | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -124,7 +126,9 @@ export default function ClosetPage() {
 
           <select
             value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            onChange={(e) =>
+              setSelectedCategory(e.target.value as ClosetItemCategory | "All")
+            }
             style={{
               width: "100%",
               padding: "8px",

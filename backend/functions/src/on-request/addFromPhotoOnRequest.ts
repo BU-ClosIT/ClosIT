@@ -10,7 +10,9 @@ export const addFromPhotoOnRequest = ({
   request: functions.https.Request;
   response: Response;
   app: admin.app.App;
-}) => {};
+}) => {
+  response.send("Not implemented yet");
+};
 
 // helper: fetch an image URL and return base64 string
 export default async function fetchImageAsBase64(url: string): Promise<string> {
