@@ -5,6 +5,8 @@ import { HexColorPicker } from "react-colorful";
 import ClosetItem from "../../model/closet/ClosetItem";
 import { ClosetItemCard } from "../../components/closet-management/ClosetItemCard";
 import PageLayout from "../../components/shared/PageLayout";
+import { useUser } from "../../components/providers/UserProvider";
+import { FirebaseServices } from "../../services/firebase-services";
 
 const categories = [
   "Outerwear",
