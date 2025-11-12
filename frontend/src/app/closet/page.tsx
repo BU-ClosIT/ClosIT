@@ -11,66 +11,14 @@ import {
   categories,
   ClosetItemCategory,
 } from "../../model/closet/ClosetItemCategories";
+import { sampleClosetData } from "@/src/services/sample-closet-data";
 
 export default function ClosetPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedItem, setSelectedItem] = useState<ClosetItem | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [sampleCloset, setCloset] = useState<ClosetItem[]>([
-    {
-      id: "1",
-      name: "Winter Jacket",
-      category: "Outerwear",
-      color: "#3b82f6",
-      size: "M",
-    },
-    {
-      id: "2",
-      name: "White Tee",
-      category: "Tops",
-      color: "#ffffff",
-      size: "L",
-    },
-    {
-      id: "3",
-      name: "Sneakers",
-      category: "Footwear",
-      color: "#cccccc",
-      size: "10",
-      brand: "Nike",
-    },
-    {
-      id: "4",
-      name: "Wool Scarf",
-      category: "Accessories",
-      color: "#000000",
-      size: "One Size",
-    },
-    {
-      id: "5",
-      name: "White Hoodie",
-      category: "Outerwear",
-      color: "#ecececff",
-      size: "M",
-      brand: "Levi's",
-    },
-    {
-      id: "6",
-      name: "Beanie",
-      category: "Accessories",
-      color: "#ff0000",
-      size: "One Size",
-    },
-    {
-      id: "7",
-      name: "Denim Jacket",
-      category: "Outerwear",
-      color: "#8eb1e6ff",
-      size: "M",
-      brand: "Levi's",
-    },
-  ]);
+  const [sampleCloset, setCloset] = useState<ClosetItem[]>(sampleClosetData);
 
   const user = useUser();
 
