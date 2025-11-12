@@ -1,6 +1,3 @@
-// import ClosetItem from "@/model/closet/ClosetItem";
-// import IFirebaseServices from "@/model/firebase-services/FirebaseServices";
-
 import JsonBlob from "../model/JsonBlon";
 
 export class FirebaseServices {
@@ -101,6 +98,7 @@ export class FirebaseServices {
   }: {
     userId: string;
     item: any;
+    itemId?: string;
   }) {
     try {
       const url = "/api/setItemInCloset";
@@ -118,6 +116,37 @@ export class FirebaseServices {
       const json = await resp.json();
 
       return json;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  }
+
+  public static async updateItemInCloset({
+    userId,
+    itemId,
+    updatedFields,
+  }: {
+    userId: string;
+    itemId: string;
+    updatedFields: any;
+  }) {
+    try {
+      const url = "/api/updateItemInCloset";
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          itemId,
+          updatedFields,
+        }),
+      });
+
+      const text = await resp.text();
+      return text;
     } catch (e) {
       console.error(e);
       return null;

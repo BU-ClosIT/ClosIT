@@ -7,8 +7,8 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { CurrentWeatherResponse } from "@/src/model/CurrentWeatherResponse";
-import { FirebaseServices } from "@/src/services/firebase-services";
+import { CurrentWeatherResponse } from "../../model/CurrentWeatherResponse";
+import { FirebaseServices } from "../../services/firebase-services";
 
 type WeatherContext = {
   weather: CurrentWeatherResponse | null;
