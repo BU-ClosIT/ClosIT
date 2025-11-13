@@ -1,7 +1,7 @@
-// import ClosetItem from "@/model/closet/ClosetItem";
-// import IFirebaseServices from "@/model/firebase-services/FirebaseServices";
-
+import ClosetItem from "../model/closet/ClosetItem";
 import JsonBlob from "../model/JsonBlon";
+
+const FIREBASE_FUNCTIONS_API_KEY = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
 
 export class FirebaseServices {
   public static async getCurrentWeather() {
@@ -9,6 +9,10 @@ export class FirebaseServices {
       const url = "/api/getCurrentWeather";
       const resp = await fetch(url, {
         method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${FIREBASE_FUNCTIONS_API_KEY}`,
+        },
       });
 
       const respJson = await resp.json();
@@ -30,6 +34,10 @@ export class FirebaseServices {
       const resp = await fetch(url, {
         method: "POST",
         body: JSON.stringify({ query }),
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${FIREBASE_FUNCTIONS_API_KEY}`,
+        },
       });
 
       const respJson = await resp.json();
@@ -48,13 +56,14 @@ export class FirebaseServices {
     userId?: string;
     userPreferences?: string;
     context?: JsonBlob;
-  }): Promise<{ content: string; outfit: string[] }> {
+  }): Promise<{ content: string; outfit: ClosetItem[] }> {
     try {
       const url = "/api/getRecommendation";
       const resp = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          authorization: `Bearer ${FIREBASE_FUNCTIONS_API_KEY}`,
         },
         body: JSON.stringify({
           userPreferences,
@@ -80,6 +89,7 @@ export class FirebaseServices {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          authorization: `Bearer ${FIREBASE_FUNCTIONS_API_KEY}`,
         },
         body: JSON.stringify({
           userId,
@@ -109,6 +119,7 @@ export class FirebaseServices {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          authorization: `Bearer ${FIREBASE_FUNCTIONS_API_KEY}`,
         },
         body: JSON.stringify({
           userId,

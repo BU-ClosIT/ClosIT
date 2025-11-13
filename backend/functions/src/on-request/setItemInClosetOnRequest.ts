@@ -1,7 +1,7 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import { Response } from "express";
-import { isOriginAllowed } from "../util/originUtil";
+import { isAuthorizedRequest } from "../util/tokenUtil";
 import { ClosetItem } from "../model/ClosetItem";
 import { setClosetItem } from "../util/dbUtil";
 
@@ -15,15 +15,8 @@ const setItemInClosetOnRequest = async ({
   response: Response;
   app: admin.app.App;
 }) => {
-  const origin = `${request.header("x-closit-referrer")}`;
-
-  // checks that the request is a POST
-  if (request.method !== "POST") {
-    response.status(401).send("Invalid");
-    return;
-  }
-
-  if (!origin || !isOriginAllowed(origin)) {
+  const bearerToken = request.headers["authorization"]?.split("Bearer ")[1];
+  if (!bearerToken || !isAuthorizedRequest({ request, app })) {
     response.status(400).send("Unauthorized");
     return;
   }

@@ -3,7 +3,7 @@ import * as admin from "firebase-admin";
 import { Response } from "express";
 import { queryGemini } from "../services/gemini-services";
 import { getGeoPositionFromIp, getIpFromReq } from "../services/geoip-services";
-import { isOriginAllowed } from "../util/originUtil";
+import { isAuthorizedRequest } from "../util/tokenUtil";
 import { getClosetByUserId } from "../util/dbUtil";
 import { CurrentWeatherResponse } from "../model/VisualCrossing";
 import { getCurrentWeatherByLatLong } from "../services/visualcrossing-services";
@@ -19,9 +19,8 @@ const outfitRecommendationOnRequest = async ({
   app: admin.app.App;
 }) => {
   // get users closet information from the database using the userId in the query
-  const origin = `${request.headers["x-closit-referrer"]}`;
-  functions.logger.log("outfitRecommendationOnRequest invoked by - " + origin);
-  if (!origin || !isOriginAllowed(origin)) {
+  const bearerToken = request.headers["authorization"]?.split("Bearer ")[1];
+  if (!bearerToken || !isAuthorizedRequest({ request, app })) {
     response.status(400).send("Unauthorized");
     return;
   }
@@ -73,7 +72,23 @@ const outfitRecommendationOnRequest = async ({
       app,
     });
 
-    response.send(resp);
+    if (!resp) {
+      response
+        .status(500)
+        .send("No response from outfit recommendation service");
+      return;
+    }
+
+    const { content, outfit } = JSON.parse(resp);
+
+    // inject full closet items into the outfit response
+    const injectedOutfit = outfit
+      .map((itemId: string) =>
+        userCloset.find((closetItem) => closetItem.id === itemId)
+      )
+      .filter((item: any) => item !== undefined);
+
+    response.send({ content, outfit: injectedOutfit });
   } catch (e) {
     functions.logger.error("Error fetching user closet data", e);
     response.status(500).send(`Error fetching user closet data: ${e}`);

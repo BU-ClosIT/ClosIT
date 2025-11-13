@@ -2,9 +2,9 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import { Response } from "express";
 import { getGeoPositionFromIp, getIpFromReq } from "../services/geoip-services";
-import { isOriginAllowed } from "../util/originUtil";
 import { getCurrentWeatherByLatLong } from "../services/visualcrossing-services";
 import { CurrentWeatherResponse } from "../model/VisualCrossing";
+import { isAuthorizedRequest } from "../util/tokenUtil";
 
 const weatherByLocationOnRequest = async ({
   request,
@@ -15,10 +15,8 @@ const weatherByLocationOnRequest = async ({
   response: Response;
   app: admin.app.App;
 }) => {
-  const selectedUnit = request.query.selectedUnit || "F";
-  const origin = `${request.header("x-closit-referrer")}`;
-  functions.logger.log("weatherByLocation invoked by - " + origin);
-  if (!origin || !isOriginAllowed(origin)) {
+  const bearerToken = request.headers["authorization"]?.split("Bearer ")[1];
+  if (!bearerToken || !isAuthorizedRequest({ request, app })) {
     response.status(400).send("Unauthorized");
     return;
   }
@@ -30,6 +28,7 @@ const weatherByLocationOnRequest = async ({
   }
 
   try {
+    const selectedUnit = request.query.selectedUnit || "F";
     const geoPosition = await getGeoPositionFromIp({ ip: clientIp });
     functions.logger.log("Geo position fetched:", geoPosition);
     const currentWeather = await getCurrentWeatherByLatLong({
