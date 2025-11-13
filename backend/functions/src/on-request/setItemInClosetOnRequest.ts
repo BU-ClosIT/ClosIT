@@ -5,6 +5,7 @@ import { isOriginAllowed } from "../util/originUtil";
 import { ClosetItem } from "../model/ClosetItem";
 import { setClosetItem } from "../util/dbUtil";
 
+/** Handles HTTP POST request for setting a closet item */
 const setItemInClosetOnRequest = async ({
   request,
   response,
@@ -16,6 +17,7 @@ const setItemInClosetOnRequest = async ({
 }) => {
   const origin = `${request.header("x-closit-referrer")}`;
 
+  // checks that the request is a POST
   if (request.method !== "POST") {
     response.status(401).send("Invalid");
     return;
@@ -30,6 +32,7 @@ const setItemInClosetOnRequest = async ({
     const { userId, item } = request.body;
     const cleanItem = { ...item, id: "" } as ClosetItem;
 
+    // set the item in the closet database
     const itemId = await setClosetItem({ userId, closetItem: cleanItem, app });
 
     response.status(200).send(`Item set in closet: ${itemId}`);
