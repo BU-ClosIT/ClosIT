@@ -10,7 +10,7 @@ export async function POST(request: Request) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-closit-referrer": `http://localhost:3000`, // TODO: change for production
+        authorization: `Bearer ${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`,
       },
       body: JSON.stringify({
         userId,
