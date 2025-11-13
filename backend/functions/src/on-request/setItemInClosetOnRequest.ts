@@ -14,8 +14,8 @@ const setItemInClosetOnRequest = async ({
   response: Response;
   app: admin.app.App;
 }) => {
-  const bearerToken = request.headers["authorization"]?.split("Bearer ")[1];
-  if (!bearerToken || !isAuthorizedRequest({ request, app })) {
+  const authorization = request.headers["authorization"];
+  if (!authorization || !isAuthorizedRequest({ request, app })) {
     response.status(400).send("Unauthorized");
     return;
   }
