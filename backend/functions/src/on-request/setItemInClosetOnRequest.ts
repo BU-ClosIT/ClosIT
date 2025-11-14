@@ -22,9 +22,8 @@ const setItemInClosetOnRequest = async ({
 
   try {
     const { userId, item } = request.body;
-    const cleanItem = { ...item, id: "" } as ClosetItem;
 
-    const itemId = await setClosetItem({ userId, closetItem: cleanItem, app });
+    const itemId = await setClosetItem({ userId, closetItem: item, app });
 
     response.status(200).send(`Item set in closet: ${itemId}`);
   } catch (error) {
