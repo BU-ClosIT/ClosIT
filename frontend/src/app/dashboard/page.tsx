@@ -5,7 +5,7 @@ import RecommendationCard from "../../components/cards/RecommendationCard";
 
 export default function Dashboard() {
   return (
-    <PageLayout>
+    <PageLayout currentPage="Dashboard">
       <div className="w-full flex flex-col items-center justify-center">
         <RecommendationCard />
       </div>

@@ -1,7 +1,7 @@
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import { Response } from "express";
-import { isOriginAllowed } from "../util/originUtil";
+import { isAuthorizedRequest } from "../util/tokenUtil";
 
 export const updateItemOnRequest = ({
   request,
@@ -12,14 +12,13 @@ export const updateItemOnRequest = ({
   response: Response;
   app: admin.app.App;
 }) => {
-  const origin = `${request.header("x-closit-referrer")}`;
-
   if (request.method !== "POST") {
     response.status(401).send("Invalid");
     return;
   }
 
-  if (!origin || !isOriginAllowed(origin)) {
+  const authorization = request.headers["authorization"];
+  if (!authorization || !isAuthorizedRequest({ request, app })) {
     response.status(400).send("Unauthorized");
     return;
   }

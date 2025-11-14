@@ -3,7 +3,7 @@ import * as admin from "firebase-admin";
 // import { tokenByName } from "../util/dbUtil";
 import { Response } from "express";
 import { queryGemini } from "../services/gemini-services";
-import { isOriginAllowed } from "../util/originUtil";
+import { isAuthorizedRequest } from "../util/tokenUtil";
 
 /** A Generic query to Gemini with query text
  *
@@ -21,9 +21,8 @@ const aiQueryOnRequest = ({
   const { body } = request;
   const query = body.query; // The user's query
 
-  const origin = `${request.headers["x-closit-referrer"]}`;
-  functions.logger.log("aiQueryOnRequest invoked by - " + origin);
-  if (!origin || !isOriginAllowed(origin)) {
+  const bearerToken = request.headers["authorization"]?.split("Bearer ")[1];
+  if (!bearerToken || !isAuthorizedRequest({ request, app })) {
     response.status(400).send("Unauthorized");
     return;
   }

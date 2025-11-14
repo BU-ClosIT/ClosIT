@@ -6,8 +6,8 @@ import weatherByLocationOnRequest from "./on-request/weatherByLocationOnRequest"
 import outfitRecommendationOnRequest from "./on-request/outfitRecommendationOnRequest";
 import getClosetByUserIdOnRequest from "./on-request/getClosetByUserIdOnRequest";
 import setItemInClosetOnRequest from "./on-request/setItemInClosetOnRequest";
-import devWeatherByLocationOnRequest from "./on-request/devWeatherByLocation";
 import { updateItemOnRequest } from "./on-request/updateItemOnRequest";
+import { deleteClosetItemOnRequest } from "./on-request/deleteClosetItemOnRequest";
 
 const app = admin.initializeApp(firebaseConfigBuilder());
 
@@ -18,11 +18,6 @@ export const aiQuery = functions.https.onRequest((request, response) => {
 export const getWeatherByLocation = functions.https.onRequest(
   (request, response) => {
     return weatherByLocationOnRequest({ request, response, app });
-  }
-);
-export const devGetWeatherByLocation = functions.https.onRequest(
-  (request, response) => {
-    return devWeatherByLocationOnRequest({ request, response, app });
   }
 );
 
@@ -48,5 +43,11 @@ export const setItemInCloset = functions.https.onRequest(
 export const updateItemInCloset = functions.https.onRequest(
   (request, response) => {
     return updateItemOnRequest({ request, response, app });
+  }
+);
+
+export const deleteClosetItem = functions.https.onRequest(
+  (request, response) => {
+    return deleteClosetItemOnRequest({ request, response, app });
   }
 );

@@ -1,3 +1,4 @@
+import ClosetItem from "../model/closet/ClosetItem";
 import JsonBlob from "../model/JsonBlon";
 
 export class FirebaseServices {
@@ -6,6 +7,9 @@ export class FirebaseServices {
       const url = "/api/getCurrentWeather";
       const resp = await fetch(url, {
         method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
 
       const respJson = await resp.json();
@@ -45,14 +49,11 @@ export class FirebaseServices {
     userId?: string;
     userPreferences?: string;
     context?: JsonBlob;
-  }): Promise<{ content: string; outfit: string[] }> {
+  }): Promise<{ content: string; outfit: ClosetItem[] }> {
     try {
       const url = "/api/getRecommendation";
       const resp = await fetch(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({
           userPreferences,
           userId,
@@ -75,9 +76,6 @@ export class FirebaseServices {
       const url = "/api/getClosetByUserId";
       const resp = await fetch(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({
           userId,
         }),
@@ -104,9 +102,6 @@ export class FirebaseServices {
       const url = "/api/setItemInCloset";
       const resp = await fetch(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({
           userId,
           item,

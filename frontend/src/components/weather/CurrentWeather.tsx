@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { useWeather } from "../providers/WeatherProvider";
 
 export default function CurrentWeather() {
@@ -38,7 +37,12 @@ export default function CurrentWeather() {
           {currentWeather.currentConditions.temp}
           {currentWeather.selectedUnit}°
         </p>
-        <p>{currentWeather.currentConditions.icon}</p>
+        <img
+          className="w-10 h-10"
+          title={currentWeather.currentConditions.icon}
+          src={`icons/weather/${currentWeather.currentConditions.icon}.svg`}
+          alt={currentWeather.currentConditions.icon}
+        />
       </>
     </div>
   );
