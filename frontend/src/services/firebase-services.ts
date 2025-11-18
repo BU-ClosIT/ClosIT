@@ -1,5 +1,21 @@
 import ClosetItem from "../model/closet/ClosetItem";
 import JsonBlob from "../model/JsonBlon";
+import {
+  getStorage,
+  ref as storageRef,
+  getDownloadURL,
+  FirebaseStorage,
+  uploadBytes,
+} from "firebase/storage";
+import { uploadBytesResumable } from "firebase/storage";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp,
+  Firestore,
+} from "firebase/firestore";
+import { query, orderBy, limit as limitQ, getDocs } from "firebase/firestore";
 
 export class FirebaseServices {
   public static async getCurrentWeather() {
@@ -146,5 +162,87 @@ export class FirebaseServices {
       console.error(e);
       return null;
     }
+  }
+
+  public static async uploadFileAndCreateItem({
+    userId,
+    file,
+  }: {
+    userId: string;
+    file: File;
+  }) {
+    const storage: FirebaseStorage = getStorage();
+
+    const fileName = `${Date.now()}_${file.name}`;
+    // Create a storage ref
+    const fileRef = storageRef(storage, `closetItems/${userId}/${fileName}`);
+
+    // Upload the file
+    const uploadTask = uploadBytesResumable(fileRef, file);
+    await uploadTask;
+    // Get the download URL
+    const downloadURL = await getDownloadURL(fileRef);
+    const firestore: Firestore = getFirestore();
+    const uid = userId;
+    const col = collection(firestore, `closetItems/${uid}/closet`);
+
+    const doc = await addDoc(col, {
+      imageUrl: downloadURL,
+      fileName,
+      createdBy: uid,
+      createdAt: serverTimestamp(),
+    });
+
+    // Call addFromPhoto API to get item details
+    const url = "/api/addFromPhoto";
+    const resp = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        imgUrl: downloadURL,
+        userId,
+        imgId: doc.id,
+        imgFileName: fileName,
+      }),
+    });
+
+    const newItem = await resp.json();
+
+    return newItem;
+  }
+
+  public static async uploadImageToStorage(
+    storage: FirebaseStorage,
+    file: File,
+    path = "uploads"
+  ) {
+    const r = storageRef(storage, `${path}/${Date.now()}_${file.name}`);
+    const snapshot = await uploadBytes(r, file);
+    const url = await getDownloadURL(snapshot.ref);
+    return { url, path: snapshot.ref.fullPath };
+  }
+
+  public static uploadImageWithProgress(
+    storage: FirebaseStorage,
+    file: File,
+    path = "uploads"
+  ) {
+    const r = storageRef(storage, `${path}/${Date.now()}_${file.name}`);
+    const task = uploadBytesResumable(r, file);
+    return {
+      task,
+      on: (cb: (progress: { loaded: number; total: number }) => void) => {
+        task.on("state_changed", (snapshot) => {
+          cb({ loaded: snapshot.bytesTransferred, total: snapshot.totalBytes });
+        });
+      },
+      then: async () => {
+        await task;
+        const url = await getDownloadURL(r);
+        return { url, path: r.fullPath };
+      },
+    };
   }
 }

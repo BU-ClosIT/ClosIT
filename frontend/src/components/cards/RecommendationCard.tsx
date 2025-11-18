@@ -20,6 +20,8 @@ export default function RecommendationCard() {
   const [isLoading, setIsLoading] = useState(true);
   const user = useUser();
   const isReady = useUserReady();
+  // hasMadeRecCall to prevent multiple calls
+  const [hasMadeRecCall, setHasMadeRecCall] = useState(false);
 
   const getRec = useCallback(
     async ({
@@ -29,7 +31,8 @@ export default function RecommendationCard() {
       preferences?: string;
       context?: string;
     }) => {
-      if (!isReady) return;
+      if (!isReady || hasMadeRecCall) return;
+      setHasMadeRecCall(true);
       const response: { content: string; outfit: ClosetItem[] } =
         await FirebaseServices.getRecommendation({
           userId: user ? user.id : "",

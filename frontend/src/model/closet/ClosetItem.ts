@@ -12,6 +12,8 @@ export default class ClosetItem {
   public purchaseDate?: string;
   public imageUrl?: string;
   public notes?: string;
+  public createdAt?: number;
+  public modifiedAt?: number;
 
   private constructor({
     id,

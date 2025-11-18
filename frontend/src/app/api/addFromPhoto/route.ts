@@ -1,16 +1,15 @@
-// backend firebase endpoint
-const ENDPOINT_URL = "https://getoutfitrecommendation-6p7lfy6g4a-uc.a.run.app/";
+const ENDPOINT_URL = "https://setItemInCloset-6p7lfy6g4a-uc.a.run.app/";
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
     // Read request body (app-router Request)
     let reqBody: unknown = null;
     try {
-      reqBody = await req.json();
+      reqBody = await request.json();
     } catch (e) {
       // If body isn't JSON or is empty, try text
       try {
-        const t = await req.text();
+        const t = await request.text();
         if (t) {
           try {
             reqBody = JSON.parse(t);
@@ -31,24 +30,9 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify(reqBody),
     });
-    console.log("Fetched response from recommendation service");
-    const text = await response.text();
-    console.log("Response from recommendation service:", text);
-    // Try to parse JSON, otherwise return the raw text
-    try {
-      const json = JSON.parse(text);
-      return new Response(json, {
-        status: response.status,
-        headers: { "Content-Type": "application/json" },
-      });
-    } catch {
-      return new Response(text, {
-        status: response.status,
-        headers: { "Content-Type": "text/plain" },
-      });
-    }
+    return response;
   } catch (err: any) {
-    console.error("Error proxying to Cloud Run recommendation service:", err);
+    console.error("Error proxying to setItemInCloset service:", err);
     return new Response(
       JSON.stringify({ error: "proxy_error", message: err?.message }),
       {
