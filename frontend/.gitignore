@@ -38,9 +38,5 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-<<<<<<< Updated upstream
 next-env.d.ts
-=======
-next-env.d.ts
-.env.local/
->>>>>>> Stashed changes
+.env.local
