@@ -1,7 +1,7 @@
 "use client";
 
 import { FirebaseServices } from "../../services/firebase-services";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useUser, useUserReady } from "../providers/UserProvider";
 import Loader from "../shared/Loader";
 import { useWeather } from "../providers/WeatherProvider";
@@ -21,7 +21,7 @@ export default function RecommendationCard() {
   const user = useUser();
   const isReady = useUserReady();
   // hasMadeRecCall to prevent multiple calls
-  const [hasMadeRecCall, setHasMadeRecCall] = useState(false);
+  const hasMadeRecCallRef = useRef(false);
 
   const getRec = useCallback(
     async ({
@@ -31,42 +31,64 @@ export default function RecommendationCard() {
       preferences?: string;
       context?: string;
     }) => {
-      if (!isReady || hasMadeRecCall) return;
-      setHasMadeRecCall(true);
-      const response: { content: string; outfit: ClosetItem[] } =
-        await FirebaseServices.getRecommendation({
-          userId: user ? user.id : "",
-          userPreferences: preferences,
-          context: { context, currentWeather: JSON.stringify(currentWeather) },
-        });
-      setIsLoading(false);
-      console.log("Recommendation response:", response);
-      setRecResponse(response);
-      const respArr = response.content.split("");
+      if (!isReady || hasMadeRecCallRef.current) return;
+      try {
+        hasMadeRecCallRef.current = true;
+        const response: { content: string; outfit: ClosetItem[] } =
+          await FirebaseServices.getRecommendation({
+            userId: user ? user.id : "",
+            userPreferences: preferences,
+            context: {
+              context,
+              currentWeather: JSON.stringify(currentWeather),
+            },
+          });
+        setIsLoading(false);
+        console.log("Recommendation response:", response);
+        setRecResponse(response);
+        const respArr = response.content.split("");
 
-      respArr.forEach((letter, idx) => {
-        setTimeout(() => {
-          setCurrentWeatherRecArr((prev) => [...prev, letter]);
-        }, idx * 5);
-      });
+        respArr.forEach((letter, idx) => {
+          setTimeout(() => {
+            setCurrentWeatherRecArr((prev) => [...prev, letter]);
+          }, idx * 5);
+        });
+      } catch (error) {
+        console.error("Error fetching recommendation:", error);
+        setIsLoading(false);
+      }
     },
-    [user?.id, setIsLoading]
+    [user?.id, setIsLoading, isReady]
   );
 
   useEffect(() => {
     console.log("useEffect triggered in RecommendationCard");
     if (!isReady) return;
-    getRec({ context: currentWeather ? JSON.stringify(currentWeather) : "" });
+    (async () => {
+      try {
+        await getRec({
+          context: currentWeather ? JSON.stringify(currentWeather) : "",
+        });
+      } catch (err) {
+        console.error("Error calling getRec from useEffect:", err);
+        setIsLoading(false);
+      }
+    })();
   }, [isReady, getRec]);
 
-  const handleTryAgain = () => {
+  const handleTryAgain = async () => {
     const previous = currentWeatherRecArr.join("");
     setCurrentWeatherRecArr([]);
     setIsLoading(true);
-    getRec({
-      preferences: "the following was your last suggestion, please try again",
-      context: previous,
-    });
+    try {
+      await getRec({
+        preferences: "the following was your last suggestion, please try again",
+        context: previous,
+      });
+    } catch (err) {
+      console.error("Error on Try Again:", err);
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -76,7 +98,7 @@ export default function RecommendationCard() {
         {currentWeatherRecArr.length ? currentWeatherRecArr.join("") : ""}
       </div>
 
-      <div>
+      <div className="flex flex-wrap gap-4 justify-center">
         {recResponse?.outfit.map((item) => (
           <ClosetItemCard key={item.id} item={item} />
         ))}
