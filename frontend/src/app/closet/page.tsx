@@ -11,7 +11,13 @@ import {
   categories,
   type ClosetItemCategory,
 } from "../../model/closet/ClosetItemCategories";
-// import { sampleClosetData } from "../../services/sample-closet-data";
+import { sampleClosetData } from "../../services/sample-closet-data";
+import AddButton from "@/src/components/closet-management/AddButton";
+import AddMenu from "@/src/components/closet-management/AddMenu";
+import AddItemModal from "@/src/components/closet-management/AddItemModal";
+import AddItemFromCameraModal from "@/src/components/closet-management/AddItemFromCameraModal";
+import AddItemFromGalleryModal from "@/src/components/closet-management/AddItemFromGalleryModal";
+import ColorField from "@/src/components/closet-management/ColorField";
 
 export default function ClosetPage() {
   const [selectedCategory, setSelectedCategory] = useState<
@@ -20,6 +26,15 @@ export default function ClosetPage() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedItem, setSelectedItem] = useState<ClosetItem | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [sampleCloset, setCloset] = useState<ClosetItem[]>(sampleClosetData);
+  const [isAddMenuOpen, setIsAddMenuOpen] = useState<boolean>(false);
+  const [isAddItemModalOpen, setAddItemModalOpen] = useState<boolean>(false);
+  const [isAddItemFromCameraModalOpen, setAddItemFromCameraModalOpen] =
+    useState<boolean>(false);
+  const [isAddItemFromGalleryModalOpen, setAddItemFromGalleryModalOpen] =
+    useState<boolean>(false);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+
   const [userCloset, setUserCloset] = useState<ClosetItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const user = useUser();
@@ -55,7 +70,8 @@ export default function ClosetPage() {
     fetchCloset();
   }, [isReady, user?.id]);
 
-  const generateId = () => `${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
+  const generateId = () =>
+    `${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
 
   const handleAddNewItem = async () => {
     const newItem: ClosetItem = {
@@ -94,9 +110,7 @@ export default function ClosetPage() {
   const handleSave = async () => {
     if (!selectedItem) return;
 
-    const originalItem = userCloset.find(
-      (item) => item.id === selectedItem.id
-    );
+    const originalItem = userCloset.find((item) => item.id === selectedItem.id);
     if (!originalItem) return;
 
     const updatedFields: Record<string, any> = {};
@@ -129,7 +143,6 @@ export default function ClosetPage() {
     } finally {
       setIsEditing(false);
     }
-
   };
 
   const handleRevert = () => {
@@ -146,9 +159,7 @@ export default function ClosetPage() {
     );
     if (!confirmed) return;
 
-    setUserCloset((prev) =>
-      prev.filter((item) => item.id !== selectedItem.id)
-    );
+    setUserCloset((prev) => prev.filter((item) => item.id !== selectedItem.id));
     setSelectedItem(null);
 
     try {
@@ -166,12 +177,11 @@ export default function ClosetPage() {
     }
   };
 
-
   // Count how many items per category
   const categoryCounts = categories.reduce((acc, category) => {
     acc[category] =
-      userCloset.filter((item) => item.category?.trim() === category)
-        .length || 0;
+      userCloset.filter((item) => item.category?.trim() === category).length ||
+      0;
     return acc;
   }, {} as Record<string, number>);
 
@@ -191,20 +201,22 @@ export default function ClosetPage() {
     setSelectedItem({ ...selectedItem, [field]: value });
   };
 
-  // Hex ↔ RGB helpers
-  const hexToRgb = (hex: string) => {
-    const cleaned = hex.replace("#", "").slice(0, 6);
-    const r = parseInt(cleaned.slice(0, 2), 16);
-    const g = parseInt(cleaned.slice(2, 4), 16);
-    const b = parseInt(cleaned.slice(4, 6), 16);
-    return { r, g, b };
-  };
-
-  const rgbToHex = (r: number, g: number, b: number) =>
-    `#${[r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("")}`;
-
-  const handleRgbChange = (r: number, g: number, b: number) => {
-    handleFieldChange("color", rgbToHex(r, g, b));
+  const handleUpload = async (file: File) => {
+    if (!user || isUploading) return;
+    setIsUploading(true);
+    try {
+      const newItem = await FirebaseServices.uploadFileAndCreateItem({
+        userId: user.id,
+        file,
+      });
+      setCloset((prev) => [...prev, newItem]);
+      setIsUploading(false);
+      return newItem;
+    } catch (e) {
+      console.error("Error uploading file and creating item:", e);
+      setIsUploading(false);
+      return;
+    }
   };
 
   return (
@@ -345,9 +357,7 @@ export default function ClosetPage() {
                   <input
                     type="text"
                     value={selectedItem.name}
-                    onChange={(e) =>
-                      handleFieldChange("name", e.target.value)
-                    }
+                    onChange={(e) => handleFieldChange("name", e.target.value)}
                   />
                 ) : (
                   selectedItem.name
@@ -360,7 +370,11 @@ export default function ClosetPage() {
                   onChange={(e) =>
                     handleFieldChange("category", e.target.value)
                   }
-                  style={{ padding: "6px", borderRadius: "4px", border: "1px solid #ccc" }}
+                  style={{
+                    padding: "6px",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                  }}
                 >
                   {categories.map((cat) => (
                     <option key={cat} value={cat}>
@@ -408,54 +422,12 @@ export default function ClosetPage() {
                   ></span>
                 </>
                 {isEditing ? (
-                  <div>
-                    <input
-                      type="text"
-                      value={selectedItem.color}
-                      onChange={(e) =>
-                        handleFieldChange("color", e.target.value)
-                      }
-                    />
-                    <p></p>
-                    <HexColorPicker
-                      color={selectedItem.color}
-                      onChange={(c) => handleFieldChange("color", c)}
-                    />
-                    {/* RGB Inputs */}
-                    <div
-                      style={{ display: "flex", gap: "5px", marginTop: "5px" }}
-                    >
-                      {["r", "g", "b"].map((ch, i) => {
-                        const rgb = selectedItem.color
-                          ? hexToRgb(selectedItem.color)
-                          : hexToRgb("000000");
-                        return (
-                          <input
-                            key={ch}
-                            type="number"
-                            min={0}
-                            max={255}
-                            value={[rgb.r, rgb.g, rgb.b][i]}
-                            onChange={(e) => {
-                              const val = Math.max(
-                                0,
-                                Math.min(255, Number(e.target.value))
-                              );
-                              if (ch === "r")
-                                handleRgbChange(val, rgb.g, rgb.b);
-                              if (ch === "g")
-                                handleRgbChange(rgb.r, val, rgb.b);
-                              if (ch === "b")
-                                handleRgbChange(rgb.r, rgb.g, val);
-                            }}
-                            style={{ width: "50px" }}
-                          />
-                        );
-                      })}
-                    </div>
-                  </div>
+                  <ColorField
+                    selectedItem={selectedItem}
+                    handleFieldChange={handleFieldChange}
+                  />
                 ) : (
-                  <>{selectedItem.color}</>
+                  selectedItem.color
                 )}
               </div>
 
@@ -591,6 +563,44 @@ export default function ClosetPage() {
           )}
         </div>
       </div>
+      <AddButton
+        onClick={() => {
+          setIsAddMenuOpen((prev) => !prev);
+        }}
+      />
+
+      {/* MODALS */}
+      <AddMenu
+        isOpen={isAddMenuOpen}
+        onClose={() => setIsAddMenuOpen(false)}
+        setAddItemModalOpen={setAddItemModalOpen}
+        setAddItemFromCameraModalOpen={setAddItemFromCameraModalOpen}
+        setAddItemFromGalleryModalOpen={setAddItemFromGalleryModalOpen}
+      />
+      <AddItemModal
+        isOpen={isAddItemModalOpen}
+        onClose={() => setAddItemModalOpen(false)}
+        addItem={async (item: ClosetItem) => {
+          if (!user) return;
+          const newItem = await FirebaseServices.setItemInCloset({
+            userId: user.id,
+            item,
+          });
+          setCloset((prev) => [...prev, newItem]);
+        }}
+      />
+      <AddItemFromCameraModal
+        isOpen={isAddItemFromCameraModalOpen}
+        onClose={() => setAddItemFromCameraModalOpen(false)}
+        uploadFile={handleUpload}
+        isUploading={isUploading}
+      />
+      <AddItemFromGalleryModal
+        isOpen={isAddItemFromGalleryModalOpen}
+        onClose={() => setAddItemFromGalleryModalOpen(false)}
+        uploadFile={handleUpload}
+        isUploading={isUploading}
+      />
     </PageLayout>
   );
 }

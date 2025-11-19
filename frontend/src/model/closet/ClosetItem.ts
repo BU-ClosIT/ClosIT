@@ -1,5 +1,7 @@
 import JsonBlob from "../JsonBlon";
 
+export type Season = "Spring" | "Summer" | "Fall" | "Winter" | "All";
+
 export default class ClosetItem {
   public id: string;
   public name: string;
@@ -12,6 +14,9 @@ export default class ClosetItem {
   public purchaseDate?: string;
   public imageUrl?: string;
   public notes?: string;
+  public createdAt?: number;
+  public modifiedAt?: number;
+  public seasons?: Season[]; // new!
 
   private constructor({
     id,
@@ -25,6 +30,7 @@ export default class ClosetItem {
     purchaseDate,
     imageUrl,
     notes,
+    seasons,
   }: {
     id: string;
     name: string;
@@ -37,6 +43,7 @@ export default class ClosetItem {
     purchaseDate?: string;
     imageUrl?: string;
     notes?: string;
+    seasons?: Season[];
   }) {
     this.id = id;
     this.name = name;
@@ -49,6 +56,7 @@ export default class ClosetItem {
     this.purchaseDate = purchaseDate;
     this.imageUrl = imageUrl;
     this.notes = notes;
+    this.seasons = seasons;
   }
 
   public static buildClosetItemFromJson(json: JsonBlob): ClosetItem {
@@ -75,6 +83,7 @@ export default class ClosetItem {
       purchaseDate: json.purchaseDate,
       imageUrl: json.imageUrl,
       notes: json.notes,
+      seasons: json.seasons as Season[],
     });
   }
 }

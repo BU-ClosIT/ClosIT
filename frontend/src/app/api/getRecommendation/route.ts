@@ -33,13 +33,13 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify(reqBody),
     });
-
+    console.log("Fetched response from recommendation service");
     const text = await response.text();
-
+    console.log("Response from recommendation service:", text);
     // Try to parse JSON, otherwise return the raw text
     try {
       const json = JSON.parse(text);
-      return new Response(JSON.stringify(json), {
+      return new Response(json, {
         status: response.status,
         headers: { "Content-Type": "application/json" },
       });
