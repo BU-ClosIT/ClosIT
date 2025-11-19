@@ -1,5 +1,7 @@
 import { ClosetItemCategory } from "./ClosetItemCategories";
 
+export type Season = "Spring" | "Summer" | "Fall" | "Winter" | "All";
+
 /** Closet Item */
 export type ClosetItem = {
   id: string;
@@ -17,4 +19,5 @@ export type ClosetItem = {
   imgFileName?: string;
   createdAt?: number;
   modifiedAt?: number;
+  seasons?: Season[]; // new!
 };

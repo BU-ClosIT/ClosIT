@@ -15,7 +15,19 @@ import {
   serverTimestamp,
   Firestore,
 } from "firebase/firestore";
-import { query, orderBy, limit as limitQ, getDocs } from "firebase/firestore";
+import firebase from "firebase/compat/app";
+
+export const configProvider = () => {
+  return {
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "",
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "",
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "",
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "",
+    messagingSenderId:
+      process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "",
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "",
+  };
+};
 
 export class FirebaseServices {
   public static async getCurrentWeather() {
@@ -171,18 +183,20 @@ export class FirebaseServices {
     userId: string;
     file: File;
   }) {
-    const storage: FirebaseStorage = getStorage();
+    const app = firebase.initializeApp(configProvider());
+    const storage: FirebaseStorage = getStorage(app);
 
     const fileName = `${Date.now()}_${file.name}`;
     // Create a storage ref
     const fileRef = storageRef(storage, `closetItems/${userId}/${fileName}`);
 
     // Upload the file
-    const uploadTask = uploadBytesResumable(fileRef, file);
-    await uploadTask;
+    const uploadTask = await uploadBytesResumable(fileRef, file);
+
     // Get the download URL
     const downloadURL = await getDownloadURL(fileRef);
-    const firestore: Firestore = getFirestore();
+    console.log("File available at", downloadURL);
+    const firestore: Firestore = getFirestore(app);
     const uid = userId;
     const col = collection(firestore, `closetItems/${uid}/closet`);
 

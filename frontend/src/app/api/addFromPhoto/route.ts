@@ -1,4 +1,4 @@
-const ENDPOINT_URL = "https://setItemInCloset-6p7lfy6g4a-uc.a.run.app/";
+const ENDPOINT_URL = "https://addFromPhoto-6p7lfy6g4a-uc.a.run.app/";
 
 export async function POST(request: Request) {
   try {

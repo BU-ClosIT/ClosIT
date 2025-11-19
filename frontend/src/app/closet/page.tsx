@@ -33,6 +33,7 @@ export default function ClosetPage() {
     useState<boolean>(false);
   const [isAddItemFromGalleryModalOpen, setAddItemFromGalleryModalOpen] =
     useState<boolean>(false);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
 
   const user = useUser();
 
@@ -88,6 +89,24 @@ export default function ClosetPage() {
   const handleFieldChange = (field: keyof ClosetItem, value: string) => {
     if (!selectedItem) return;
     setSelectedItem({ ...selectedItem, [field]: value });
+  };
+
+  const handleUpload = async (file: File) => {
+    if (!user || isUploading) return;
+    setIsUploading(true);
+    try {
+      const newItem = await FirebaseServices.uploadFileAndCreateItem({
+        userId: user.id,
+        file,
+      });
+      setCloset((prev) => [...prev, newItem]);
+      setIsUploading(false);
+      return newItem;
+    } catch (e) {
+      console.error("Error uploading file and creating item:", e);
+      setIsUploading(false);
+      return;
+    }
   };
 
   return (
@@ -401,26 +420,14 @@ export default function ClosetPage() {
       <AddItemFromCameraModal
         isOpen={isAddItemFromCameraModalOpen}
         onClose={() => setAddItemFromCameraModalOpen(false)}
-        uploadFile={async (file: File) => {
-          if (!user) return;
-          const newItem = await FirebaseServices.uploadFileAndCreateItem({
-            userId: user.id,
-            file,
-          });
-          setCloset((prev) => [...prev, newItem]);
-        }}
+        uploadFile={handleUpload}
+        isUploading={isUploading}
       />
       <AddItemFromGalleryModal
         isOpen={isAddItemFromGalleryModalOpen}
         onClose={() => setAddItemFromGalleryModalOpen(false)}
-        uploadFile={async (file: File) => {
-          if (!user) return;
-          const newItem = await FirebaseServices.uploadFileAndCreateItem({
-            userId: user.id,
-            file,
-          });
-          setCloset((prev) => [...prev, newItem]);
-        }}
+        uploadFile={handleUpload}
+        isUploading={isUploading}
       />
     </PageLayout>
   );

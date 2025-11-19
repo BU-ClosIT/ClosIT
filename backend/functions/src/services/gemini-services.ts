@@ -43,8 +43,10 @@ export const queryGeminiWithImage = async ({
     model: "gemini-2.5-flash",
     contents: [
       {
-        text: query,
-        inlineData: { mimeType: "image/jpeg", data: base64Image },
+        parts: [
+          { text: query },
+          { inlineData: { mimeType: "image/jpeg", data: base64Image } },
+        ],
       },
     ],
   });

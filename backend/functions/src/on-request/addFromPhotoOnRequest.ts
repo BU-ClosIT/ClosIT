@@ -29,6 +29,9 @@ export const addFromPhotoOnRequest = async ({
     );
 
     const base64Image = await fetchImageAsBase64(imgUrl);
+    functions.logger.log(
+      "Fetched image and converted to base64, querying Gemini"
+    );
     const aiResp = await queryGeminiWithImage({
       query: `Analyze this image and return a JSON object with fields: {
       name: string,
@@ -37,6 +40,7 @@ export const addFromPhotoOnRequest = async ({
       material: string,
       size: string,
       brand: string,
+      seasons: ["Spring" | "Summer" | "Fall" | "Winter" | "All"][]
       }
       Ensure the response is strictly in JSON format with no additional text.`,
       app,
@@ -52,17 +56,18 @@ export const addFromPhotoOnRequest = async ({
       .replace("```json", "")
       .replace("```", "")
       .replace("\\n", "");
-
-    const { type, color, style, material, brand } = JSON.parse(cleanText);
+    functions.logger.log("Received AI response:", cleanText);
+    const { name, category, color, material, size, brand } =
+      JSON.parse(cleanText);
 
     const itemDetails: ClosetItem = {
       id: "",
-      name: type,
-      category: style,
+      name,
+      category,
       color,
       material,
       purchaseDate: Date.now().toString(),
-      size: "",
+      size,
       brand,
       imageUrl: imgUrl,
       imgId,
