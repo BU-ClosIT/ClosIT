@@ -6,7 +6,7 @@ export async function POST(request: Request) {
     const { userId, itemId, updatedFields } = await request.json();
 
     // Call the backend function to update the item
-    const response = await fetch(`/api/update-item`, {
+    const response = await fetch(ENDPOINT_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

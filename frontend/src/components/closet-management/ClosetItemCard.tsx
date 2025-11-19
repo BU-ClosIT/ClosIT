@@ -4,11 +4,13 @@ import ClosetItem from "../../model/closet/ClosetItem";
 interface ClosetItemCardProps {
   item: ClosetItem;
   onClick?: (item: ClosetItem) => void;
+  style?: React.CSSProperties;
 }
 
 export const ClosetItemCard: React.FC<ClosetItemCardProps> = ({
   item,
   onClick,
+  style,
 }) => {
   const { name, subCategory, category, color } = item;
 
@@ -49,8 +51,8 @@ export const ClosetItemCard: React.FC<ClosetItemCardProps> = ({
         overflow: "hidden",
         boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
         border: "1px solid #ddd",
-        backgroundColor: "#fdfdfd",
         cursor: "pointer",
+        ...style,
       }}
     >
       {/* Right Side: Colored background with icon overlay */}

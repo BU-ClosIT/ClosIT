@@ -96,7 +96,6 @@ export class FirebaseServices {
   }: {
     userId: string;
     item: any;
-    itemId?: string;
   }) {
     try {
       const url = "/api/setItemInCloset";
@@ -147,4 +146,33 @@ export class FirebaseServices {
       return null;
     }
   }
+
+  public static async deleteClosetItemById({
+    userId,
+    itemId,
+  }: {
+    userId: string;
+    itemId: string;
+  }) {
+    try {
+      const url = "/api/deleteClosetItemById";
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          itemId,
+        }),
+      });
+
+      const text = await resp.text();
+      return text;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  }
+
 }

@@ -2,6 +2,7 @@ const ENDPOINT_URL = "https://getweatherbylocation-6p7lfy6g4a-uc.a.run.app/";
 
 export async function GET(req: Request) {
   try {
+    const clientAuth = req.headers.get("authorization");
     const response = await fetch(ENDPOINT_URL, {
       method: "GET",
       headers: {

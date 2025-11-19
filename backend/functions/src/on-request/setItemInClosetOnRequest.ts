@@ -23,7 +23,6 @@ const setItemInClosetOnRequest = async ({
 
   try {
     const { userId, item } = request.body;
-    const cleanItem = { ...item, id: "" } as ClosetItem;
 
     // set the item in the closet database
     const itemId = await setClosetItem({ userId, closetItem: cleanItem, app });
