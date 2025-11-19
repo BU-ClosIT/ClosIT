@@ -47,7 +47,7 @@ export const updateItemInCloset = functions.https.onRequest(
   }
 );
 
-export const deleteClosetItem = functions.https.onRequest(
+export const deleteClosetItemById = functions.https.onRequest(
   (request, response) => {
     return deleteClosetItemOnRequest({ request, response, app });
   }

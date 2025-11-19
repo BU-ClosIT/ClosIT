@@ -3,6 +3,8 @@ const ENDPOINT_URL = "https://getoutfitrecommendation-6p7lfy6g4a-uc.a.run.app/";
 
 export async function POST(req: Request) {
   try {
+    const clientAuth = req.headers.get("authorization");
+
     // Read request body (app-router Request)
     let reqBody: unknown = null;
     try {

@@ -28,6 +28,7 @@ export const tokenByName = async ({
   return snap.val() as string;
 };
 
+/** sets a closet item of the user in the database */
 export const setClosetItem = async ({
   userId,
   closetItem,
@@ -53,6 +54,7 @@ export const setClosetItem = async ({
   return newItem.key;
 };
 
+/** gets the closet items by user id from database */
 export const getClosetByUserId = async ({
   userId,
   app,
