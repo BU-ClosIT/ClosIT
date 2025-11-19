@@ -7,8 +7,7 @@ export async function GET(req: Request) {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "x-closit-referrer": `http://localhost:3000`,
-        authorization: clientAuth || "",
+        authorization: `Bearer ${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`,
       },
     });
 

@@ -1,8 +1,6 @@
 import ClosetItem from "../model/closet/ClosetItem";
 import JsonBlob from "../model/JsonBlon";
 
-const FIREBASE_FUNCTIONS_API_KEY = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
-
 export class FirebaseServices {
   public static async getCurrentWeather() {
     try {
@@ -11,7 +9,6 @@ export class FirebaseServices {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          authorization: `Bearer ${FIREBASE_FUNCTIONS_API_KEY}`,
         },
       });
 
@@ -34,10 +31,6 @@ export class FirebaseServices {
       const resp = await fetch(url, {
         method: "POST",
         body: JSON.stringify({ query }),
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${FIREBASE_FUNCTIONS_API_KEY}`,
-        },
       });
 
       const respJson = await resp.json();
@@ -61,10 +54,6 @@ export class FirebaseServices {
       const url = "/api/getRecommendation";
       const resp = await fetch(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${FIREBASE_FUNCTIONS_API_KEY}`,
-        },
         body: JSON.stringify({
           userPreferences,
           userId,
@@ -87,10 +76,6 @@ export class FirebaseServices {
       const url = "/api/getClosetByUserId";
       const resp = await fetch(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${FIREBASE_FUNCTIONS_API_KEY}`,
-        },
         body: JSON.stringify({
           userId,
         }),
@@ -116,10 +101,6 @@ export class FirebaseServices {
       const url = "/api/setItemInCloset";
       const resp = await fetch(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${FIREBASE_FUNCTIONS_API_KEY}`,
-        },
         body: JSON.stringify({
           userId,
           item,

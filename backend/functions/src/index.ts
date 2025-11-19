@@ -7,6 +7,7 @@ import outfitRecommendationOnRequest from "./on-request/outfitRecommendationOnRe
 import getClosetByUserIdOnRequest from "./on-request/getClosetByUserIdOnRequest";
 import setItemInClosetOnRequest from "./on-request/setItemInClosetOnRequest";
 import { updateItemOnRequest } from "./on-request/updateItemOnRequest";
+import { deleteClosetItemOnRequest } from "./on-request/deleteClosetItemOnRequest";
 
 const app = admin.initializeApp(firebaseConfigBuilder());
 
@@ -42,5 +43,11 @@ export const setItemInCloset = functions.https.onRequest(
 export const updateItemInCloset = functions.https.onRequest(
   (request, response) => {
     return updateItemOnRequest({ request, response, app });
+  }
+);
+
+export const deleteClosetItem = functions.https.onRequest(
+  (request, response) => {
+    return deleteClosetItemOnRequest({ request, response, app });
   }
 );
