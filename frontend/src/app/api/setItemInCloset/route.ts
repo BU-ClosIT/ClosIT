@@ -27,6 +27,10 @@ export async function POST(request: Request) {
       headers: {
         "Content-Type": "application/json",
         authorization: `Bearer ${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`,
+<<<<<<< Updated upstream
+=======
+        "x-closit-referrer": `http://localhost:3000`, // TODO: change for production
+>>>>>>> Stashed changes
       },
       body: JSON.stringify(reqBody),
     });

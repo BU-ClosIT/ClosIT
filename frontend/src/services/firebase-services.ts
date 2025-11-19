@@ -153,7 +153,6 @@ export class FirebaseServices {
   }: {
     userId: string;
     itemId: string;
-    updatedFields: any;
   }) {
     try {
       const url = "/api/deleteClosetItemById";

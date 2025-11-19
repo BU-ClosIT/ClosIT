@@ -46,8 +46,16 @@ export const updateItemInCloset = functions.https.onRequest(
   }
 );
 
+<<<<<<< Updated upstream
 export const deleteClosetItem = functions.https.onRequest(
   (request, response) => {
     return deleteClosetItemOnRequest({ request, response, app });
   }
 );
+=======
+export const deleteClosetItemById = functions.https.onRequest(
+  (request, response) => {
+    return deleteClosetItemOnRequest({ request, response, app });
+  }
+);
+>>>>>>> Stashed changes

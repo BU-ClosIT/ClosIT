@@ -72,7 +72,6 @@ export default function ClosetPage() {
       imageUrl: "",
     };
 
-    // Optimistically update UI
     setUserCloset((prev) => [...prev, newItem]);
     setSelectedItem(newItem);
     setIsEditing(true);
@@ -92,12 +91,45 @@ export default function ClosetPage() {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!selectedItem) return;
+
+    const originalItem = userCloset.find(
+      (item) => item.id === selectedItem.id
+    );
+    if (!originalItem) return;
+
+    const updatedFields: Record<string, any> = {};
+    (Object.keys(selectedItem) as (keyof ClosetItem)[]).forEach((key) => {
+      if (selectedItem[key] !== originalItem[key]) {
+        updatedFields[key] = selectedItem[key];
+      }
+    });
+
+    if (Object.keys(updatedFields).length === 0) {
+      setIsEditing(false);
+      return;
+    }
+
     setUserCloset((prev) =>
       prev.map((item) => (item.id === selectedItem.id ? selectedItem : item))
     );
-    setIsEditing(false);
+
+    try {
+      // Call your Firebase function
+      const response = await FirebaseServices.updateItemInCloset({
+        userId: user!.id,
+        itemId: selectedItem.id,
+        updatedFields,
+      });
+      console.log("Updated item in database:", response);
+    } catch (err) {
+      console.error("Failed to update item in database:", err);
+      // Optionally revert local state on failure
+    } finally {
+      setIsEditing(false);
+    }
+
   };
 
   const handleRevert = () => {
@@ -105,6 +137,35 @@ export default function ClosetPage() {
     const original = userCloset.find((item) => item.id === selectedItem.id);
     if (original) setSelectedItem(original);
   };
+
+  const handleDelete = async () => {
+    if (!selectedItem) return;
+
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${selectedItem.name}"?`
+    );
+    if (!confirmed) return;
+
+    setUserCloset((prev) =>
+      prev.filter((item) => item.id !== selectedItem.id)
+    );
+    setSelectedItem(null);
+
+    try {
+      // Call Firebase function to delete from database
+      await FirebaseServices.deleteClosetItemById({
+        userId: user!.id,
+        itemId: selectedItem.id,
+      });
+      console.log("Item deleted successfully from database");
+    } catch (err) {
+      console.error("Failed to delete item from database:", err);
+      // Revert local deletion if it fails
+      setUserCloset((prev) => [...prev, selectedItem]);
+      setSelectedItem(selectedItem);
+    }
+  };
+
 
   // Count how many items per category
   const categoryCounts = categories.reduce((acc, category) => {
@@ -216,20 +277,7 @@ export default function ClosetPage() {
 
           {selectedItem && (
             <button
-              onClick={() => {
-                const confirmed = window.confirm(
-                  `Are you sure you want to delete "${selectedItem.name}"?`
-                );
-                if (!confirmed) return;
-
-                // Remove locally
-                setUserCloset((prev) =>
-                  prev.filter((item) => item.id !== selectedItem.id)
-                );
-                setSelectedItem(null);
-
-                // Remove from Firebase !!!!!!!!!!!!!!!!!!!!!!!
-              }}
+              onClick={handleDelete}
               style={{
                 marginTop: "10px",
                 marginBottom: "10px",
