@@ -8,6 +8,7 @@ import { getClosetByUserId } from "../util/dbUtil";
 import { CurrentWeatherResponse } from "../model/VisualCrossing";
 import { getCurrentWeatherByLatLong } from "../services/visualcrossing-services";
 
+/** Handles HTTP POST request for outfit recommendation */
 const outfitRecommendationOnRequest = async ({
   request,
   response,

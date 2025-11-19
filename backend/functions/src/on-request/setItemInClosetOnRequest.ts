@@ -5,6 +5,7 @@ import { isAuthorizedRequest } from "../util/tokenUtil";
 import { ClosetItem } from "../model/ClosetItem";
 import { setClosetItem } from "../util/dbUtil";
 
+/** Handles HTTP POST request for setting a closet item */
 const setItemInClosetOnRequest = async ({
   request,
   response,
@@ -24,6 +25,7 @@ const setItemInClosetOnRequest = async ({
     const { userId, item } = request.body;
     const cleanItem = { ...item, id: "" } as ClosetItem;
 
+    // set the item in the closet database
     const itemId = await setClosetItem({ userId, closetItem: cleanItem, app });
 
     response.status(200).send(`Item set in closet: ${itemId}`);
