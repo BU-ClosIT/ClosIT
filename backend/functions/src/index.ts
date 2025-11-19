@@ -6,8 +6,9 @@ import weatherByLocationOnRequest from "./on-request/weatherByLocationOnRequest"
 import outfitRecommendationOnRequest from "./on-request/outfitRecommendationOnRequest";
 import getClosetByUserIdOnRequest from "./on-request/getClosetByUserIdOnRequest";
 import setItemInClosetOnRequest from "./on-request/setItemInClosetOnRequest";
-import devWeatherByLocationOnRequest from "./on-request/devWeatherByLocation";
 import { updateItemOnRequest } from "./on-request/updateItemOnRequest";
+import { deleteClosetItemOnRequest } from "./on-request/deleteClosetItemOnRequest";
+import { addFromPhotoOnRequest } from "./on-request/addFromPhotoOnRequest";
 
 const app = admin.initializeApp(firebaseConfigBuilder());
 
@@ -18,11 +19,6 @@ export const aiQuery = functions.https.onRequest((request, response) => {
 export const getWeatherByLocation = functions.https.onRequest(
   (request, response) => {
     return weatherByLocationOnRequest({ request, response, app });
-  }
-);
-export const devGetWeatherByLocation = functions.https.onRequest(
-  (request, response) => {
-    return devWeatherByLocationOnRequest({ request, response, app });
   }
 );
 
@@ -50,3 +46,13 @@ export const updateItemInCloset = functions.https.onRequest(
     return updateItemOnRequest({ request, response, app });
   }
 );
+
+export const deleteClosetItemById = functions.https.onRequest(
+  (request, response) => {
+    return deleteClosetItemOnRequest({ request, response, app });
+  }
+);
+
+export const addFromPhoto = functions.https.onRequest((request, response) => {
+  return addFromPhotoOnRequest({ request, response, app });
+});

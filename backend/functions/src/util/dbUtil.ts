@@ -5,8 +5,8 @@ import JsonBlob from "../model/JsonBlob";
 // a bunch of utils for interacting with the database
 type SupportedTokenName =
   | "gemini-api-key"
-  | "accuweather-api-key"
-  | "visual-crossing-api-key";
+  | "visual-crossing-api-key"
+  | "closit-web-app-token";
 
 /** Get a secure key from the DB by passing the name of the token */
 export const tokenByName = async ({
@@ -28,6 +28,7 @@ export const tokenByName = async ({
   return snap.val() as string;
 };
 
+/** sets a closet item of the user in the database */
 export const setClosetItem = async ({
   userId,
   closetItem,
@@ -45,11 +46,15 @@ export const setClosetItem = async ({
     dbRef.push(`${userId}`);
   }
 
-  const newItem = dbRef.child(`${userId}`).child("item").push(closetItem);
+  const newItem = dbRef
+    .child(`${userId}`)
+    .child("closet")
+    .push({ ...closetItem, createdAt: Date.now(), modifiedAt: Date.now() });
   newItem.child("id").set(newItem.key);
   return newItem.key;
 };
 
+/** gets the closet items by user id from database */
 export const getClosetByUserId = async ({
   userId,
   app,

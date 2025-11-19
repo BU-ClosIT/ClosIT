@@ -2,13 +2,19 @@
 import React from "react";
 import "./loader.css";
 
-export default function Loader({ className = "" }: { className?: string }) {
+export default function Loader({
+  className = "",
+  children,
+}: {
+  className?: string;
+  children?: React.ReactNode;
+}) {
   return (
     <div
-      className={`${className} w-10 aspect-square flex items-center justify-center`}
+      className={`${className} w-10 aspect-square flex items-center justify-center align-center mx-auto`}
     >
       <div className="loader" aria-hidden="true" />
-      <span className="sr-only">Loading</span>
+      <span className="sr-only">{children ? children : "Loading..."}</span>
     </div>
   );
 }
