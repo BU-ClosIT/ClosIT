@@ -6,8 +6,7 @@ import { useUser, useUserReady } from "../providers/UserProvider";
 import Loader from "../shared/Loader";
 import { useWeather } from "../providers/WeatherProvider";
 import ClosetItem from "@/src/model/closet/ClosetItem";
-import { ClosetItemCard } from "../closet-management/ClosetItemCard";
-import { useRouter } from "next/navigation";
+import { ClosetItemCard } from "./ClosetItemCard";
 
 export default function RecommendationCard() {
   const [currentWeatherRecArr, setCurrentWeatherRecArr] = useState<string[]>(
@@ -101,7 +100,7 @@ export default function RecommendationCard() {
 
       <div className="flex flex-wrap gap-4 justify-center">
         {recResponse?.outfit.map((item) => (
-          <ClosetItemCard key={item.id} item={item}/>
+          <ClosetItemCard key={item.id} item={item} />
         ))}
       </div>
 

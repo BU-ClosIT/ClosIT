@@ -1,7 +1,7 @@
 import { useCamera } from "@/src/hooks/useCamera";
-import CloseButton from "../shared/CloseButton";
+import CloseButton from "../../shared/CloseButton";
 import { useEffect } from "react";
-import Loader from "../shared/Loader";
+import Loader from "../../shared/Loader";
 
 export default function AddItemFromCameraModal({
   isOpen,
