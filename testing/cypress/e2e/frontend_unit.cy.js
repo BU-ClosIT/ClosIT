@@ -44,9 +44,3 @@ describe('cypress demo', () => {
   })
 }) 
 
-// Test 
-
-// Make request to Gemini API with cold weather and check if it suggests warm clothes
-
-
-// Make request to Gemini API with hot weather and check if it suggests light clothes
