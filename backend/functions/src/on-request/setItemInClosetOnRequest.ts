@@ -1,11 +1,12 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import { Response } from "express";
-import { isOriginAllowed } from "../util/originUtil";
-import ClosetItem from "../model/ClosetItem";
+import { isAuthorizedRequest } from "../util/tokenUtil";
+import { ClosetItem } from "../model/ClosetItem";
 import { setClosetItem } from "../util/dbUtil";
 
-const setItemInClosetOnRequest = ({
+/** Handles HTTP POST request for setting a closet item */
+const setItemInClosetOnRequest = async ({
   request,
   response,
   app,
@@ -14,21 +15,17 @@ const setItemInClosetOnRequest = ({
   response: Response;
   app: admin.app.App;
 }) => {
-  if (request.method !== "POST") {
-    response.status(401).send("Invalid");
-    return;
-  }
-
-  if (!origin || !isOriginAllowed(origin)) {
+  const authorization = request.headers["authorization"];
+  if (!authorization || !isAuthorizedRequest({ request, app })) {
     response.status(400).send("Unauthorized");
     return;
   }
 
   try {
     const { userId, item } = request.body;
-    const cleanItem = ClosetItem.buildClosetItemFromJson({ ...item, id: "" });
 
-    const itemId = setClosetItem({ userId, closetItem: cleanItem, app });
+    // set the item in the closet database
+    const itemId = await setClosetItem({ userId, closetItem: cleanItem, app });
 
     response.status(200).send(`Item set in closet: ${itemId}`);
   } catch (error) {

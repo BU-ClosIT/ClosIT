@@ -1,11 +1,15 @@
+import { PageName } from "@/src/model/PageName";
 import Footer from "./footer";
 import Nav from "./nav/nav";
 
-const PageLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const PageLayout: React.FC<{
+  currentPage: PageName;
+  children: React.ReactNode;
+}> = ({ currentPage, children }) => {
   return (
-    <div className="font-sans min-h-screen flex flex-col items-center w-full">
+    <div className="font-sans min-h-screen flex flex-col items-center w-full justify-center">
       <header className="w-full sticky top-0 z-40 backdrop-blur-sm ">
-        <Nav />
+        <Nav currentPage={currentPage} />
       </header>
 
       <main className="w-full max-w-4xl mx-auto overflow-hidden flex-1">

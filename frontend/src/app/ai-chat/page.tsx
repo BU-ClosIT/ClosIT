@@ -4,9 +4,10 @@ import PageLayout from "../../components/shared/PageLayout";
 
 export default function AiChatPage() {
   return (
-    <PageLayout>
-      <h1>Page</h1>
-      <p>This is AiChatPage</p>
+    <PageLayout currentPage="AI Chat">
+      <div className="w-full flex flex-col items-center justify-center">
+        <h1>AI Chat Page</h1>
+      </div>
     </PageLayout>
   );
 }

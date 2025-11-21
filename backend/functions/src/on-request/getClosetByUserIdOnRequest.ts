@@ -1,8 +1,8 @@
 import { Response } from "express";
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-import { isOriginAllowed } from "../util/originUtil";
 import { getClosetByUserId } from "../util/dbUtil";
+import { isAuthorizedRequest } from "../util/tokenUtil";
 
 const getClosetByUserIdOnRequest = async ({
   request,
@@ -13,12 +13,13 @@ const getClosetByUserIdOnRequest = async ({
   response: Response;
   app: admin.app.App;
 }) => {
-  if (request.method !== "GET") {
+  if (request.method !== "POST") {
     response.status(401).send("Invalid");
     return;
   }
 
-  if (!origin || !isOriginAllowed(origin)) {
+  const bearerToken = request.headers["authorization"]?.split("Bearer ")[1];
+  if (!bearerToken || !isAuthorizedRequest({ request, app })) {
     response.status(400).send("Unauthorized");
     return;
   }

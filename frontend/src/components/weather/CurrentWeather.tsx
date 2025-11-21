@@ -13,22 +13,36 @@ export default function CurrentWeather() {
     );
   }
 
-  if (!currentWeather) return null;
+  if (!currentWeather) {
+    return (
+      <div className="w-full flex flex-row items-center justify-center gap-4">
+        <p>No weather data available.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex flex-row items-center justify-center gap-4">
       <>
         <p>
-          {new Date(currentWeather?.LocalObservationDateTime).toLocaleString()}
+          {currentWeather?.currentConditions?.datetimeEpoch &&
+            new Date(
+              currentWeather?.currentConditions?.datetimeEpoch * 1000
+            ).toLocaleString()}
         </p>
         <p>
-          {currentWeather.city}, {currentWeather.adminArea.ID}
+          {currentWeather?.city}, {currentWeather?.region}
         </p>
         <p>
-          {currentWeather.Temperature.Imperial.Value}
-          {currentWeather.Temperature.Imperial.Unit}°
+          {currentWeather?.currentConditions?.temp}
+          {currentWeather?.selectedUnit}°
         </p>
-        <p>{currentWeather.WeatherText}</p>
+        <img
+          className="w-10 h-10"
+          title={currentWeather?.currentConditions?.icon}
+          src={`icons/weather/${currentWeather?.currentConditions?.icon}.svg`}
+          alt={currentWeather?.currentConditions?.icon}
+        />
       </>
     </div>
   );

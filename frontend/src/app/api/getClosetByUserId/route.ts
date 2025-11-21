@@ -3,6 +3,8 @@ const ENDPOINT_URL = "https://getclosetbyuserid-6p7lfy6g4a-uc.a.run.app/";
 
 export async function POST(req: Request) {
   try {
+    const clientAuth = req.headers.get("authorization");
+
     // Read request body (app-router Request)
     let reqBody: unknown = null;
     try {
@@ -27,7 +29,7 @@ export async function POST(req: Request) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-closit-referrer": `http://localhost:3000`, // TODO: change for production
+        authorization: `Bearer ${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`,
       },
       body: JSON.stringify(reqBody),
     });
