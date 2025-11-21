@@ -1,7 +1,7 @@
 import { FormEvent, useState } from "react";
-import CloseButton from "../shared/CloseButton";
+import CloseButton from "../../shared/CloseButton";
 import ClosetItem from "@/src/model/closet/ClosetItem";
-import ColorField from "./ColorField";
+import ColorField from "../item-form-fields/ColorField";
 
 export default function AddItemModal({
   isOpen,
@@ -145,10 +145,8 @@ export default function AddItemModal({
             }
           />
 
-            <div className="flex items-center space-x-2 ">
-            <label htmlFor="item-color" className="text-gray-700">
-
-            </label>
+          <div className="flex items-center space-x-2 ">
+            <label htmlFor="item-color" className="text-gray-700"></label>
             <ColorField
               selectedItem={formData}
               handleFieldChange={(field, value) => {

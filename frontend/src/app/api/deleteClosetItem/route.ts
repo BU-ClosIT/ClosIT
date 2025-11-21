@@ -31,6 +31,7 @@ export async function POST(request: Request) {
       JSON.stringify({ message: `Item deleted successfully: ${itemId}` }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error("Error deleting closet item:", err);
     return new Response(

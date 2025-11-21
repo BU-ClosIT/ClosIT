@@ -1,6 +1,6 @@
-import { RefObject, useState } from "react";
-import CloseButton from "../shared/CloseButton";
-import Loader from "../shared/Loader";
+import { useState } from "react";
+import CloseButton from "../../shared/CloseButton";
+import Loader from "../../shared/Loader";
 
 export default function AddItemFromGalleryModal({
   isOpen,

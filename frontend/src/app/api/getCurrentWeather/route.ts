@@ -2,7 +2,6 @@ const ENDPOINT_URL = "https://getweatherbylocation-6p7lfy6g4a-uc.a.run.app/";
 
 export async function GET(req: Request) {
   try {
-    const clientAuth = req.headers.get("authorization");
     const response = await fetch(ENDPOINT_URL, {
       method: "GET",
       headers: {
@@ -26,6 +25,7 @@ export async function GET(req: Request) {
       status: response.status,
       headers: { "Content-Type": "application/json" },
     });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error("Error proxying to getWeather", err);
     return new Response(

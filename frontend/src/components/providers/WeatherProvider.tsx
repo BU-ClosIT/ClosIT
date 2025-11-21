@@ -44,6 +44,7 @@ export default function WeatherProvider({
         throw new Error("No weather response");
       }
       setWeather(resp as CurrentWeatherResponse);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err?.message ?? String(err));
     } finally {

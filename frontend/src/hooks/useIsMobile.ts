@@ -13,6 +13,7 @@ const useIsMobile = (breakpoint = 768) => {
     if (typeof window === "undefined" || !window.matchMedia) return;
     const mq = window.matchMedia(`(max-width: ${breakpoint}px)`);
     const handler = (e: MediaQueryListEvent | MediaQueryList) =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setIsMobile((e as any).matches);
 
     // set initial on mount
@@ -21,15 +22,15 @@ const useIsMobile = (breakpoint = 768) => {
     // add listener (with modern/older API fallbacks)
     if (typeof mq.addEventListener === "function") {
       mq.addEventListener("change", handler as EventListener);
-    } else if (typeof (mq as any).addListener === "function") {
-      (mq as any).addListener(handler);
+    } else if (typeof mq.addListener === "function") {
+      mq.addListener(handler);
     }
 
     return () => {
       if (typeof mq.removeEventListener === "function") {
         mq.removeEventListener("change", handler as EventListener);
-      } else if (typeof (mq as any).removeListener === "function") {
-        (mq as any).removeListener(handler);
+      } else if (typeof mq.removeListener === "function") {
+        mq.removeListener(handler);
       }
     };
   }, [breakpoint]);

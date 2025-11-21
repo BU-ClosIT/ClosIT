@@ -2,7 +2,6 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import { Response } from "express";
 import { isAuthorizedRequest } from "../util/tokenUtil";
-import { ClosetItem } from "../model/ClosetItem";
 import { setClosetItem } from "../util/dbUtil";
 
 /** Handles HTTP POST request for setting a closet item */
@@ -25,9 +24,9 @@ const setItemInClosetOnRequest = async ({
     const { userId, item } = request.body;
 
     // set the item in the closet database
-    const itemId = await setClosetItem({ userId, closetItem: cleanItem, app });
+    const itemId = await setClosetItem({ userId, closetItem: item, app });
 
-    response.status(200).send(`Item set in closet: ${itemId}`);
+    response.status(200).send({ itemId });
   } catch (error) {
     functions.logger.error("Error setting item in closet", error);
     response.status(500).send(`Error setting item in closet: ${error}`);

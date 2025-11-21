@@ -1,30 +1,20 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import ClosetItem from "../../model/closet/ClosetItem";
-import { ClosetItemCard } from "../../components/closet-management/ClosetItemCard";
 import PageLayout from "../../components/shared/PageLayout";
 import { FirebaseServices } from "../../services/firebase-services";
 import { useUser, useUserReady } from "../../components/providers/UserProvider";
-import {
-  categories,
-  type ClosetItemCategory,
-} from "../../model/closet/ClosetItemCategories";
-import AddButton from "@/src/components/closet-management/AddButton";
-import AddMenu from "@/src/components/closet-management/AddMenu";
-import AddItemModal from "@/src/components/closet-management/AddItemModal";
-import AddItemFromCameraModal from "@/src/components/closet-management/AddItemFromCameraModal";
-import AddItemFromGalleryModal from "@/src/components/closet-management/AddItemFromGalleryModal";
-import ColorField from "@/src/components/closet-management/ColorField";
-import { useSearchParams, useRouter } from "next/navigation";
+import AddButton from "../../components/closet-management/item-form-fields/AddButton";
+import AddMenu from "../../components/closet-management/modals/AddMenu";
+import AddItemModal from "../../components/closet-management/modals/AddItemModal";
+import AddItemFromCameraModal from "../../components/closet-management/modals/AddItemFromCameraModal";
+import AddItemFromGalleryModal from "../../components/closet-management/modals/AddItemFromGalleryModal";
+import ClosetLeftPanel from "../../components/closet-management/panels/ClosetLeftPanel";
+import ClosetRightPanel from "../../components/closet-management/panels/ClosetRightPanel";
 
 export default function ClosetPage() {
-  const [selectedCategory, setSelectedCategory] = useState<
-    ClosetItemCategory | "All"
-  >("All");
-  const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedItem, setSelectedItem] = useState<ClosetItem | null>(null);
-  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isAddMenuOpen, setIsAddMenuOpen] = useState<boolean>(false);
   const [isAddItemModalOpen, setAddItemModalOpen] = useState<boolean>(false);
   const [isAddItemFromCameraModalOpen, setAddItemFromCameraModalOpen] =
@@ -32,16 +22,12 @@ export default function ClosetPage() {
   const [isAddItemFromGalleryModalOpen, setAddItemFromGalleryModalOpen] =
     useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [userCloset, setUserCloset] = useState<ClosetItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+
   const user = useUser();
   const isReady = useUserReady();
-
-  // handle ID passed in link
-  const searchParams = useSearchParams();
-  const itemIdFromUrl = searchParams.get("id");
-  const router = useRouter();
 
   useEffect(() => {
     if (!isReady || !user?.id) return;
@@ -73,112 +59,6 @@ export default function ClosetPage() {
     fetchCloset();
   }, [isReady, user?.id]);
 
-  // When URL param or selection changes:
-  useEffect(() => {
-    if (!itemIdFromUrl || userCloset.length === 0) return;
-
-    const item = userCloset.find(i => i.id === itemIdFromUrl);
-    if (item) {
-      setSelectedItem(item);
-    }
-  }, [itemIdFromUrl, userCloset]);
-
-  const handleSave = async () => {
-    if (!selectedItem) return;
-
-    const originalItem = userCloset.find((item) => item.id === selectedItem.id);
-    if (!originalItem) return;
-
-    const updatedFields: Record<string, any> = {};
-    (Object.keys(selectedItem) as (keyof ClosetItem)[]).forEach((key) => {
-      if (selectedItem[key] !== originalItem[key]) {
-        updatedFields[key] = selectedItem[key];
-      }
-    });
-
-    if (Object.keys(updatedFields).length === 0) {
-      setIsEditing(false);
-      return;
-    }
-
-    setUserCloset((prev) =>
-      prev.map((item) => (item.id === selectedItem.id ? selectedItem : item))
-    );
-
-    try {
-      // Call your Firebase function
-      const response = await FirebaseServices.updateItemInCloset({
-        userId: user!.id,
-        itemId: selectedItem.id,
-        updatedFields,
-      });
-      console.log("Updated item in database:", response);
-    } catch (err) {
-      console.error("Failed to update item in database:", err);
-      // Optionally revert local state on failure
-    } finally {
-      setIsEditing(false);
-    }
-  };
-
-  const handleRevert = () => {
-    if (!selectedItem) return;
-    const original = userCloset.find((item) => item.id === selectedItem.id);
-    if (original) setSelectedItem(original);
-  };
-
-  const handleDelete = async () => {
-    if (!selectedItem) return;
-
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${selectedItem.name}"?`
-    );
-    if (!confirmed) return;
-
-    setUserCloset((prev) => prev.filter((item) => item.id !== selectedItem.id));
-
-    try {
-      // Call Firebase function to delete from database
-      await FirebaseServices.deleteClosetItemById({
-        userId: user!.id,
-        itemId: selectedItem.id,
-      });
-      console.log("Item deleted successfully from database");
-      setSelectedItem(null);
-
-    } catch (err) {
-      console.error("Failed to delete item from database:", err);
-      // Revert local deletion if it fails
-      setUserCloset((prev) => [...prev, selectedItem]);
-      setSelectedItem(selectedItem);
-    }
-
-  };
-
-  // Count how many items per category
-  const categoryCounts = categories.reduce((acc, category) => {
-    acc[category] =
-      userCloset.filter((item) => item.category?.trim() === category).length ||
-      0;
-    return acc;
-  }, {} as Record<string, number>);
-
-  // Filter items by category and search
-  const filteredCloset = userCloset.filter((item) => {
-    const itemCategory = item.category?.trim();
-    const matchesCategory =
-      selectedCategory === "All" || itemCategory === selectedCategory;
-    const matchesSearch = item.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
-
-  const handleFieldChange = (field: keyof ClosetItem, value: string) => {
-    if (!selectedItem) return;
-    setSelectedItem({ ...selectedItem, [field]: value });
-  };
-
   const handleUpload = async (file: File) => {
     if (!user || isUploading) return;
     setIsUploading(true);
@@ -199,326 +79,32 @@ export default function ClosetPage() {
 
   return (
     <PageLayout currentPage="Closet">
-      <div
-        style={{
-          display: "flex",
-          maxHeight: "93vh",
-          maxWidth: "700px",
-          padding: "20px",
-          gap: "20px",
-          justifySelf: "center",
-        }}
-      >
-        {/* Left Panel */}
-        <div style={{ flex: "1", overflowY: "auto" }}>
-          <h2>My Closet</h2>
-
-          <input
-            type="text"
-            placeholder="Search by name..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "8px",
-              borderRadius: "6px",
-              border: "1px solid #ccc",
-              boxSizing: "border-box",
-              marginBottom: "10px",
-            }}
+      {!user ? (
+        <div>Please log in to view your closet.</div>
+      ) : (
+        <div className="flex mt-5 mb-10 justify-center">
+          <ClosetLeftPanel
+            selectedItem={selectedItem}
+            setSelectedItem={setSelectedItem}
+            userCloset={userCloset}
+            isLoading={isLoading}
           />
 
-          <select
-            value={selectedCategory}
-            onChange={(e) =>
-              setSelectedCategory(e.target.value as ClosetItemCategory | "All")
-            }
-            style={{
-              width: "100%",
-              padding: "8px",
-              borderRadius: "6px",
-              border: "1px solid #ccc",
-              marginBottom: "10px",
+          <ClosetRightPanel
+            selectedItem={selectedItem}
+            setSelectedItem={setSelectedItem}
+            userCloset={userCloset}
+            setUserCloset={setUserCloset}
+            user={user}
+          />
+
+          <AddButton
+            onClick={() => {
+              setIsAddMenuOpen((prev) => !prev);
             }}
-          >
-            <option value="All">All Categories ({userCloset.length})</option>
-            {categories.map((category) => (
-              <option key={category} value={category}>
-                {category} ({categoryCounts[category]})
-              </option>
-            ))}
-          </select>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-            {filteredCloset.length > 0 ? (
-              filteredCloset.map((item) => (
-                <ClosetItemCard
-                  key={item.id}
-                  item={item}
-                  onClick={() => {
-                    router.push(`/closet?id=${item.id}`); // Fields handled when id in router changes
-                  }}
-                  style={{
-                    backgroundColor:
-                      selectedItem?.id === item.id ? "#d4dcffff" : "#fdfdfd", // highlight selected
-                  }}
-                />
-              ))
-            ) : (
-              <div style={{ fontStyle: "italic", color: "#888" }}>
-                No {selectedCategory !== "All" ? selectedCategory : "items"}{" "}
-                found
-              </div>
-            )}
-          </div>
+          />
         </div>
-
-        {/* Right Panel */}
-        <div
-          style={{
-            flex: "1",
-            padding: "20px",
-            border: "1px solid #ddd",
-            borderRadius: "8px",
-            background: "#fafafa",
-            overflowY: "auto",
-          }}
-        >
-          {selectedItem ? (
-            <div>
-              <button
-                onClick={isEditing ? handleSave : () => setIsEditing(true)}
-              >
-                {isEditing ? "Save" : "Edit"}
-              </button>
-              {isEditing && (
-                <button onClick={handleRevert} style={{ marginLeft: "10px" }}>
-                  Revert
-                </button>
-              )}
-              {isEditing && (
-                <button onClick={handleDelete} style={{ marginLeft: "10px" }}>
-                  Delete
-                </button>
-              )}
-
-              <p>
-                <strong></strong>{" "}
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={selectedItem.name}
-                    onChange={(e) => handleFieldChange("name", e.target.value)}
-                  />
-                ) : (
-                  selectedItem.name
-                )}
-              </p>
-
-              {isEditing ? (
-                <select
-                  value={selectedItem.category}
-                  onChange={(e) =>
-                    handleFieldChange("category", e.target.value)
-                  }
-                  style={{
-                    padding: "6px",
-                    borderRadius: "4px",
-                    border: "1px solid #ccc",
-                  }}
-                >
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                selectedItem.category
-              )}
-
-              <p>
-                <strong>Subcategory:</strong>{" "}
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={selectedItem.subCategory || ""}
-                    onChange={(e) =>
-                      handleFieldChange("subCategory", e.target.value)
-                    }
-                  />
-                ) : (
-                  selectedItem.subCategory || (
-                    <span style={{ fontStyle: "italic", color: "#888" }}>
-                      Unspecified
-                    </span>
-                  )
-                )}
-              </p>
-
-              {/* Color Field */}
-              <div style={{ marginBottom: "10px" }}>
-                <strong>Color:</strong>{" "}
-                <>
-                  <span
-                    style={{
-                      display: "inline-block",
-                      width: "20px",
-                      height: "20px",
-                      backgroundColor: selectedItem.color,
-                      borderRadius: "4px",
-                      boxShadow: "0 0 4px black",
-                      marginRight: "5px",
-                    }}
-                  ></span>
-                </>
-                {isEditing ? (
-                  <ColorField
-                    selectedItem={selectedItem}
-                    handleFieldChange={handleFieldChange}
-                  />
-                ) : (
-                  selectedItem.color
-                )}
-              </div>
-
-              <p>
-                <strong>Material:</strong>{" "}
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={selectedItem.material || ""}
-                    onChange={(e) =>
-                      handleFieldChange("material", e.target.value)
-                    }
-                  />
-                ) : (
-                  selectedItem.material || (
-                    <span style={{ fontStyle: "italic", color: "#888" }}>
-                      Unspecified
-                    </span>
-                  )
-                )}
-              </p>
-
-              <p>
-                <strong>Size:</strong>{" "}
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={selectedItem.size}
-                    onChange={(e) => handleFieldChange("size", e.target.value)}
-                  />
-                ) : (
-                  selectedItem.subCategory || (
-                    <span style={{ fontStyle: "italic", color: "#888" }}>
-                      Unspecified
-                    </span>
-                  )
-                )}
-              </p>
-
-              <p>
-                <strong>Brand:</strong>{" "}
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={selectedItem.brand || ""}
-                    onChange={(e) => handleFieldChange("brand", e.target.value)}
-                  />
-                ) : (
-                  selectedItem.brand || (
-                    <span style={{ fontStyle: "italic", color: "#888" }}>
-                      Unspecified
-                    </span>
-                  )
-                )}
-              </p>
-
-              <p>
-                <strong>Purchase Date:</strong>{" "}
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={selectedItem.purchaseDate || ""}
-                    onChange={(e) =>
-                      handleFieldChange("purchaseDate", e.target.value)
-                    }
-                  />
-                ) : (
-                  selectedItem.purchaseDate || (
-                    <span style={{ fontStyle: "italic", color: "#888" }}>
-                      Unspecified
-                    </span>
-                  )
-                )}
-              </p>
-
-              <p>
-                <strong>Notes:</strong>{" "}
-                {isEditing ? (
-                  <textarea
-                    value={selectedItem.notes || ""}
-                    onChange={(e) => handleFieldChange("notes", e.target.value)}
-                  />
-                ) : (
-                  selectedItem.notes || (
-                    <span style={{ fontStyle: "italic", color: "#888" }}>
-                      None
-                    </span>
-                  )
-                )}
-              </p>
-
-              <div>
-                <strong>Image:</strong>{" "}
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={selectedItem.imageUrl || ""}
-                    onChange={(e) =>
-                      handleFieldChange("imageUrl", e.target.value)
-                    }
-                    placeholder="Enter image URL"
-                  />
-                ) : selectedItem.imageUrl ? (
-                  <img
-                    src={selectedItem.imageUrl}
-                    alt={selectedItem.name}
-                    style={{
-                      width: "100%",
-                      borderRadius: "8px",
-                      marginTop: "10px",
-                    }}
-                  />
-                ) : (
-                  <div
-                    style={{
-                      textAlign: "center",
-                      padding: "20px",
-                      border: "1px dashed #ccc",
-                      borderRadius: "8px",
-                      color: "#888",
-                      marginTop: "10px",
-                    }}
-                  >
-                    [No image]
-                  </div>
-                )}
-              </div>
-            </div>
-          ) : (
-            <div style={{ fontStyle: "italic", color: "#888" }}>
-              Select an item to view details
-            </div>
-          )}
-        </div>
-      </div>
-      <AddButton
-        onClick={() => {
-          setIsAddMenuOpen((prev) => !prev);
-        }}
-      />
+      )}
 
       {/* MODALS */}
       <AddMenu

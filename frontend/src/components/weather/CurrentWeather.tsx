@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useWeather } from "../providers/WeatherProvider";
 
 export default function CurrentWeather() {
@@ -37,11 +38,13 @@ export default function CurrentWeather() {
           {currentWeather?.currentConditions?.temp}
           {currentWeather?.selectedUnit}°
         </p>
-        <img
+        <Image
           className="w-10 h-10"
           title={currentWeather?.currentConditions?.icon}
           src={`icons/weather/${currentWeather?.currentConditions?.icon}.svg`}
-          alt={currentWeather?.currentConditions?.icon}
+          alt={currentWeather?.currentConditions?.icon || "weather icon"}
+          width={40}
+          height={40}
         />
       </>
     </div>
