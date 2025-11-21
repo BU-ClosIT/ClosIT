@@ -46,7 +46,10 @@ export const setClosetItem = async ({
     dbRef.push(`${userId}`);
   }
 
-  const newItem = dbRef.child(`${userId}`).child("item").push(closetItem);
+  const newItem = dbRef
+    .child(`${userId}`)
+    .child("closet")
+    .push({ ...closetItem, createdAt: Date.now(), modifiedAt: Date.now() });
   newItem.child("id").set(newItem.key);
   return newItem.key;
 };

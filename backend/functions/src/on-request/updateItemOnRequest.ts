@@ -27,7 +27,7 @@ export const updateItemOnRequest = ({
     const { userId, itemId, updatedFields } = request.body;
 
     const db = app.database();
-    const itemRef = db.ref(`closets/${userId}/items/${itemId}`);
+    const itemRef = db.ref(`closets/${userId}/closet/${itemId}`);
 
     itemRef.update(updatedFields, (error) => {
       if (error) {

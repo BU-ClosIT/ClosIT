@@ -27,3 +27,29 @@ export const queryGemini = async ({
 
   return response.text;
 };
+
+export const queryGeminiWithImage = async ({
+  query,
+  app,
+  base64Image,
+}: {
+  query: string;
+  app: admin.app.App;
+  base64Image: string;
+}) => {
+  const genAi = await genAiAgentBuilder({ app });
+
+  const response = await genAi.models.generateContent({
+    model: "gemini-2.5-flash",
+    contents: [
+      {
+        parts: [
+          { text: query },
+          { inlineData: { mimeType: "image/jpeg", data: base64Image } },
+        ],
+      },
+    ],
+  });
+
+  return response.text;
+};

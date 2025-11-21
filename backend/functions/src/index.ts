@@ -8,6 +8,7 @@ import getClosetByUserIdOnRequest from "./on-request/getClosetByUserIdOnRequest"
 import setItemInClosetOnRequest from "./on-request/setItemInClosetOnRequest";
 import { updateItemOnRequest } from "./on-request/updateItemOnRequest";
 import { deleteClosetItemOnRequest } from "./on-request/deleteClosetItemOnRequest";
+import { addFromPhotoOnRequest } from "./on-request/addFromPhotoOnRequest";
 
 const app = admin.initializeApp(firebaseConfigBuilder());
 
@@ -46,8 +47,12 @@ export const updateItemInCloset = functions.https.onRequest(
   }
 );
 
-export const deleteClosetItem = functions.https.onRequest(
+export const deleteClosetItemById = functions.https.onRequest(
   (request, response) => {
     return deleteClosetItemOnRequest({ request, response, app });
   }
 );
+
+export const addFromPhoto = functions.https.onRequest((request, response) => {
+  return addFromPhotoOnRequest({ request, response, app });
+});

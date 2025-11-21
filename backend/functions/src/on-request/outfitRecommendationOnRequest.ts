@@ -79,7 +79,12 @@ const outfitRecommendationOnRequest = async ({
       return;
     }
 
-    const { content, outfit } = JSON.parse(resp);
+    const cleanText = resp
+      .replace("```json", "")
+      .replace("```", "")
+      .replace("\\n", "");
+
+    const { content, outfit } = JSON.parse(cleanText);
 
     // inject full closet items into the outfit response
     const injectedOutfit = outfit
@@ -88,7 +93,8 @@ const outfitRecommendationOnRequest = async ({
       )
       .filter((item: any) => item !== undefined);
 
-    response.send({ content, outfit: injectedOutfit });
+    const returnable = JSON.stringify({ content, outfit: injectedOutfit });
+    response.status(200).json(returnable);
   } catch (e) {
     functions.logger.error("Error fetching user closet data", e);
     response.status(500).send(`Error fetching user closet data: ${e}`);
