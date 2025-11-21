@@ -1,6 +1,6 @@
 import { useCamera } from "@/src/hooks/useCamera";
 import CloseButton from "../shared/CloseButton";
-import { RefObject, useEffect } from "react";
+import { useEffect } from "react";
 import Loader from "../shared/Loader";
 
 export default function AddItemFromCameraModal({
@@ -14,16 +14,27 @@ export default function AddItemFromCameraModal({
   uploadFile: (file: File) => Promise<void>;
   isUploading: boolean;
 }) {
-  if (!isOpen) return null;
-
   const { videoRef, start, stop, capture, cameraOn } = useCamera();
 
-  // Auto-start camera on mount
+  // Ensure hooks are called in the same order on every render.
+  // Start/stop camera only when the modal is open.
   useEffect(() => {
-    if (cameraOn) return;
+    if (!isOpen) {
+      // if modal closed, ensure camera is stopped
+      if (cameraOn) stop();
+      return;
+    }
 
-    start();
-  }, [cameraOn, start]);
+    if (!cameraOn) {
+      start();
+    }
+    // when modal closes, stop camera via dependency change
+    return () => {
+      if (cameraOn) stop();
+    };
+  }, [isOpen, cameraOn, start, stop]);
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

@@ -44,7 +44,7 @@ export class FirebaseServices {
       console.log("Fetched current weather:", respJson);
       return respJson;
     } catch (e) {
-      console.error("Error fetching current weather");
+      console.error("Error fetching current weather: " + e);
       return null;
     }
   }
@@ -65,7 +65,7 @@ export class FirebaseServices {
 
       return respJson;
     } catch (e) {
-      return "Error Fetching AI Response";
+      return "Error Fetching AI Response: " + e;
     }
   }
 
@@ -123,7 +123,7 @@ export class FirebaseServices {
     item,
   }: {
     userId: string;
-    item: any;
+    item: ClosetItem;
   }) {
     try {
       const url = "/api/setItemInCloset";
@@ -151,7 +151,7 @@ export class FirebaseServices {
   }: {
     userId: string;
     itemId: string;
-    updatedFields: any;
+    updatedFields: Partial<ClosetItem>;
   }) {
     try {
       const url = "/api/updateItemInCloset";
@@ -190,7 +190,7 @@ export class FirebaseServices {
     const fileRef = storageRef(storage, `closetItems/${userId}/${fileName}`);
 
     // Upload the file
-    const uploadTask = await uploadBytesResumable(fileRef, file);
+    await uploadBytesResumable(fileRef, file);
 
     // Get the download URL
     const downloadURL = await getDownloadURL(fileRef);
@@ -266,7 +266,7 @@ export class FirebaseServices {
     itemId: string;
   }) {
     try {
-      const url = "/api/deleteClosetItemById";
+      const url = "/api/deleteClosetItem";
       const resp = await fetch(url, {
         method: "POST",
         headers: {

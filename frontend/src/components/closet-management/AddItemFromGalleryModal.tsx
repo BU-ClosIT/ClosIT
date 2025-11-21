@@ -1,4 +1,4 @@
-import { RefObject, useState } from "react";
+import { useState } from "react";
 import CloseButton from "../shared/CloseButton";
 import Loader from "../shared/Loader";
 

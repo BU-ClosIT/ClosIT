@@ -1,5 +1,6 @@
 import React from "react";
 import ClosetItem from "../../model/closet/ClosetItem";
+import Image from "next/image";
 
 interface ClosetItemCardProps {
   item: ClosetItem;
@@ -69,9 +70,11 @@ export const ClosetItemCard: React.FC<ClosetItemCardProps> = ({
           color: textColor,
         }}
       >
-        <img
+        <Image
           src={`/icons/${category}.png`}
           alt={category}
+          width={48}
+          height={48}
           style={{
             width: "80%",
             height: "80%",
@@ -82,7 +85,7 @@ export const ClosetItemCard: React.FC<ClosetItemCardProps> = ({
                 ? "drop-shadow(0 0 3px rgba(0,0,0,0.3))"
                 : "drop-shadow(0 0 3px rgba(255,255,255,0.5))",
           }}
-          onError={(e) => {}}
+          onError={() => {}}
         />
       </div>
 

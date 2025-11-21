@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
-import { HexColorPicker } from "react-colorful";
+import React, { useEffect, useState } from "react";
 import ClosetItem from "../../model/closet/ClosetItem";
 import { ClosetItemCard } from "../../components/closet-management/ClosetItemCard";
 import PageLayout from "../../components/shared/PageLayout";
@@ -11,13 +10,14 @@ import {
   categories,
   type ClosetItemCategory,
 } from "../../model/closet/ClosetItemCategories";
-import { sampleClosetData } from "../../services/sample-closet-data";
 import AddButton from "@/src/components/closet-management/AddButton";
 import AddMenu from "@/src/components/closet-management/AddMenu";
 import AddItemModal from "@/src/components/closet-management/AddItemModal";
 import AddItemFromCameraModal from "@/src/components/closet-management/AddItemFromCameraModal";
 import AddItemFromGalleryModal from "@/src/components/closet-management/AddItemFromGalleryModal";
 import ColorField from "@/src/components/closet-management/ColorField";
+import Loader from "@/src/components/shared/Loader";
+import Image from "next/image";
 
 export default function ClosetPage() {
   const [selectedCategory, setSelectedCategory] = useState<
@@ -26,7 +26,6 @@ export default function ClosetPage() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedItem, setSelectedItem] = useState<ClosetItem | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [sampleCloset, setCloset] = useState<ClosetItem[]>(sampleClosetData);
   const [isAddMenuOpen, setIsAddMenuOpen] = useState<boolean>(false);
   const [isAddItemModalOpen, setAddItemModalOpen] = useState<boolean>(false);
   const [isAddItemFromCameraModalOpen, setAddItemFromCameraModalOpen] =
@@ -113,6 +112,7 @@ export default function ClosetPage() {
     const originalItem = userCloset.find((item) => item.id === selectedItem.id);
     if (!originalItem) return;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updatedFields: Record<string, any> = {};
     (Object.keys(selectedItem) as (keyof ClosetItem)[]).forEach((key) => {
       if (selectedItem[key] !== originalItem[key]) {
@@ -209,7 +209,7 @@ export default function ClosetPage() {
         userId: user.id,
         file,
       });
-      setCloset((prev) => [...prev, newItem]);
+      setUserCloset((prev) => [...prev, newItem]);
       setIsUploading(false);
       return newItem;
     } catch (e) {
@@ -305,26 +305,36 @@ export default function ClosetPage() {
             </button>
           )}
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-            {filteredCloset.length > 0 ? (
-              filteredCloset.map((item) => (
-                <ClosetItemCard
-                  key={item.id}
-                  item={item}
-                  onClick={setSelectedItem}
-                  style={{
-                    backgroundColor:
-                      selectedItem?.id === item.id ? "#d4dcffff" : "#fdfdfd", // highlight selected
-                  }}
-                />
-              ))
-            ) : (
-              <div style={{ fontStyle: "italic", color: "#888" }}>
-                No {selectedCategory !== "All" ? selectedCategory : "items"}{" "}
-                found
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <div>
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: "5px" }}
+              >
+                {filteredCloset.length > 0 ? (
+                  filteredCloset.map((item) => (
+                    <ClosetItemCard
+                      key={item.id}
+                      item={item}
+                      onClick={setSelectedItem}
+                      style={{
+                        backgroundColor:
+                          selectedItem?.id === item.id
+                            ? "#d4dcffff"
+                            : "#fdfdfd", // highlight selected
+                      }}
+                    />
+                  ))
+                ) : (
+                  <div style={{ fontStyle: "italic", color: "#888" }}>
+                    No {selectedCategory !== "All" ? selectedCategory : "items"}{" "}
+                    found
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Right Panel */}
@@ -531,9 +541,11 @@ export default function ClosetPage() {
                     placeholder="Enter image URL"
                   />
                 ) : selectedItem.imageUrl ? (
-                  <img
+                  <Image
                     src={selectedItem.imageUrl}
                     alt={selectedItem.name}
+                    width={200}
+                    height={200}
                     style={{
                       width: "100%",
                       borderRadius: "8px",
@@ -586,7 +598,8 @@ export default function ClosetPage() {
             userId: user.id,
             item,
           });
-          setCloset((prev) => [...prev, newItem]);
+          setUserCloset((prev) => [...prev, newItem]);
+          return newItem;
         }}
       />
       <AddItemFromCameraModal

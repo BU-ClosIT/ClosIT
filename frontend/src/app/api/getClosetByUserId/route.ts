@@ -3,8 +3,6 @@ const ENDPOINT_URL = "https://getclosetbyuserid-6p7lfy6g4a-uc.a.run.app/";
 
 export async function POST(req: Request) {
   try {
-    const clientAuth = req.headers.get("authorization");
-
     // Read request body (app-router Request)
     let reqBody: unknown = null;
     try {
@@ -50,6 +48,7 @@ export async function POST(req: Request) {
         headers: { "Content-Type": "text/plain" },
       });
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error("Error proxying to getClosetByUserId service:", err);
     return new Response(

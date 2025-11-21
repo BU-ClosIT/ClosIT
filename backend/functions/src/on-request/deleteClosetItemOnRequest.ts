@@ -22,7 +22,7 @@ export const deleteClosetItemOnRequest = async ({
     const { userId, itemId } = request.body;
 
     const db = app.database();
-    const itemRef = db.ref(`closets/${userId}/items/${itemId}`);
+    const itemRef = db.ref(`closets/${userId}/closet/${itemId}`);
     // check that the item is actually owned by the user asking to delete it
     if (!itemRef) {
       response.status(404).send("Item not found");

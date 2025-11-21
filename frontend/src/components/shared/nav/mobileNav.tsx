@@ -3,6 +3,7 @@ import { useUser } from "../../providers/UserProvider";
 import Link from "next/link";
 import { PageName } from "@/src/model/PageName";
 import Logo from "../Logo";
+import Image from "next/image";
 
 const MobileNav: React.FC<{ currentPage: PageName }> = ({ currentPage }) => {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -27,9 +28,19 @@ const MobileNav: React.FC<{ currentPage: PageName }> = ({ currentPage }) => {
         onClick={() => setIsOpen((s) => !s)}
       >
         {isOpen ? (
-          <img src="/icons/Close.svg" />
+          <Image
+            src="/icons/Close.svg"
+            alt="Close menu"
+            width={24}
+            height={24}
+          />
         ) : (
-          <img src="/icons/BurgerMenu.svg" />
+          <Image
+            src="/icons/BurgerMenu.svg"
+            alt="Open menu"
+            width={24}
+            height={24}
+          />
         )}
       </button>
 
@@ -40,6 +51,10 @@ const MobileNav: React.FC<{ currentPage: PageName }> = ({ currentPage }) => {
       >
         <ul className="flex flex-col items-center justify-center h-full">
           <li>
+            <Link href={"/closet-management"}>
+              {/* direct this to profile eventually */}
+              Hello, {user?.name || "Guest"}
+            </Link>
             <Link
               href="/dashboard"
               className={`py-2 hover:underline ${

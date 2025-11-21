@@ -18,7 +18,6 @@ export async function POST(request: Request) {
       headers: {
         "Content-Type": "application/json",
         authorization: `Bearer ${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`,
-        "x-closit-referrer": "http://localhost:3000", // TODO: adjust in production
       },
       body: JSON.stringify({ userId, itemId }),
     });
@@ -32,6 +31,7 @@ export async function POST(request: Request) {
       JSON.stringify({ message: `Item deleted successfully: ${itemId}` }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error("Error deleting closet item:", err);
     return new Response(

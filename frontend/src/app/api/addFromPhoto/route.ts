@@ -31,6 +31,7 @@ export async function POST(request: Request) {
       body: JSON.stringify(reqBody),
     });
     return response;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error("Error proxying to setItemInCloset service:", err);
     return new Response(

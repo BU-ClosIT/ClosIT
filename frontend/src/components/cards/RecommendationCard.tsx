@@ -58,7 +58,7 @@ export default function RecommendationCard() {
         setIsLoading(false);
       }
     },
-    [user?.id, setIsLoading, isReady]
+    [user, setIsLoading, isReady, currentWeather]
   );
 
   useEffect(() => {
@@ -74,7 +74,7 @@ export default function RecommendationCard() {
         setIsLoading(false);
       }
     })();
-  }, [isReady, getRec]);
+  }, [isReady, getRec, currentWeather]);
 
   const handleTryAgain = async () => {
     const previous = currentWeatherRecArr.join("");
