@@ -266,7 +266,7 @@ export class FirebaseServices {
     itemId: string;
   }) {
     try {
-      const url = "/api/deleteClosetItemById";
+      const url = "/api/deleteClosetItem";
       const resp = await fetch(url, {
         method: "POST",
         headers: {

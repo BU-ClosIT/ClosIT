@@ -7,6 +7,7 @@ import Loader from "../shared/Loader";
 import { useWeather } from "../providers/WeatherProvider";
 import ClosetItem from "@/src/model/closet/ClosetItem";
 import { ClosetItemCard } from "../closet-management/ClosetItemCard";
+import { useRouter } from "next/navigation";
 
 export default function RecommendationCard() {
   const [currentWeatherRecArr, setCurrentWeatherRecArr] = useState<string[]>(
@@ -22,6 +23,12 @@ export default function RecommendationCard() {
   const isReady = useUserReady();
   // hasMadeRecCall to prevent multiple calls
   const hasMadeRecCallRef = useRef(false);
+
+  const router = useRouter();
+
+  const handleItemClick = (item: ClosetItem) => {
+    router.push(`/closet?id=${item.id}`);
+  } // probably reusable
 
   const getRec = useCallback(
     async ({
@@ -100,7 +107,7 @@ export default function RecommendationCard() {
 
       <div className="flex flex-wrap gap-4 justify-center">
         {recResponse?.outfit.map((item) => (
-          <ClosetItemCard key={item.id} item={item} />
+          <ClosetItemCard key={item.id} item={item} onClick={handleItemClick}/>
         ))}
       </div>
 
