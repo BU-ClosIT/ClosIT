@@ -15,10 +15,13 @@ export default function AddItemModal({
   const [formData, setFormData] = useState<ClosetItem>({
     id: "",
     name: "",
-    category: "",
+    category: "Outerwear",
     subCategory: "",
     color: "",
-    size: "",
+    size: "Small",
+    material: "",
+    brand: "",
+    purchaseDate: "",
     notes: "",
   });
   if (!isOpen) return null;
@@ -26,20 +29,35 @@ export default function AddItemModal({
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     await addItem(formData);
+
+    setFormData({
+      id: "",
+      name: "",
+      category: "",
+      subCategory: "",
+      color: "",
+      size: "",
+      material: "",
+      brand: "",
+      purchaseDate: "",
+      notes: "",
+    });
+
     onClose();
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-4 rounded shadow-md w-96">
+      <div className="bg-white p-4 rounded shadow-md w-140">
         <div className="flex flex-row items-start justify-between">
           <h2 className="text-lg font-semibold mb-2">Add Item</h2>
           <CloseButton onClick={onClose} />
         </div>
         <form
           id="add-item-form"
-          className="flex flex-col space-y-4 mt-4"
+          className="grid grid-cols-2 gap-6 mt-4"
           onSubmit={(e) => handleSubmit(e)}
+          autoComplete="off"
         >
           <input
             id="item-name"
@@ -50,6 +68,9 @@ export default function AddItemModal({
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
+
+          <div></div>
+
           <select
             id="item-category"
             className="border border-gray-300 p-2 rounded"
@@ -57,43 +78,76 @@ export default function AddItemModal({
               setFormData({ ...formData, category: e.target.value })
             }
           >
-            <option value="">Select Category</option>
-            <option value="clothing">Clothing</option>
-            <option value="accessories">Accessories</option>
-            <option value="shoes">Shoes</option>
+            <option value="Outerwear">Outerwear</option>
+            <option value="Tops">Tops</option>
+            <option value="Bottoms">Bottoms</option>
+            <option value="Legwear">Legwear</option>
+            <option value="Footwear">Footwear</option>
+            <option value="Accessories">Accessories</option>
+            <option value="Bags">Bags</option>
+            <option value="Misc">Misc</option>
           </select>
-          <select
+
+          <input
             id="item-subcategory"
+            type="text"
+            placeholder="Subcategory (optional)"
             className="border border-gray-300 p-2 rounded"
             value={formData.subCategory}
             onChange={(e) =>
               setFormData({ ...formData, subCategory: e.target.value })
             }
-          >
-            <option value="">Select Sub-Category</option>
-            <option value="tops">Tops</option>
-            <option value="bottoms">Bottoms</option>
-            <option value="outerwear">Outerwear</option>
-            <option value="footwear">Footwear</option>
-            <option value="jewelry">Jewelry</option>
-            <option value="bags">Bags</option>
-          </select>
+          />
+
           <select
             id="item-size"
             className="border border-gray-300 p-2 rounded"
             value={formData.size}
             onChange={(e) => setFormData({ ...formData, size: e.target.value })}
           >
-            <option value="">Select Size</option>
             <option value="small">Small</option>
             <option value="medium">Medium</option>
             <option value="large">Large</option>
             <option value="x-large">X-Large</option>
             <option value="xx-large">XX-Large</option>
           </select>
-          <div className="flex items-center space-x-2">
+
+          <input
+            id="item-material"
+            type="text"
+            placeholder="Material (optional)"
+            className="border border-gray-300 p-2 rounded"
+            value={formData.material}
+            onChange={(e) =>
+              setFormData({ ...formData, material: e.target.value })
+            }
+          />
+
+          <input
+            id="item-brand"
+            type="text"
+            placeholder="Brand (optional)"
+            className="border border-gray-300 p-2 rounded"
+            value={formData.brand}
+            onChange={(e) =>
+              setFormData({ ...formData, brand: e.target.value })
+            }
+          />
+
+          <input
+            id="item-purchaseDate"
+            type="text"
+            placeholder="Purchase Date (optional)"
+            className="border border-gray-300 p-2 rounded"
+            value={formData.purchaseDate}
+            onChange={(e) =>
+              setFormData({ ...formData, purchaseDate: e.target.value })
+            }
+          />
+
+            <div className="flex items-center space-x-2 ">
             <label htmlFor="item-color" className="text-gray-700">
-              Color:
+
             </label>
             <ColorField
               selectedItem={formData}
@@ -106,13 +160,17 @@ export default function AddItemModal({
           <input
             id="item-notes"
             type="text"
-            placeholder="Note (optional)"
+            placeholder="Notes (optional)"
             className="border border-gray-300 p-2 rounded"
             value={formData.notes}
             onChange={(e) =>
               setFormData({ ...formData, notes: e.target.value })
             }
           />
+
+          <div></div>
+          <div></div>
+          <div></div>
 
           <button
             id="add-item-submit"
