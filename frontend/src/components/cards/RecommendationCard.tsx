@@ -24,12 +24,6 @@ export default function RecommendationCard() {
   // hasMadeRecCall to prevent multiple calls
   const hasMadeRecCallRef = useRef(false);
 
-  const router = useRouter();
-
-  const handleItemClick = (item: ClosetItem) => {
-    router.push(`/closet?id=${item.id}`);
-  } // probably reusable
-
   const getRec = useCallback(
     async ({
       preferences,
@@ -107,7 +101,7 @@ export default function RecommendationCard() {
 
       <div className="flex flex-wrap gap-4 justify-center">
         {recResponse?.outfit.map((item) => (
-          <ClosetItemCard key={item.id} item={item} onClick={handleItemClick}/>
+          <ClosetItemCard key={item.id} item={item}/>
         ))}
       </div>
 

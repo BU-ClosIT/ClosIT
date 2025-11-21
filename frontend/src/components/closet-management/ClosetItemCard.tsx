@@ -1,6 +1,7 @@
 import React from "react";
 import ClosetItem from "../../model/closet/ClosetItem";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface ClosetItemCardProps {
   item: ClosetItem;
@@ -24,9 +25,9 @@ export const ClosetItemCard: React.FC<ClosetItemCardProps> = ({
     const fullHex =
       hex.length === 3
         ? hex
-            .split("")
-            .map((c) => c + c)
-            .join("")
+          .split("")
+          .map((c) => c + c)
+          .join("")
         : hex;
 
     const r = parseInt(fullHex.substring(0, 2), 16) || 0;
@@ -39,9 +40,16 @@ export const ClosetItemCard: React.FC<ClosetItemCardProps> = ({
 
   const textColor = getTextColor(fallbackColor);
 
+
+  const router = useRouter();
+  const handleClick = () => {
+    onClick?.(item);
+    router.push(`/closet?id=${item.id}`);
+  }
+
   return (
     <div
-      onClick={() => onClick?.(item)}
+      onClick={handleClick}
       style={{
         display: "flex",
         alignItems: "center",
@@ -85,7 +93,7 @@ export const ClosetItemCard: React.FC<ClosetItemCardProps> = ({
                 ? "drop-shadow(0 0 3px rgba(0,0,0,0.3))"
                 : "drop-shadow(0 0 3px rgba(255,255,255,0.5))",
           }}
-          onError={() => {}}
+          onError={() => { }}
         />
       </div>
 

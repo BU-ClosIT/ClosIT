@@ -43,7 +43,6 @@ export default function ClosetPage() {
   // handle ID passed in link
   const searchParams = useSearchParams();
   const itemIdFromUrl = searchParams.get("id");
-  const router = useRouter();
 
   useEffect(() => {
     if (!isReady || !user?.id) return;
