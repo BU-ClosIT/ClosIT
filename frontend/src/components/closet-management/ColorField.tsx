@@ -25,16 +25,11 @@ export default function ColorField({
   };
   return (
     <div>
-      <input
-        type="text"
-        value={selectedItem.color}
-        onChange={(e) => handleFieldChange("color", e.target.value)}
-      />
-      <p></p>
       <HexColorPicker
         color={selectedItem.color}
         onChange={(c) => handleFieldChange("color", c)}
       />
+      
       {/* RGB Inputs */}
       <div style={{ display: "flex", gap: "5px", marginTop: "5px" }}>
         {["r", "g", "b"].map((ch, i) => {
@@ -59,6 +54,13 @@ export default function ColorField({
           );
         })}
       </div>
+
+      <input
+        type="text"
+        placeholder="#ffffff"
+        value={selectedItem.color}
+        onChange={(e) => handleFieldChange("color", e.target.value)}
+      />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import ClosetItem from "../../model/closet/ClosetItem";
 import { ClosetItemCard } from "../../components/closet-management/ClosetItemCard";
 import PageLayout from "../../components/shared/PageLayout";
@@ -18,6 +18,7 @@ import AddItemFromGalleryModal from "@/src/components/closet-management/AddItemF
 import ColorField from "@/src/components/closet-management/ColorField";
 import Loader from "@/src/components/shared/Loader";
 import Image from "next/image";
+import { useSearchParams, useRouter } from "next/navigation";
 
 export default function ClosetPage() {
   const [selectedCategory, setSelectedCategory] = useState<
@@ -38,6 +39,11 @@ export default function ClosetPage() {
   const [isLoading, setIsLoading] = useState(true);
   const user = useUser();
   const isReady = useUserReady();
+
+  // handle ID passed in link
+  const searchParams = useSearchParams();
+  const itemIdFromUrl = searchParams.get("id");
+  const router = useRouter();
 
   useEffect(() => {
     if (!isReady || !user?.id) return;
@@ -69,42 +75,15 @@ export default function ClosetPage() {
     fetchCloset();
   }, [isReady, user?.id]);
 
-  const generateId = () =>
-    `${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
+  // When URL param or selection changes:
+  useEffect(() => {
+    if (!itemIdFromUrl || userCloset.length === 0) return;
 
-  const handleAddNewItem = async () => {
-    const newItem: ClosetItem = {
-      id: generateId(),
-      name: "New Item",
-      category: "Outerwear",
-      subCategory: "",
-      color: "#ffffff",
-      material: "",
-      size: "",
-      brand: "",
-      purchaseDate: "",
-      notes: "",
-      imageUrl: "",
-    };
-
-    setUserCloset((prev) => [...prev, newItem]);
-    setSelectedItem(newItem);
-    setIsEditing(true);
-
-    try {
-      // Add to Firebase
-      const result = await FirebaseServices.setItemInCloset({
-        userId: user!.id,
-        item: newItem,
-      });
-
-      console.log("Added new item to database:", result);
-    } catch (error) {
-      console.error("Failed to add item to database:", error);
-      setUserCloset((prev) => prev.filter((item) => item.id !== newItem.id));
-      setSelectedItem(null);
+    const item = userCloset.find((i) => i.id === itemIdFromUrl);
+    if (item) {
+      setSelectedItem(item);
     }
-  };
+  }, [itemIdFromUrl, userCloset]);
 
   const handleSave = async () => {
     if (!selectedItem) return;
@@ -160,7 +139,6 @@ export default function ClosetPage() {
     if (!confirmed) return;
 
     setUserCloset((prev) => prev.filter((item) => item.id !== selectedItem.id));
-    setSelectedItem(null);
 
     try {
       // Call Firebase function to delete from database
@@ -169,6 +147,7 @@ export default function ClosetPage() {
         itemId: selectedItem.id,
       });
       console.log("Item deleted successfully from database");
+      setSelectedItem(null);
     } catch (err) {
       console.error("Failed to delete item from database:", err);
       // Revert local deletion if it fails
@@ -260,6 +239,7 @@ export default function ClosetPage() {
               padding: "8px",
               borderRadius: "6px",
               border: "1px solid #ccc",
+              marginBottom: "10px",
             }}
           >
             <option value="All">All Categories ({userCloset.length})</option>
@@ -269,41 +249,6 @@ export default function ClosetPage() {
               </option>
             ))}
           </select>
-
-          <button
-            onClick={handleAddNewItem}
-            style={{
-              marginTop: "10px",
-              marginBottom: "10px",
-              marginRight: "10px",
-              padding: "8px 12px",
-              borderRadius: "6px",
-              backgroundColor: "#4CAF50",
-              color: "white",
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
-            Add Item
-          </button>
-
-          {selectedItem && (
-            <button
-              onClick={handleDelete}
-              style={{
-                marginTop: "10px",
-                marginBottom: "10px",
-                padding: "8px 12px",
-                borderRadius: "6px",
-                backgroundColor: "#f44336",
-                color: "white",
-                border: "none",
-                cursor: "pointer",
-              }}
-            >
-              Delete Item
-            </button>
-          )}
 
           {isLoading ? (
             <Loader />
@@ -358,6 +303,11 @@ export default function ClosetPage() {
               {isEditing && (
                 <button onClick={handleRevert} style={{ marginLeft: "10px" }}>
                   Revert
+                </button>
+              )}
+              {isEditing && (
+                <button onClick={handleDelete} style={{ marginLeft: "10px" }}>
+                  Delete
                 </button>
               )}
 
@@ -594,12 +544,13 @@ export default function ClosetPage() {
         onClose={() => setAddItemModalOpen(false)}
         addItem={async (item: ClosetItem) => {
           if (!user) return;
-          const newItem = await FirebaseServices.setItemInCloset({
+          const newItemId = await FirebaseServices.setItemInCloset({
             userId: user.id,
             item,
           });
-          setUserCloset((prev) => [...prev, newItem]);
-          return newItem;
+
+          const newItemWithId = { ...item, id: newItemId };
+          setUserCloset((prev) => [...prev, newItemWithId]);
         }}
       />
       <AddItemFromCameraModal
