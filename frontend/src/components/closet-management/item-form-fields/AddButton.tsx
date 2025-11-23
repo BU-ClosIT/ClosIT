@@ -1,4 +1,4 @@
-import { useUser } from "../providers/UserProvider";
+import { useUser } from "../../providers/UserProvider";
 
 export default function AddButton({ onClick }: { onClick: () => void }) {
   const user = useUser();

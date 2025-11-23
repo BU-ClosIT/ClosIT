@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  images: {
+    // Allow images served from Firebase Storage
+    domains: ["firebasestorage.googleapis.com"],
+  },
 };
 
 export default nextConfig;
