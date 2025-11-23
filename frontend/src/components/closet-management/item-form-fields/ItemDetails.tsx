@@ -7,6 +7,7 @@ import Image from "next/image";
 import { User } from "@/src/model/User";
 import EditButtons from "./EditButtons";
 import SeasonsChips from "./SeasonsChips";
+import { sizes } from "@/src/model/closet/Sizes";
 
 export default function ItemDetails({
   selectedItem,
@@ -205,20 +206,26 @@ export default function ItemDetails({
           )}
         </div>
 
+        {/* TODO handle shoe sizes */}
         <div className="flex items-center">
           <label htmlFor="size" className="font-semibold mr-2">
             Size:
           </label>
           {isEditing ? (
-            <input
-              type="text"
+            <select
               id="size"
               className="mb-2 p-2 w-full border border-gray-300 rounded"
               value={selectedItem.size}
               onChange={(e) => handleFieldChange("size", e.target.value)}
-            />
+            >
+              {sizes.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
           ) : (
-            selectedItem.subCategory || (
+            selectedItem.size || (
               <span style={{ fontStyle: "italic", color: "#888" }}>
                 Unspecified
               </span>
