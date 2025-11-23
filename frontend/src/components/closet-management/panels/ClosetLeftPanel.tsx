@@ -5,6 +5,7 @@ import ClosetItem from "../../../model/closet/ClosetItem";
 import SearchBar from "../item-form-fields/SearchBar";
 import CategorySelector from "../item-form-fields/CategorySelector";
 import ClosetItemsList from "../ClosetItemsList";
+import useIsMobile from "@/src/hooks/useIsMobile";
 
 export default function ClosetLeftPanel({
   selectedItem,
@@ -21,6 +22,7 @@ export default function ClosetLeftPanel({
   const [selectedCategory, setSelectedCategory] = useState<
     ClosetItemCategory | "All"
   >("All");
+  const isMobile = useIsMobile();
 
   // Filter items by category and search
   const filteredCloset = userCloset.filter((item) => {
@@ -34,7 +36,11 @@ export default function ClosetLeftPanel({
   });
 
   return (
-    <div className="w-1/2 p-4 h-full overflow-y-auto bg-white shadow-md rounded-lg mr-4">
+    <div
+      className={`${
+        isMobile ? "w-full" : "w-1/2 mr-4"
+      } p-4 h-full overflow-y-auto bg-white shadow-md rounded-lg`}
+    >
       <h2 className="text-lg font-semibold mb-4">My Closet</h2>
 
       <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />

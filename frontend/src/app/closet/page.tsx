@@ -12,6 +12,8 @@ import AddItemFromCameraModal from "../../components/closet-management/modals/Ad
 import AddItemFromGalleryModal from "../../components/closet-management/modals/AddItemFromGalleryModal";
 import ClosetLeftPanel from "../../components/closet-management/panels/ClosetLeftPanel";
 import ClosetRightPanel from "../../components/closet-management/panels/ClosetRightPanel";
+import useIsMobile from "@/src/hooks/useIsMobile";
+import CloseButton from "@/src/components/shared/CloseButton";
 
 export default function ClosetPage() {
   const [selectedItem, setSelectedItem] = useState<ClosetItem | null>(null);
@@ -25,6 +27,8 @@ export default function ClosetPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [userCloset, setUserCloset] = useState<ClosetItem[]>([]);
+
+  const isMobile = useIsMobile();
 
   const user = useUser();
   const isReady = useUserReady();
@@ -90,13 +94,59 @@ export default function ClosetPage() {
             isLoading={isLoading}
           />
 
-          <ClosetRightPanel
-            selectedItem={selectedItem}
-            setSelectedItem={setSelectedItem}
-            userCloset={userCloset}
-            setUserCloset={setUserCloset}
-            user={user}
-          />
+          {!isMobile && (
+            <ClosetRightPanel
+              selectedItem={selectedItem}
+              setSelectedItem={setSelectedItem}
+              userCloset={userCloset}
+              setUserCloset={setUserCloset}
+              user={user}
+            />
+          )}
+
+          {isMobile && (
+            <>
+              {/* Backdrop: click to close */}
+              <div
+                className={`fixed inset-0 z-40 transition-opacity duration-200 ${
+                  selectedItem
+                    ? "opacity-100 pointer-events-auto"
+                    : "opacity-0 pointer-events-none"
+                }`}
+                aria-hidden={!selectedItem}
+                onClick={() => setSelectedItem(null)}
+              >
+                <div className="absolute inset-0 bg-black/40" />
+              </div>
+
+              {/* Sliding panel from right */}
+              <div
+                className={`fixed top-0 right-0 z-50 h-full w-[85%] max-w-md bg-white shadow-md rounded-l-lg transform transition-transform duration-300 ${
+                  selectedItem ? "translate-x-0" : "translate-x-full"
+                }`}
+                aria-hidden={!selectedItem}
+              >
+                <div className="p-4 h-full overflow-y-auto">
+                  <div className="flex justify-end mb-2">
+                    <CloseButton
+                      onClick={() => {
+                        setSelectedItem(null);
+                      }}
+                      aria-label="Close panel"
+                    />
+                  </div>
+
+                  <ClosetRightPanel
+                    selectedItem={selectedItem}
+                    setSelectedItem={setSelectedItem}
+                    userCloset={userCloset}
+                    setUserCloset={setUserCloset}
+                    user={user}
+                  />
+                </div>
+              </div>
+            </>
+          )}
 
           <AddButton
             onClick={() => {
