@@ -49,7 +49,7 @@ export const ClosetItemCard: React.FC<ClosetItemCardProps> = ({
   return (
     <div
       onClick={handleClick}
-      className={`flex items-center justify-between w-full h-20 border border-gray-300 rounded-lg cursor-pointer hover:shadow-md transition-shadow ${
+      className={`flex items-center justify-between min-w-xs h-20 border border-gray-300 rounded-lg cursor-pointer hover:shadow-md transition-shadow ${
         isSelected ? "bg-blue-100 border-blue-500" : "bg-white"
       }`}
     >

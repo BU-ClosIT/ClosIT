@@ -1,6 +1,6 @@
 import JsonBlob from "../JsonBlon";
-
-export type Season = "Spring" | "Summer" | "Fall" | "Winter" | "All";
+import Season from "./Seasons";
+import Size from "./Sizes";
 
 export default class ClosetItem {
   public id: string;
@@ -9,7 +9,7 @@ export default class ClosetItem {
   public subCategory?: string; // new!
   public color: string;
   public material?: string; // new!
-  public size: string;
+  public size: Size;
   public brand?: string;
   public purchaseDate?: string;
   public imageUrl?: string;
@@ -38,7 +38,7 @@ export default class ClosetItem {
     subCategory?: string;
     color: string;
     material?: string;
-    size: string;
+    size: Size;
     brand?: string;
     purchaseDate?: string;
     imageUrl?: string;

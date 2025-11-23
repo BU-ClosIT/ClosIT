@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import ClosetItem, { Season } from "../../../model/closet/ClosetItem";
+import ClosetItem from "../../../model/closet/ClosetItem";
+import Season from "../../../model/closet/Seasons";
 
 export function SeasonChip({
   season,
