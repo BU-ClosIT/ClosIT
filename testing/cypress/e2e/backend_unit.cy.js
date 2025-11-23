@@ -1,20 +1,25 @@
 /** Unit Tests for Backend API endpoints - index.ts file
- * It check if the firebase function return correct output for the given input 
- * 
- * /
+ *  It checks if the firebase function return correct output for the given input 
+ */
 
-// check aiQuery endpoint
+const endpoints = {
+	aiQuery: 'https://aiquery-6p7lfy6g4a-uc.a.run.app',
+	getWeatherByLocation: 'https://getweatherbylocation-6p7lfy6g4a-uc.a.run.app',
+	getOutfitRecommendation: 'https://getoutfitrecommendation-6p7lfy6g4a-uc.a.run.app',
+	getClosetByUserId: 'https://getclosetbyuserid-6p7lfy6g4a-uc.a.run.app',
+	setItemInCloset: 'https://setitemincloset-6p7lfy6g4a-uc.a.run.app',
+	updateItemInCloset: 'https://updateitemincloset-6p7lfy6g4a-uc.a.run.app',
+	deleteClosetItemById: 'https://deleteclosetitem-6p7lfy6g4a-uc.a.run.app',
+	addFromPhoto: 'https://addfromphoto-6p7lfy6g4a-uc.a.run.app',
+};
 
-// check getWeatherByLocation endpoint
-
-// check getOutfitRecommendation endpoint
-
-// check getClosetByUserId endpoint
-
-// check setItemInCloset endpoint
-
-// check updateItemInCloset endpoint
-
-// check deleteClosetItemById endpoint
-
-// check addFromPhoto endpoint
+describe('Backend API smoke tests (skipped by default)', () => {
+	Object.entries(endpoints).forEach(([name, url]) => {
+		it(`${name} should respond`, () => {
+			cy.request({ url, failOnStatusCode: false }).then((resp) => {
+				expect(resp.status).to.be.a('number');
+				expect(resp.body).to.not.be.null;
+			});
+		});
+	});
+});
