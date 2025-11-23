@@ -4,6 +4,7 @@ import Link from "next/link";
 import { PageName } from "@/src/model/PageName";
 import Logo from "../Logo";
 import Image from "next/image";
+import CurrentWeather from "../../weather/CurrentWeather";
 
 const MobileNav: React.FC<{ currentPage: PageName }> = ({ currentPage }) => {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -21,6 +22,7 @@ const MobileNav: React.FC<{ currentPage: PageName }> = ({ currentPage }) => {
   return (
     <div className="flex flex-row items-center justify-between w-full">
       <Logo />
+      <CurrentWeather />
       <button
         className="flex items-center gap-3 focus:outline-none h-10 w-10 transition-transform duration-200 hover:scale-110 rounded-md p-2"
         aria-haspopup="true"
