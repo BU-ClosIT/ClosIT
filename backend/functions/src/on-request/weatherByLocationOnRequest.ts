@@ -1,13 +1,10 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import { Response } from "express";
-import {
-  getCityKeyByGeoPosition,
-  getCurrentWeatherByCityKey,
-} from "../services/accuweather-services";
 import { getGeoPositionFromIp, getIpFromReq } from "../services/geoip-services";
-import { isOriginAllowed } from "../util/originUtil";
-import { CityKeyResponse, CurrentWeatherResponse } from "../model/AccuWeather";
+import { getCurrentWeatherByLatLong } from "../services/visualcrossing-services";
+import { CurrentWeatherResponse } from "../model/VisualCrossing";
+import { isAuthorizedRequest } from "../util/tokenUtil";
 
 const weatherByLocationOnRequest = async ({
   request,
@@ -18,9 +15,8 @@ const weatherByLocationOnRequest = async ({
   response: Response;
   app: admin.app.App;
 }) => {
-  const origin = `${request.header("x-closit-referrer")}`;
-  functions.logger.log("weatherByLocation invoked by - " + origin);
-  if (!origin || !isOriginAllowed(origin)) {
+  const bearerToken = request.headers["authorization"]?.split("Bearer ")[1];
+  if (!bearerToken || !isAuthorizedRequest({ request, app })) {
     response.status(400).send("Unauthorized");
     return;
   }
@@ -32,22 +28,29 @@ const weatherByLocationOnRequest = async ({
   }
 
   try {
-    const geoPosition: string = await getGeoPositionFromIp({ ip: clientIp });
-    const cityKeyResponse: CityKeyResponse = await getCityKeyByGeoPosition({
-      geoPosition,
+    const selectedUnit = request.query.selectedUnit || "F";
+    const geoPosition = await getGeoPositionFromIp({ ip: clientIp });
+    functions.logger.log("Geo position fetched:", geoPosition);
+    const currentWeather = await getCurrentWeatherByLatLong({
+      latLong: `${geoPosition.lat},${geoPosition.lon}`,
+      selectedUnit: selectedUnit as "F" | "C",
       app,
     });
-    const currentWeather: CurrentWeatherResponse =
-      await getCurrentWeatherByCityKey({ cityKey: cityKeyResponse.Key, app });
-
+    functions.logger.log("Current weather fetched:", currentWeather);
     response.status(200).send(
       JSON.stringify({
-        ...currentWeather,
-        city: cityKeyResponse.EnglishName,
-        region: cityKeyResponse.Region.EnglishName,
-        country: cityKeyResponse.Country.EnglishName,
-        adminArea: cityKeyResponse.AdministrativeArea,
-      })
+        latitude: currentWeather.latitude,
+        longitude: currentWeather.longitude,
+        timezone: currentWeather.timezone,
+        tzoffset: currentWeather.tzoffset,
+        description: currentWeather.description,
+        alerts: currentWeather.alerts,
+        currentConditions: currentWeather.currentConditions,
+        city: geoPosition.city,
+        region: geoPosition.region,
+        country: geoPosition.country,
+        selectedUnit,
+      } as CurrentWeatherResponse)
     );
   } catch (error: any) {
     functions.logger.error("Error fetching weather data", error);

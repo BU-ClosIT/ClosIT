@@ -6,7 +6,7 @@ export async function GET(req: Request) {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "x-closit-referrer": `http://localhost:3000`,
+        authorization: `Bearer ${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`,
       },
     });
 
@@ -25,6 +25,7 @@ export async function GET(req: Request) {
       status: response.status,
       headers: { "Content-Type": "application/json" },
     });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error("Error proxying to getWeather", err);
     return new Response(

@@ -7,8 +7,8 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { CurrentWeatherResponse } from "@/src/model/CurrentWeatherResponse";
-import { FirebaseServices } from "@/src/services/firebase-services";
+import { CurrentWeatherResponse } from "../../model/CurrentWeatherResponse";
+import { FirebaseServices } from "../../services/firebase-services";
 
 type WeatherContext = {
   weather: CurrentWeatherResponse | null;
@@ -38,7 +38,13 @@ export default function WeatherProvider({
     setError(null);
     try {
       const resp = await FirebaseServices.getCurrentWeather();
-      setWeather(resp);
+      // FirebaseServices.getCurrentWeather() returns parsed JSON or null on error.
+      // Don't call string methods on the response (it will be an object).
+      if (!resp) {
+        throw new Error("No weather response");
+      }
+      setWeather(resp as CurrentWeatherResponse);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err?.message ?? String(err));
     } finally {

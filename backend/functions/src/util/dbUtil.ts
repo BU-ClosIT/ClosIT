@@ -1,9 +1,12 @@
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
-import ClosetItem from "../model/ClosetItem";
+import { ClosetItem } from "../model/ClosetItem";
 import JsonBlob from "../model/JsonBlob";
 // a bunch of utils for interacting with the database
-type SupportedTokenName = "gemini-api-key" | "accuweather-api-key";
+type SupportedTokenName =
+  | "gemini-api-key"
+  | "visual-crossing-api-key"
+  | "closit-web-app-token";
 
 /** Get a secure key from the DB by passing the name of the token */
 export const tokenByName = async ({
@@ -25,6 +28,7 @@ export const tokenByName = async ({
   return snap.val() as string;
 };
 
+/** sets a closet item of the user in the database */
 export const setClosetItem = async ({
   userId,
   closetItem,
@@ -42,11 +46,15 @@ export const setClosetItem = async ({
     dbRef.push(`${userId}`);
   }
 
-  const newItem = dbRef.child(`${userId}`).child("item").push(closetItem);
+  const newItem = dbRef
+    .child(`${userId}`)
+    .child("closet")
+    .push({ ...closetItem, createdAt: Date.now(), modifiedAt: Date.now() });
   newItem.child("id").set(newItem.key);
   return newItem.key;
 };
 
+/** gets the closet items by user id from database */
 export const getClosetByUserId = async ({
   userId,
   app,
@@ -57,7 +65,7 @@ export const getClosetByUserId = async ({
   functions.logger.log(`running getClosetByUserId for userId: ${userId}`);
   const db = app.database();
   const dbRef = db.ref("closets");
-  const userClosetSnap = await dbRef.child(`${userId}/item`).get();
+  const userClosetSnap = await dbRef.child(`${userId}/closet`).get();
   if (!userClosetSnap.exists()) {
     functions.logger.log(`no closet found for userId: ${userId}`);
     return [];
@@ -66,9 +74,8 @@ export const getClosetByUserId = async ({
   const itemsJson: JsonBlob = userClosetSnap.val() as JsonBlob;
   const closetItems: ClosetItem[] = [];
   Object.keys(itemsJson).forEach((key) => {
-    const itemJson = itemsJson[key];
-    const closetItem = ClosetItem.buildClosetItemFromJson(itemJson);
-    closetItems.push(closetItem);
+    const itemJson = itemsJson[key] as ClosetItem;
+    closetItems.push(itemJson);
   });
 
   return closetItems;

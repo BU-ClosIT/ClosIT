@@ -27,7 +27,7 @@ export async function POST(req: Request) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-closit-referrer": `http://localhost:3000`, // TODO: change for production
+        authorization: `Bearer ${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`,
       },
       body: JSON.stringify(reqBody),
     });
@@ -48,6 +48,7 @@ export async function POST(req: Request) {
         headers: { "Content-Type": "text/plain" },
       });
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error("Error proxying to getClosetByUserId service:", err);
     return new Response(
