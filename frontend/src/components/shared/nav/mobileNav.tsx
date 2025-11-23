@@ -45,19 +45,26 @@ const MobileNav: React.FC<{ currentPage: PageName }> = ({ currentPage }) => {
       </button>
 
       <div
-        className={`absolute top-15 right-0 w-50 h-full bg-gray-200 transition-opacity duration-200 border-solid shadow-md rounded ${
+        className={`absolute top-15 right-0 w-50 bg-gray-200 transition-opacity duration-200 border-solid shadow-md rounded ${
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >
         <ul className="flex flex-col items-center justify-center h-full">
-          <li>
-            <Link href={"/closet-management"}>
+          <li className="py-2 border-b w-full text-center">
+            <Link
+              href={"/closet"}
+              className={`hover:underline ${
+                currentPage === "Profile" ? "font-bold" : ""
+              }`}
+            >
               {/* direct this to profile eventually */}
               Hello, {user?.name || "Guest"}
             </Link>
+          </li>
+          <li className="py-2 border-b border-gray-300 w-full text-center">
             <Link
               href="/dashboard"
-              className={`py-2 hover:underline ${
+              className={`hover:underline ${
                 currentPage === "Dashboard" ? "font-bold" : ""
               }`}
               onClick={() => setIsOpen(false)}
@@ -65,7 +72,7 @@ const MobileNav: React.FC<{ currentPage: PageName }> = ({ currentPage }) => {
               Dashboard
             </Link>
           </li>
-          <li>
+          <li className="py-2 border-b border-gray-300 w-full text-center">
             <Link
               href="/closet"
               className={`py-2 hover:underline ${
@@ -76,7 +83,7 @@ const MobileNav: React.FC<{ currentPage: PageName }> = ({ currentPage }) => {
               Closet Management
             </Link>
           </li>
-          <li>
+          <li className="py-2 border-b border-gray-300 w-full text-center">
             <Link
               href="/ai-chat"
               className={`py-2 hover:underline ${

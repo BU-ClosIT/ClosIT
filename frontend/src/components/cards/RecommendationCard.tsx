@@ -92,7 +92,7 @@ export default function RecommendationCard() {
   };
 
   return (
-    <div className="flex flex-col w-full min-h-[200px] p-4 border rounded-lg shadow-lg my-4 justify-center align-middle max-h-screen">
+    <div className="flex flex-col w-full min-h-[200px] bg-white p-4 border rounded-lg shadow-lg my-4 justify-center align-middle max-h-screen">
       {isLoading && <Loader />}
       <div className="whitespace-pre-wrap mb-4 italic">
         {currentWeatherRecArr.length ? currentWeatherRecArr.join("") : ""}

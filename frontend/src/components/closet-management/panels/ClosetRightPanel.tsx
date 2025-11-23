@@ -3,6 +3,7 @@ import ClosetItem from "../../../model/closet/ClosetItem";
 import { useSearchParams } from "next/navigation";
 import ItemDetails from "../item-form-fields/ItemDetails";
 import { User } from "@/src/model/User";
+import useIsMobile from "@/src/hooks/useIsMobile";
 
 export default function ClosetRightPanel({
   selectedItem,
@@ -17,6 +18,7 @@ export default function ClosetRightPanel({
   setUserCloset: React.Dispatch<React.SetStateAction<ClosetItem[]>>;
   user: User;
 }) {
+  const isMobile = useIsMobile();
   // When URL param or selection changes:
   const searchParams = useSearchParams();
   useEffect(() => {
@@ -30,7 +32,11 @@ export default function ClosetRightPanel({
   }, [userCloset, searchParams, setSelectedItem]);
 
   return (
-    <div className="w-1/2 h-full p-4 overflow-y-auto bg-white shadow-md rounded-lg">
+    <div
+      className={`${
+        isMobile ? "w-full" : "w-1/2 bg-white shadow-md rounded-lg"
+      } h-full p-4 overflow-y-auto`}
+    >
       {selectedItem ? (
         <ItemDetails
           selectedItem={selectedItem}
