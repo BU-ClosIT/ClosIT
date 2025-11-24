@@ -3,7 +3,7 @@ import * as admin from "firebase-admin";
 import { Response } from "express";
 import { isAuthorizedRequest } from "../util/tokenUtil";
 
-export const deleteClosetItemOnRequest = async ({
+const deleteClosetItemOnRequest = async ({
   request,
   response,
   app,
@@ -39,3 +39,5 @@ export const deleteClosetItemOnRequest = async ({
 
   response.send("Not implemented yet");
 };
+
+export default deleteClosetItemOnRequest;
