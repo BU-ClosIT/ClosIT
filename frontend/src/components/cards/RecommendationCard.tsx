@@ -33,6 +33,12 @@ export default function RecommendationCard() {
     }) => {
       if (!isReady || hasMadeRecCallRef.current) return;
       try {
+        console.log("----------------------")
+        // console.log(user);
+        // console.log(preferences);
+        // console.log(context);
+        console.log(currentWeather);
+        console.log("----------------------")
         hasMadeRecCallRef.current = true;
         const response: { content: string; outfit: ClosetItem[] } =
           await FirebaseServices.getRecommendation({
@@ -63,6 +69,7 @@ export default function RecommendationCard() {
 
   useEffect(() => {
     console.log("useEffect triggered in RecommendationCard");
+    // console.log(currentWeather);
     if (!isReady) return;
     (async () => {
       try {

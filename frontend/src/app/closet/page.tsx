@@ -131,6 +131,7 @@ export default function ClosetPage() {
 
     try {
       // Call your Firebase function
+      // console.log({userId: user!.id, itemId: selectedItem.id, updatedFields});
       const response = await FirebaseServices.updateItemInCloset({
         userId: user!.id,
         itemId: selectedItem.id,

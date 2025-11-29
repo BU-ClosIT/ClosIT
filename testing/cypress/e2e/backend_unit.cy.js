@@ -2,24 +2,178 @@
  *  It checks if the firebase function return correct output for the given input 
  */
 
-const endpoints = {
-	aiQuery: 'https://aiquery-6p7lfy6g4a-uc.a.run.app',
-	getWeatherByLocation: 'https://getweatherbylocation-6p7lfy6g4a-uc.a.run.app',
-	getOutfitRecommendation: 'https://getoutfitrecommendation-6p7lfy6g4a-uc.a.run.app',
-	getClosetByUserId: 'https://getclosetbyuserid-6p7lfy6g4a-uc.a.run.app',
-	setItemInCloset: 'https://setitemincloset-6p7lfy6g4a-uc.a.run.app',
-	updateItemInCloset: 'https://updateitemincloset-6p7lfy6g4a-uc.a.run.app',
-	deleteClosetItemById: 'https://deleteclosetitem-6p7lfy6g4a-uc.a.run.app',
-	addFromPhoto: 'https://addfromphoto-6p7lfy6g4a-uc.a.run.app',
-};
+// check aiQuery endpoint
+describe('POST /aiQuery', () => {
+  it('should fetch response from AI/LLM', () => {
+    cy.request({
+      method: 'POST',
+      url: 'https://aiquery-6p7lfy6g4a-uc.a.run.app',
+      headers: {
+        authorization: 'Bearer 7b3d98102a373d0c26aa9d3c6e0cdf6f830c459f8c18837303da5e08676b79db'
+      }
+    }).then((response) => {
+      expect(response.status).to.eq(200);
 
-describe('Backend API smoke tests (skipped by default)', () => {
-	Object.entries(endpoints).forEach(([name, url]) => {
-		it(`${name} should respond`, () => {
-			cy.request({ url, failOnStatusCode: false }).then((resp) => {
-				expect(resp.status).to.be.a('number');
-				expect(resp.body).to.not.be.null;
-			});
-		});
-	});
+      expect(response.body).to.exist;
+    });
+  });
+});
+
+// check getWeatherByLocation endpoint
+describe('GET /getWeatherByLocation', () => {
+  it('should fetch weather conditions of current location', () => {
+    cy.request({
+      method: 'GET',
+      url: 'https://getweatherbylocation-6p7lfy6g4a-uc.a.run.app',
+      headers: {
+        authorization: 'Bearer 7b3d98102a373d0c26aa9d3c6e0cdf6f830c459f8c18837303da5e08676b79db'
+      },
+    }).then((response) => {
+      expect(response.status).to.eq(200);
+
+      expect(response.body).to.exist;
+    });
+  });
+});
+
+// check getOutfitRecommendation endpoint
+describe('POST /getOutfitRecommendation', () => {
+  it('should recommend an outfit based on weather and closet items', () => {
+    cy.request({
+      method: 'POST',
+      url: 'https://getoutfitrecommendation-6p7lfy6g4a-uc.a.run.app',
+      headers: {
+        authorization: 'Bearer 7b3d98102a373d0c26aa9d3c6e0cdf6f830c459f8c18837303da5e08676b79db'
+      },
+      body: {
+            userId:"sampleUserId",
+            userPreferences:"",
+            context: {
+              "context": "",
+              "currentWeather": ""
+            }
+		}
+    }).then((response) => {
+      expect(response.status).to.eq(200);
+
+      expect(response.body).to.exist;
+    });
+  });
+});
+
+// check getClosetByUserId endpoint
+describe('POST /getClosetByUserId', () => {
+  it('should fetch closet data for userId', () => {
+    cy.request({
+      method: 'POST',
+      url: 'https://getclosetbyuserid-6p7lfy6g4a-uc.a.run.app',
+      headers: {
+        authorization: 'Bearer 7b3d98102a373d0c26aa9d3c6e0cdf6f830c459f8c18837303da5e08676b79db'
+      },
+      body: {
+        userId: 'sampleUserId'
+      }
+    }).then((response) => {
+      expect(response.status).to.eq(200);
+      expect(response.body).to.exist;
+    });
+  });
+});
+
+// check setItemInCloset endpoint
+describe('POST /setItemInCloset', () => {
+  it('should set item in the closet', () => {
+    cy.request({
+      method: 'POST',
+      url: 'https://setitemincloset-6p7lfy6g4a-uc.a.run.app',
+      headers: {
+        authorization: 'Bearer 7b3d98102a373d0c26aa9d3c6e0cdf6f830c459f8c18837303da5e08676b79db'
+      },
+      body: {
+		"userId":"sampleUserId",
+		"item": {
+		"id": "xyzwx",
+		"name": "New Item",
+		"category": "Outerwear",
+		"subCategory": "",
+		"color": "#000000ff",
+		"material": "",
+		"size": "XXXXXL",
+		"brand": "Tommy Hilfiger",
+		"purchaseDate": "",
+		"notes": "",
+		"imageUrl": ""
+		}
+	}
+    }).then((response) => {
+      expect(response.status).to.eq(200);
+      expect(response.body).to.exist;
+    });
+  });
+});
+
+// check updateItemInCloset endpoint
+describe('POST /updateItemInCloset', () => {
+  it('should update item in the closet', () => {
+    cy.request({
+      method: 'POST',
+      url: 'https://updateitemincloset-6p7lfy6g4a-uc.a.run.app',
+      headers: {
+        authorization: 'Bearer 7b3d98102a373d0c26aa9d3c6e0cdf6f830c459f8c18837303da5e08676b79db'
+      },
+      body: {
+		"userId":"sampleUserId",
+		"itemId": "-OfGZ_Sn6x-2jtZYHIdR",
+		"updatedFields": {
+			"name": "Updated Item Name",
+			"size": "M"
+		}
+	}
+    }).then((response) => {
+      expect(response.status).to.eq(200);
+      expect(response.body).to.exist;
+    });
+  });
+});
+
+// check deleteClosetItemById endpoint
+describe('DELETE /deleteClosetItemById', () => {
+  it('should delete item in the closet', () => {
+    cy.request({
+      method: 'POST',
+      url: 'https://deleteclosetitem-6p7lfy6g4a-uc.a.run.app',
+      headers: {
+        authorization: 'Bearer 7b3d98102a373d0c26aa9d3c6e0cdf6f830c459f8c18837303da5e08676b79db'
+      },
+      body: {
+		"userId":"sampleUserId",
+		"itemId": "-OfGmUoAZxiNemFWdcPu"
+	}
+    }).then((response) => {
+      expect(response.status).to.eq(200);
+      expect(response.body).to.exist;
+    });
+  });
+});
+
+// check addFromPhoto endpoint
+describe('POST /addFromPhoto', () => {
+  it('should add closet item by a new image', () => {
+    cy.request({
+      method: 'POST',
+      url: 'https://addFromPhoto-6p7lfy6g4a-uc.a.run.app',
+      headers: {
+        authorization: 'Bearer 7b3d98102a373d0c26aa9d3c6e0cdf6f830c459f8c18837303da5e08676b79db'
+      },
+      body: {   
+			imgUrl: "https://thumbs.dreamstime.com/b/wildflowers-blooming-sunset-nature-scenery-wildflowers-blooming-sunset-nature-scenery-388164189.jpg", 
+			userId: "sampleUserId", 
+			imgId:"-OesFgahcq7NHgHoZCN7", 
+			imgFileName: "Sunset.jpg"
+		}
+    }).then((response) => {
+      expect(response.status).to.eq(200);
+      expect(response.body).to.exist;
+    });
+  });
 });
