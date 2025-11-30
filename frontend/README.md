@@ -8,7 +8,7 @@ npm run dev
 ```
 
 ### Frontend Folder Structure
-
+```
 .
 ├── public
 └── src
@@ -36,7 +36,7 @@ npm run dev
     │   ├── closet
     ├── services                      # services for interacting with external apis (primarily firebase functions backend)
     └── util                          # utils and helper functions
-
+```
 
 ## Navigation Bar
 fullNav.tsx: Displays pages and UserId
