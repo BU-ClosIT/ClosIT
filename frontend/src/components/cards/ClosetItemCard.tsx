@@ -60,7 +60,7 @@ export const ClosetItemCard: React.FC<ClosetItemCardProps> = ({
       >
         <Image
           src={`/icons/${category}.png`}
-          alt={category}
+          alt={`category-${category}`}
           width={48}
           height={48}
           className={`w-4/5 h-4/5 object-contain rounded-md ${

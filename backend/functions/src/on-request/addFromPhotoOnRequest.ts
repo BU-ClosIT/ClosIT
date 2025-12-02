@@ -52,13 +52,11 @@ const addFromPhotoOnRequest = async ({
       return;
     }
 
-    const cleanText = aiResp
-      .replace("```json", "")
-      .replace("```", "")
-      .replace("\\n", "");
-    functions.logger.log("Received AI response:", cleanText);
-    const { name, category, color, material, size, brand } =
-      JSON.parse(cleanText);
+    const cleanText = JSON.parse(
+      aiResp.replace("```json", "").replace("```", "").replace("\\n", "")
+    );
+
+    const { name, category, color, material, size, brand } = cleanText;
 
     const itemDetails: ClosetItem = {
       id: "",

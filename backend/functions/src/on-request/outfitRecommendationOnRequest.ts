@@ -5,7 +5,6 @@ import { queryGemini } from "../services/gemini-services";
 import { getGeoPositionFromIp, getIpFromReq } from "../services/geoip-services";
 import { isAuthorizedRequest } from "../util/tokenUtil";
 import { getClosetByUserId } from "../util/dbUtil";
-import { CurrentWeatherResponse } from "../model/VisualCrossing";
 import { getCurrentWeatherByLatLong } from "../services/visualcrossing-services";
 
 /** Handles HTTP POST request for outfit recommendation */
@@ -33,11 +32,12 @@ const outfitRecommendationOnRequest = async ({
 
   try {
     const { userId, context, userPreferences, selectedUnit } = request.body;
+    const { context: ctx } = context; // destructure to avoid naming conflict
 
     functions.logger.log(
       `Outfit Recommendation requested for userId: ${userId} 
       with preferences: ${userPreferences} 
-      and context: ${JSON.stringify(context)}`
+      and context: ${ctx}`
     );
 
     if (!userId) {
@@ -45,8 +45,7 @@ const outfitRecommendationOnRequest = async ({
       return;
     }
 
-    let currentWeather: CurrentWeatherResponse | null =
-      context.currentWeather.weather;
+    let currentWeather = ctx.weather;
 
     if (!currentWeather) {
       functions.logger.log(

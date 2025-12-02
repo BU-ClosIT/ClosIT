@@ -1,6 +1,9 @@
+import isValidIPv4 from "@/src/util/ip-util";
+import { type NextRequest } from "next/server";
+
 const ENDPOINT_URL = "https://getweatherbylocation-6p7lfy6g4a-uc.a.run.app/";
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   try {
     const response = await fetch(ENDPOINT_URL, {
       method: "GET",
@@ -21,9 +24,24 @@ export async function GET(req: Request) {
       body = text;
     }
 
+    const forwarded = req.headers.get("x-forwarded-for");
+    // The first IP in the list is usually the client's original IP
+    console.log({ forwarded });
+    const forwardedFor =
+      typeof forwarded === "string" ? forwarded.split(/, /)[0] : "";
+    console.log({ forwardedFor });
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+
+    if (isValidIPv4(forwardedFor)) {
+      headers["x-forwarded-for"] = forwardedFor;
+    }
+
     return new Response(JSON.stringify(body), {
       status: response.status,
-      headers: { "Content-Type": "application/json" },
+      headers,
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {

@@ -16,9 +16,9 @@ export default function ClosetItemsList({
     <div>
       <div className="flex flex-col gap-2">
         {filteredCloset.length > 0 ? (
-          filteredCloset.map((item: ClosetItem) => (
+          filteredCloset.map((item: ClosetItem, idx: number) => (
             <ClosetItemCard
-              key={item.id}
+              key={`$${item.id}-${idx}`}
               item={item}
               onClick={setSelectedItem}
               isSelected={selectedItem?.id === item.id}

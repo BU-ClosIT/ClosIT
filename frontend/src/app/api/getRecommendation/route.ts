@@ -1,7 +1,10 @@
+import isValidIPv4 from "@/src/util/ip-util";
+import { type NextRequest } from "next/server";
+
 // backend firebase endpoint
 const ENDPOINT_URL = "https://getoutfitrecommendation-6p7lfy6g4a-uc.a.run.app/";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     // Read request body (app-router Request)
     let reqBody: unknown = null;
@@ -23,12 +26,23 @@ export async function POST(req: Request) {
       }
     }
 
+    const forwarded = req.headers.get("x-forwarded-for");
+    // The first IP in the list is usually the client's original IP
+    const forwardedFor =
+      typeof forwarded === "string" ? forwarded.split(/, /)[0] : "";
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`,
+    };
+
+    if (isValidIPv4(forwardedFor)) {
+      headers["x-forwarded-for"] = forwardedFor;
+    }
+
     const response = await fetch(ENDPOINT_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`,
-      },
+      headers,
       body: JSON.stringify(reqBody),
     });
     console.log("Fetched response from recommendation service");

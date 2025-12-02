@@ -2,6 +2,7 @@ import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import { ClosetItem } from "../model/ClosetItem";
 import JsonBlob from "../model/JsonBlob";
+
 // a bunch of utils for interacting with the database
 type SupportedTokenName =
   | "gemini-api-key"
@@ -79,4 +80,38 @@ export const getClosetByUserId = async ({
   });
 
   return closetItems;
+};
+
+export const storeOrUpdateUserConversation = async ({
+  context,
+  userId,
+  app,
+}: {
+  context: JsonBlob;
+  userId: string;
+  app: admin.app.App;
+}) => {
+  functions.logger.log(
+    `running storeOrUpdateUserConversation for userId: ${userId}`
+  );
+
+  const now = new Date();
+  const dateString = now.toISOString().split("T")[0]; // YYYY-MM-DD
+
+  const db = app.database();
+  const dbRef = db.ref(`closets/${userId}/conversations/${dateString}`);
+  const userConvSnap = await dbRef.get();
+
+  if (!userConvSnap.exists()) {
+    dbRef.push({ ...context, createdAt: Date.now(), modifiedAt: Date.now() });
+    return;
+  }
+
+  const newConv = dbRef.push({
+    ...context,
+    createdAt: Date.now(),
+    modifiedAt: Date.now(),
+  });
+  newConv.child("id").set(newConv.key);
+  return newConv.key;
 };

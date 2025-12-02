@@ -62,7 +62,7 @@ export default function AiChatCard() {
         ...prevContext,
         {
           role: "ai",
-          content: JSON.stringify(resp),
+          content: resp.explanation || "No response",
           timestamp: new Date().toISOString(),
         },
       ]);
