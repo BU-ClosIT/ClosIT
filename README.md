@@ -39,7 +39,7 @@ Google Gemini                  # Handle clothing suggestions in Dashboard page, 
 Firebase Functions             # Retrieve, update, and delete clothing entries
 
 ## 3-Layer Architecture
-
+```
 React Frontend: ItemDetails > handleDelete()
       ↓
 React Frontend: FirebaseServices.deleteClosetItemById()
@@ -57,3 +57,4 @@ Firebase Cloud: Deletes item in Firebase realtime database, returns success
 Next.js: returns JSON.stringify({ message: `Item deleted successfully: ${itemId}` }),
       ↓
 React Frontend: receives response and updates UI accordingly
+```
