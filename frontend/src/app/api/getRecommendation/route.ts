@@ -1,4 +1,4 @@
-import isValidIPv4 from "@/src/util/ip-util";
+import isValidIPv4 from "../../../util/ip-util";
 import { type NextRequest } from "next/server";
 
 // backend firebase endpoint
