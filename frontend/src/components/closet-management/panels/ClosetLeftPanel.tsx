@@ -29,7 +29,9 @@ export default function ClosetLeftPanel({
     const itemCategory = item.category?.trim();
     const matchesCategory =
       selectedCategory === "All" || itemCategory === selectedCategory;
-    const matchesSearch = item.name
+
+    const itemName = item.name ?? "";
+    const matchesSearch = itemName
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
