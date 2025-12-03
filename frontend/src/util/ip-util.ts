@@ -7,11 +7,7 @@ export function isValidIPv4(ip: string) {
 export function getClientIpFromHeaders(
   headers: Headers | Record<string, string | undefined>
 ) {
-  // headers may be a Fetch Headers or plain object (Express)
-  const get = (name: string) =>
-    typeof (headers as any).get === "function"
-      ? (headers as Headers).get(name)
-      : (headers as Record<string, string | undefined>)[name.toLowerCase()];
+  const get = (name: string) => (headers as Headers).get(name);
 
   return (
     get("x-client-ip") ||
