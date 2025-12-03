@@ -6,7 +6,7 @@ import { queryGeminiWithImage } from "../services/gemini-services";
 import { setClosetItem } from "../util/dbUtil";
 import { ClosetItem } from "../model/ClosetItem";
 
-export const addFromPhotoOnRequest = async ({
+const addFromPhotoOnRequest = async ({
   request,
   response,
   app,
@@ -52,13 +52,11 @@ export const addFromPhotoOnRequest = async ({
       return;
     }
 
-    const cleanText = aiResp
-      .replace("```json", "")
-      .replace("```", "")
-      .replace("\\n", "");
-    functions.logger.log("Received AI response:", cleanText);
-    const { name, category, color, material, size, brand } =
-      JSON.parse(cleanText);
+    const cleanText = JSON.parse(
+      aiResp.replace("```json", "").replace("```", "").replace("\\n", "")
+    );
+
+    const { name, category, color, material, size, brand } = cleanText;
 
     const itemDetails: ClosetItem = {
       id: "",
@@ -92,10 +90,12 @@ export const addFromPhotoOnRequest = async ({
 };
 
 // helper: fetch an image URL and return base64 string
-export default async function fetchImageAsBase64(url: string): Promise<string> {
+async function fetchImageAsBase64(url: string): Promise<string> {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Failed to fetch image: ${res.status}`);
   const arrayBuffer = await res.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
   return buffer.toString("base64");
 }
+
+export default addFromPhotoOnRequest;

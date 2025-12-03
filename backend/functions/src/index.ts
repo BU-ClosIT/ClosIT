@@ -1,14 +1,15 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-import { firebaseConfigBuilder } from "./services/firebase-services";
+import firebaseConfigBuilder from "./services/firebase-services";
 import aiQueryOnRequest from "./on-request/aiQueryOnRequest";
 import weatherByLocationOnRequest from "./on-request/weatherByLocationOnRequest";
 import outfitRecommendationOnRequest from "./on-request/outfitRecommendationOnRequest";
 import getClosetByUserIdOnRequest from "./on-request/getClosetByUserIdOnRequest";
 import setItemInClosetOnRequest from "./on-request/setItemInClosetOnRequest";
-import { updateItemOnRequest } from "./on-request/updateItemOnRequest";
-import { deleteClosetItemOnRequest } from "./on-request/deleteClosetItemOnRequest";
-import { addFromPhotoOnRequest } from "./on-request/addFromPhotoOnRequest";
+import updateItemOnRequest from "./on-request/updateItemOnRequest";
+import deleteClosetItemOnRequest from "./on-request/deleteClosetItemOnRequest";
+import addFromPhotoOnRequest from "./on-request/addFromPhotoOnRequest";
+import converseOnRequest from "./on-request/converseOnRequest";
 
 const app = admin.initializeApp(firebaseConfigBuilder());
 
@@ -55,4 +56,8 @@ export const deleteClosetItem = functions.https.onRequest(
 
 export const addFromPhoto = functions.https.onRequest((request, response) => {
   return addFromPhotoOnRequest({ request, response, app });
+});
+
+export const converse = functions.https.onRequest((request, response) => {
+  return converseOnRequest({ request, response, app });
 });

@@ -40,5 +40,6 @@ module.exports = {
     "object-curly-spacing": ["warn", "always"],
     "max-len": ["error", { code: 120 }],
     "quote-props": ["warn", "consistent-as-needed"],
+    "operator-linebreak": ["error", "before"],
   },
 };

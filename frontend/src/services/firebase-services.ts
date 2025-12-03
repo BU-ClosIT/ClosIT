@@ -49,6 +49,7 @@ export class FirebaseServices {
     }
   }
 
+  /** Use this one for debugging, use converse for actual conversations */
   public static async aiAgentQuery({
     query,
   }: {
@@ -73,10 +74,12 @@ export class FirebaseServices {
     userId,
     userPreferences,
     context,
+    currentWeather,
   }: {
     userId?: string;
     userPreferences?: string;
-    context?: JsonBlob;
+    context?: string;
+    currentWeather?: string;
   }): Promise<{ content: string; outfit: ClosetItem[] }> {
     try {
       const url = "/api/getRecommendation";
@@ -86,6 +89,7 @@ export class FirebaseServices {
           userPreferences,
           userId,
           context,
+          currentWeather,
         }),
       });
 
@@ -283,6 +287,31 @@ export class FirebaseServices {
     } catch (e) {
       console.error(e);
       return null;
+    }
+  }
+
+  /** Used for conversation with Gemini, provides enhanced responses */
+  public static async converse({
+    query,
+    userId,
+  }: {
+    query: JsonBlob;
+    userId: string;
+  }) {
+    try {
+      const url = "/api/converse";
+      const resp = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify({ query, userId }),
+      });
+
+      const text = await resp.text();
+
+      const cleanText = text.replace("```json", "").replace("```", "");
+
+      return JSON.parse(cleanText);
+    } catch (e) {
+      return "Error Fetching AI Response: " + e;
     }
   }
 }

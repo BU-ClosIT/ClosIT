@@ -35,7 +35,14 @@ const FullNav: React.FC<{ currentPage: PageName }> = ({ currentPage }) => {
             AI Chat
           </Link>
         </li>
-        <div>{user ? `Hello, ${user.name}` : "Hello, Guest"}</div>
+        <li>
+          <Link
+            href="/closet"
+            className="border-b-2 border-transparent hover:border-gray-500"
+          >
+            {user ? `Hello, ${user.name}` : "Hello, Guest"}
+          </Link>
+        </li>
       </ul>
       <CurrentWeather />
     </div>

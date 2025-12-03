@@ -3,7 +3,7 @@ import * as functions from "firebase-functions";
 import { Response } from "express";
 import { isAuthorizedRequest } from "../util/tokenUtil";
 
-export const updateItemOnRequest = ({
+const updateItemOnRequest = ({
   request,
   response,
   app,
@@ -42,3 +42,5 @@ export const updateItemOnRequest = ({
     response.status(500).send(`Error updating item: ${error}`);
   }
 };
+
+export default updateItemOnRequest;
