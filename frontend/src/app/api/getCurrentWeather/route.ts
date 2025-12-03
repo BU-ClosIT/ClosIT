@@ -1,4 +1,4 @@
-import isValidIPv4 from "@/src/util/ip-util";
+import { getClientIpFromHeaders, isValidIPv4 } from "@/src/util/ip-util";
 import { type NextRequest } from "next/server";
 
 const ENDPOINT_URL = "https://getweatherbylocation-6p7lfy6g4a-uc.a.run.app/";
@@ -24,19 +24,14 @@ export async function GET(req: NextRequest) {
       body = text;
     }
 
-    const forwarded = req.headers.get("x-forwarded-for");
-    // The first IP in the list is usually the client's original IP
-    console.log({ forwarded });
-    const forwardedFor =
-      typeof forwarded === "string" ? forwarded.split(/, /)[0] : "";
-    console.log({ forwardedFor });
+    const ipFromHeaders = getClientIpFromHeaders(req.headers);
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
     };
 
-    if (isValidIPv4(forwardedFor)) {
-      headers["x-forwarded-for"] = forwardedFor;
+    if (isValidIPv4(ipFromHeaders)) {
+      headers["x-client-ip"] = ipFromHeaders;
     }
 
     return new Response(JSON.stringify(body), {

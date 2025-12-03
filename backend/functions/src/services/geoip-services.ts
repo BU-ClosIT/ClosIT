@@ -9,7 +9,8 @@ export const getIpFromReq = ({
 }: {
   request: functions.https.Request;
 }): string | undefined => {
-  const forwardedFor = request.headers["x-forwarded-for"] as string | undefined;
+  const forwardedFor = (request.headers["x-client-ip"]
+    || request.headers["x-forwarded-for"]) as string | undefined;
 
   if (!forwardedFor) {
     return;

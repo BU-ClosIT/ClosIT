@@ -1,4 +1,4 @@
-import isValidIPv4 from "../../../util/ip-util";
+import { getClientIpFromHeaders, isValidIPv4 } from "../../../util/ip-util";
 import { type NextRequest } from "next/server";
 
 // backend firebase endpoint
@@ -26,18 +26,15 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const forwarded = req.headers.get("x-forwarded-for");
-    // The first IP in the list is usually the client's original IP
-    const forwardedFor =
-      typeof forwarded === "string" ? forwarded.split(/, /)[0] : "";
+    const ipFromHeaders = getClientIpFromHeaders(req.headers);
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
       authorization: `Bearer ${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`,
     };
 
-    if (isValidIPv4(forwardedFor)) {
-      headers["x-forwarded-for"] = forwardedFor;
+    if (isValidIPv4(ipFromHeaders)) {
+      headers["x-client-ip"] = ipFromHeaders;
     }
 
     const response = await fetch(ENDPOINT_URL, {
