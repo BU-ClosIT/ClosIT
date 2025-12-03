@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import { useUser, useUserReady } from "./UserProvider";
-import { isWeatherReady, useWeather } from "./WeatherProvider";
+import { useWeatherReady, useWeather } from "./WeatherProvider";
 import { FirebaseServices } from "../../services/firebase-services";
 import ClosetItem from "../../model/closet/ClosetItem";
 
@@ -51,7 +51,7 @@ export const RecommendationProvider = ({
   const user = useUser();
   const isReady = useUserReady();
   const currentWeather = useWeather();
-  const weatherReady = isWeatherReady();
+  const weatherReady = useWeatherReady();
   const hasMadeRecCallRef = useRef(false);
 
   const weatherReadyPromise = new Promise((resolve) => {
