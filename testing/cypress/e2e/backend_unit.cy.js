@@ -9,7 +9,7 @@ describe('POST /aiQuery', () => {
       method: 'POST',
       url: 'https://aiquery-6p7lfy6g4a-uc.a.run.app',
       headers: {
-        authorization: 'Bearer 7b3d98102a373d0c26aa9d3c6e0cdf6f830c459f8c18837303da5e08676b79db'
+        authorization: Cypress.env('CLOSET_AUTH_TOKEN')
       }
     }).then((response) => {
       expect(response.status).to.eq(200);
@@ -26,7 +26,7 @@ describe('GET /getWeatherByLocation', () => {
       method: 'GET',
       url: 'https://getweatherbylocation-6p7lfy6g4a-uc.a.run.app',
       headers: {
-        authorization: 'Bearer 7b3d98102a373d0c26aa9d3c6e0cdf6f830c459f8c18837303da5e08676b79db'
+        authorization: Cypress.env('CLOSET_AUTH_TOKEN')
       },
     }).then((response) => {
       expect(response.status).to.eq(200);
@@ -43,15 +43,13 @@ describe('POST /getOutfitRecommendation', () => {
       method: 'POST',
       url: 'https://getoutfitrecommendation-6p7lfy6g4a-uc.a.run.app',
       headers: {
-        authorization: 'Bearer 7b3d98102a373d0c26aa9d3c6e0cdf6f830c459f8c18837303da5e08676b79db'
+        authorization: Cypress.env('CLOSET_AUTH_TOKEN')
       },
       body: {
             userId:"sampleUserId",
             userPreferences:"",
-            context: {
-              "context": "",
-              "currentWeather": ""
-            }
+            context: "",
+            currentWeather: ""
 		}
     }).then((response) => {
       expect(response.status).to.eq(200);
@@ -68,7 +66,7 @@ describe('POST /getClosetByUserId', () => {
       method: 'POST',
       url: 'https://getclosetbyuserid-6p7lfy6g4a-uc.a.run.app',
       headers: {
-        authorization: 'Bearer 7b3d98102a373d0c26aa9d3c6e0cdf6f830c459f8c18837303da5e08676b79db'
+        authorization: Cypress.env('CLOSET_AUTH_TOKEN')
       },
       body: {
         userId: 'sampleUserId'
@@ -87,23 +85,23 @@ describe('POST /setItemInCloset', () => {
       method: 'POST',
       url: 'https://setitemincloset-6p7lfy6g4a-uc.a.run.app',
       headers: {
-        authorization: 'Bearer 7b3d98102a373d0c26aa9d3c6e0cdf6f830c459f8c18837303da5e08676b79db'
+        authorization: Cypress.env('CLOSET_AUTH_TOKEN')
       },
       body: {
-		"userId":"sampleUserId",
-		"item": {
-		"id": "xyzwx",
-		"name": "New Item",
-		"category": "Outerwear",
-		"subCategory": "",
-		"color": "#000000ff",
-		"material": "",
-		"size": "XXXXXL",
-		"brand": "Tommy Hilfiger",
-		"purchaseDate": "",
-		"notes": "",
-		"imageUrl": ""
-		}
+      "userId":"sampleUserId",
+      "item": {
+      "id": "xyzwx",
+      "name": "New Item",
+      "category": "Outerwear",
+      "subCategory": "",
+      "color": "#000000ff",
+      "material": "",
+      "size": "XXXXXL",
+      "brand": "Tommy Hilfiger",
+      "purchaseDate": "",
+      "notes": "",
+      "imageUrl": ""
+      }
 	}
     }).then((response) => {
       expect(response.status).to.eq(200);
@@ -119,7 +117,7 @@ describe('POST /updateItemInCloset', () => {
       method: 'POST',
       url: 'https://updateitemincloset-6p7lfy6g4a-uc.a.run.app',
       headers: {
-        authorization: 'Bearer 7b3d98102a373d0c26aa9d3c6e0cdf6f830c459f8c18837303da5e08676b79db'
+        authorization: Cypress.env('CLOSET_AUTH_TOKEN')
       },
       body: {
 		"userId":"sampleUserId",
@@ -143,7 +141,7 @@ describe('DELETE /deleteClosetItemById', () => {
       method: 'POST',
       url: 'https://deleteclosetitem-6p7lfy6g4a-uc.a.run.app',
       headers: {
-        authorization: 'Bearer 7b3d98102a373d0c26aa9d3c6e0cdf6f830c459f8c18837303da5e08676b79db'
+        authorization: Cypress.env('CLOSET_AUTH_TOKEN')
       },
       body: {
 		"userId":"sampleUserId",
@@ -163,7 +161,7 @@ describe('POST /addFromPhoto', () => {
       method: 'POST',
       url: 'https://addFromPhoto-6p7lfy6g4a-uc.a.run.app',
       headers: {
-        authorization: 'Bearer 7b3d98102a373d0c26aa9d3c6e0cdf6f830c459f8c18837303da5e08676b79db'
+        authorization: Cypress.env('CLOSET_AUTH_TOKEN')
       },
       body: {   
 			imgUrl: "https://thumbs.dreamstime.com/b/wildflowers-blooming-sunset-nature-scenery-wildflowers-blooming-sunset-nature-scenery-388164189.jpg", 
