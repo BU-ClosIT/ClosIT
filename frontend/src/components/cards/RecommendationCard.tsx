@@ -9,46 +9,34 @@ import {
   Recommendation,
   useRecommendation,
 } from "../providers/RecommendationProvider";
+import { useTyping } from "@/src/hooks/useTyping";
 
 export default function RecommendationCard() {
-  const [currentWeatherRecArr, setCurrentWeatherRecArr] = useState<string[]>(
-    []
-  );
   const [recResponse, setRecResponse] = useState<Recommendation>();
   const currentWeather = useWeather();
   const isUserReady = useUserReady();
   const recommendation = useRecommendation();
+  const { typedArr: currentWeatherRecArr, setToType, clear } = useTyping();
 
   const {
     recommendation: rec,
     isLoading: isRecLoading,
     refreshRecommendation,
-    setContext,
     setPreferences,
     getRec,
   } = recommendation;
 
-  const typeRec = () => {
-    const respArr = rec.content.split("");
-
-    respArr.forEach((letter, idx) => {
-      setTimeout(() => {
-        setCurrentWeatherRecArr((prev) => [...prev, letter]);
-      }, idx * 5);
-    });
-  };
+  // typewriter effect for recommendation
   useEffect(() => {
-    typeRec();
-  }, [rec]);
+    setToType(rec.content);
+  }, [rec.content]);
 
   useEffect(() => {
     if (!isUserReady) return;
     (async () => {
       try {
         const resp = await getRec();
-        console.log("Called getRec from useEffect:", resp);
         setRecResponse(resp);
-        console.log("recResponse set to:", resp);
       } catch (err) {
         console.error("Error calling getRec from useEffect:", err);
       }
@@ -62,7 +50,7 @@ export default function RecommendationCard() {
         previous +
         '". Please provide a new recommendation.'
     );
-    setCurrentWeatherRecArr([]);
+    clear();
     await refreshRecommendation();
   };
 

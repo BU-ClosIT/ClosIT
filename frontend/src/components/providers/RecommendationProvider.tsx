@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import { useUser, useUserReady } from "./UserProvider";
-import { useWeather } from "./WeatherProvider";
+import { isWeatherReady, useWeather } from "./WeatherProvider";
 import { FirebaseServices } from "../../services/firebase-services";
 import ClosetItem from "../../model/closet/ClosetItem";
 
@@ -51,25 +51,39 @@ export const RecommendationProvider = ({
   const user = useUser();
   const isReady = useUserReady();
   const currentWeather = useWeather();
+  const weatherReady = isWeatherReady();
   const hasMadeRecCallRef = useRef(false);
 
+  const weatherReadyPromise = new Promise((resolve) => {
+    if (weatherReady) {
+      resolve(true);
+    } else {
+      const interval = setInterval(() => {
+        if (weatherReady) {
+          clearInterval(interval);
+          resolve(true);
+        }
+      }, 100);
+    }
+  });
+
   const getRec = useCallback(async () => {
+    await weatherReadyPromise;
+
     // early returns to prevent multiple calls and loading before ready
-    if (!isReady || hasMadeRecCallRef.current || currentWeather.loading) {
+    if (!isReady || hasMadeRecCallRef.current) {
       return;
     }
 
     try {
       hasMadeRecCallRef.current = true;
-
+      console.log({ context });
       const response: { content: string; outfit: ClosetItem[] } =
         await FirebaseServices.getRecommendation({
           userId: user ? user.id : "",
           userPreferences: preferences,
-          context: {
-            context,
-            currentWeather: JSON.stringify(currentWeather),
-          },
+          context,
+          currentWeather: JSON.stringify(currentWeather),
         });
       setIsLoading(false);
 

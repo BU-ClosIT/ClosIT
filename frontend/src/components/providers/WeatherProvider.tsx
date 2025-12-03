@@ -67,6 +67,11 @@ export default function WeatherProvider({
   );
 }
 
+export function isWeatherReady() {
+  const { loading, weather } = useContext(WeatherContext);
+  return !loading && weather !== null;
+}
+
 export function useWeather() {
   return useContext(WeatherContext);
 }

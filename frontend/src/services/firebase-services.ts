@@ -74,10 +74,12 @@ export class FirebaseServices {
     userId,
     userPreferences,
     context,
+    currentWeather,
   }: {
     userId?: string;
     userPreferences?: string;
-    context?: JsonBlob;
+    context?: string;
+    currentWeather?: string;
   }): Promise<{ content: string; outfit: ClosetItem[] }> {
     try {
       const url = "/api/getRecommendation";
@@ -87,6 +89,7 @@ export class FirebaseServices {
           userPreferences,
           userId,
           context,
+          currentWeather,
         }),
       });
 

@@ -31,28 +31,29 @@ const outfitRecommendationOnRequest = async ({
   }
 
   try {
-    const { userId, context, userPreferences, selectedUnit } = request.body;
-    const { context: ctx } = context; // destructure to avoid naming conflict
+    functions.logger.log("Outfit Recommendation request body:", request.body);
 
-    functions.logger.log(
-      `Outfit Recommendation requested for userId: ${userId} 
-      with preferences: ${userPreferences} 
-      and context: ${ctx}`
-    );
+    const {
+      userId,
+      selectedUnit,
+      userPreferences,
+      currentWeather,
+      context,
+      // d
+    } = request.body;
 
     if (!userId) {
       response.status(400).send("Missing userId in request body");
       return;
     }
 
-    let currentWeather = ctx.weather;
-
+    let fetchedWeather = null;
     if (!currentWeather) {
       functions.logger.log(
         "Outfit Recommendation: Fetching current weather as none was provided"
       );
       const geoPosition = await getGeoPositionFromIp({ ip: clientIp });
-      currentWeather = await getCurrentWeatherByLatLong({
+      fetchedWeather = await getCurrentWeatherByLatLong({
         latLong: `${geoPosition.lat},${geoPosition.lon}`,
         selectedUnit: selectedUnit || "F",
         app,
@@ -60,13 +61,16 @@ const outfitRecommendationOnRequest = async ({
     }
 
     const userCloset = await getClosetByUserId({ userId, app });
+    const weather = currentWeather || fetchedWeather.currentConditions;
+
     const resp = await queryGemini({
       query: JSON.stringify({
         prompt: `You are a helpful assistant for picking clothes, 
           please respond in the format: { content: "anything you want to say here", outfit: [itemId1, itemId2, ...] }`,
-        currentWeather: currentWeather?.currentConditions || null,
+        currentWeather: weather,
         userPreferences,
         userCloset,
+        context,
       }),
       app,
     });
