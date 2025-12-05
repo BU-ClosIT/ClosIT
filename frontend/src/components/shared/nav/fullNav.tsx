@@ -31,6 +31,14 @@ const FullNav: React.FC<{ currentPage: PageName }> = ({ currentPage }) => {
         </li>
         <li className="border-b-2 border-transparent hover:border-gray-500">
           <Link
+            href="/saved-outfits"
+            className={currentPage === "Saved Outfits" ? "font-bold" : ""}
+          >
+            Saved Outfits
+          </Link>
+        </li>
+        <li className="border-b-2 border-transparent hover:border-gray-500">
+          <Link
             href="/ai-chat"
             className={currentPage === "AI Chat" ? "font-bold" : ""}
           >

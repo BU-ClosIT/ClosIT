@@ -3,7 +3,7 @@ import * as admin from "firebase-admin";
 import { Response } from "express";
 import { isAuthorizedRequest } from "../util/tokenUtil";
 
-export const deleteClosetItemOnRequest = async ({
+const deleteClosetItemOnRequest = async ({
   request,
   response,
   app,
@@ -22,7 +22,7 @@ export const deleteClosetItemOnRequest = async ({
     const { userId, itemId } = request.body;
 
     const db = app.database();
-    const itemRef = db.ref(`closets/${userId}/items/${itemId}`);
+    const itemRef = db.ref(`closets/${userId}/closet/${itemId}`);
     // check that the item is actually owned by the user asking to delete it
     if (!itemRef) {
       response.status(404).send("Item not found");
@@ -39,3 +39,5 @@ export const deleteClosetItemOnRequest = async ({
 
   response.send("Not implemented yet");
 };
+
+export default deleteClosetItemOnRequest;

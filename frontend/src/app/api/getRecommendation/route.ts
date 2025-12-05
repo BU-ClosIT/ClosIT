@@ -1,10 +1,11 @@
+import { getClientIpFromHeaders, isValidIPv4 } from "../../../util/ip-util";
+import { type NextRequest } from "next/server";
+
 // backend firebase endpoint
 const ENDPOINT_URL = "https://getoutfitrecommendation-6p7lfy6g4a-uc.a.run.app/";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const clientAuth = req.headers.get("authorization");
-
     // Read request body (app-router Request)
     let reqBody: unknown = null;
     try {
@@ -25,12 +26,20 @@ export async function POST(req: Request) {
       }
     }
 
+    const ipFromHeaders = getClientIpFromHeaders(req.headers);
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`,
+    };
+
+    if (isValidIPv4(ipFromHeaders)) {
+      headers["x-client-ip"] = ipFromHeaders;
+    }
+
     const response = await fetch(ENDPOINT_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`,
-      },
+      headers,
       body: JSON.stringify(reqBody),
     });
     console.log("Fetched response from recommendation service");
@@ -49,6 +58,7 @@ export async function POST(req: Request) {
         headers: { "Content-Type": "text/plain" },
       });
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error("Error proxying to Cloud Run recommendation service:", err);
     return new Response(

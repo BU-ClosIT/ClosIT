@@ -3,6 +3,8 @@ import { useUser } from "../../providers/UserProvider";
 import Link from "next/link";
 import { PageName } from "@/src/model/PageName";
 import Logo from "../Logo";
+import Image from "next/image";
+import CurrentWeather from "../../weather/CurrentWeather";
 
 const MobileNav: React.FC<{ currentPage: PageName }> = ({ currentPage }) => {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -20,6 +22,7 @@ const MobileNav: React.FC<{ currentPage: PageName }> = ({ currentPage }) => {
   return (
     <div className="flex flex-row items-center justify-between w-full">
       <Logo />
+      <CurrentWeather />
       <button
         className="flex items-center gap-3 focus:outline-none h-10 w-10 transition-transform duration-200 hover:scale-110 rounded-md p-2"
         aria-haspopup="true"
@@ -27,22 +30,43 @@ const MobileNav: React.FC<{ currentPage: PageName }> = ({ currentPage }) => {
         onClick={() => setIsOpen((s) => !s)}
       >
         {isOpen ? (
-          <img src="/icons/Close.svg" />
+          <Image
+            src="/icons/Close.svg"
+            alt="Close menu"
+            width={24}
+            height={24}
+          />
         ) : (
-          <img src="/icons/BurgerMenu.svg" />
+          <Image
+            src="/icons/BurgerMenu.svg"
+            alt="Open menu"
+            width={24}
+            height={24}
+          />
         )}
       </button>
 
       <div
-        className={`absolute top-15 right-0 w-50 h-full bg-gray-200 transition-opacity duration-200 border-solid shadow-md rounded ${
+        className={`absolute top-15 right-0 w-50 bg-gray-200 transition-opacity duration-200 border-solid shadow-md rounded ${
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >
         <ul className="flex flex-col items-center justify-center h-full">
-          <li>
+          <li className="py-2 border-b w-full text-center">
+            <Link
+              href={"/closet"}
+              className={`hover:underline ${
+                currentPage === "Profile" ? "font-bold" : ""
+              }`}
+            >
+              {/* direct this to profile eventually */}
+              Hello, {user?.name || "Guest"}
+            </Link>
+          </li>
+          <li className="py-2 border-b border-gray-300 w-full text-center">
             <Link
               href="/dashboard"
-              className={`py-2 hover:underline ${
+              className={`hover:underline ${
                 currentPage === "Dashboard" ? "font-bold" : ""
               }`}
               onClick={() => setIsOpen(false)}
@@ -50,7 +74,7 @@ const MobileNav: React.FC<{ currentPage: PageName }> = ({ currentPage }) => {
               Dashboard
             </Link>
           </li>
-          <li>
+          <li className="py-2 border-b border-gray-300 w-full text-center">
             <Link
               href="/closet"
               className={`py-2 hover:underline ${
@@ -61,7 +85,7 @@ const MobileNav: React.FC<{ currentPage: PageName }> = ({ currentPage }) => {
               Closet Management
             </Link>
           </li>
-          <li>
+          <li className="py-2 border-b border-gray-300 w-full text-center">
             <Link
               href="/ai-chat"
               className={`py-2 hover:underline ${

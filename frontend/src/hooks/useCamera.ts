@@ -42,15 +42,14 @@ export function useCamera(initialFacing: FacingMode = "environment") {
             videoRef.current.srcObject = s;
             // some browsers require muted/autoPlay to allow play(); swallow errors
             // but attempt to play so the preview starts when possible
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
             await videoRef.current.play().catch(() => {});
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
           } catch (e) {
             // ignore and continue retrying
           }
           break;
         }
         // wait 100ms and try again
-        // eslint-disable-next-line no-await-in-loop
         await new Promise((r) => setTimeout(r, 100));
       }
 

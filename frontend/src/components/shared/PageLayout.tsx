@@ -1,6 +1,8 @@
 import { PageName } from "@/src/model/PageName";
 import Footer from "./footer";
 import Nav from "./nav/nav";
+import { Suspense } from "react";
+import Loader from "./Loader";
 
 const PageLayout: React.FC<{
   currentPage: PageName;
@@ -13,7 +15,7 @@ const PageLayout: React.FC<{
       </header>
 
       <main className="w-full max-w-4xl mx-auto overflow-hidden flex-1">
-        {children}
+        <Suspense fallback={<Loader />}>{children}</Suspense>
       </main>
 
       <footer className="w-full sticky border-t py-3">

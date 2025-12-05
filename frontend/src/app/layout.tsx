@@ -1,3 +1,4 @@
+import { RecommendationProvider } from "../components/providers/RecommendationProvider";
 import UserProvider from "../components/providers/UserProvider";
 import WeatherProvider from "../components/providers/WeatherProvider";
 import "./globals.css";
@@ -19,7 +20,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <WeatherProvider>
-          <UserProvider>{children}</UserProvider>
+          <UserProvider>
+            <RecommendationProvider>{children}</RecommendationProvider>
+          </UserProvider>
         </WeatherProvider>
       </body>
     </html>

@@ -1,0 +1,15 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  # pin a Node version Netlify will use (optional)
+  NODE_VERSION = "18"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Run the forwarder for all requests under /api/*
+[[edge_functions]]
+path = "/api/*"
+function = "forward-all"

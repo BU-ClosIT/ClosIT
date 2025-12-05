@@ -1,9 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import { useWeather } from "../providers/WeatherProvider";
+import useIsMobile from "@/src/hooks/useIsMobile";
 
 export default function CurrentWeather() {
   const { weather: currentWeather, loading } = useWeather();
+
+  const isMobile = useIsMobile();
 
   if (loading) {
     return (
@@ -17,6 +21,27 @@ export default function CurrentWeather() {
     return (
       <div className="w-full flex flex-row items-center justify-center gap-4">
         <p>No weather data available.</p>
+      </div>
+    );
+  }
+
+  if (isMobile) {
+    return (
+      <div className="w-full flex flex-row items-center justify-center gap-2">
+        <>
+          <p>
+            {currentWeather?.currentConditions?.temp}
+            {currentWeather?.selectedUnit}°
+          </p>
+          <Image
+            className="w-8 h-8"
+            title={currentWeather?.currentConditions?.icon}
+            src={`icons/weather/${currentWeather?.currentConditions?.icon}.svg`}
+            alt={currentWeather?.currentConditions?.icon || "weather icon"}
+            width={32}
+            height={32}
+          />
+        </>
       </div>
     );
   }
@@ -37,11 +62,13 @@ export default function CurrentWeather() {
           {currentWeather?.currentConditions?.temp}
           {currentWeather?.selectedUnit}°
         </p>
-        <img
+        <Image
           className="w-10 h-10"
           title={currentWeather?.currentConditions?.icon}
           src={`icons/weather/${currentWeather?.currentConditions?.icon}.svg`}
-          alt={currentWeather?.currentConditions?.icon}
+          alt={currentWeather?.currentConditions?.icon || "weather icon"}
+          width={40}
+          height={40}
         />
       </>
     </div>
