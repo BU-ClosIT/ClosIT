@@ -338,6 +338,7 @@ export default function ItemDetails({
             alt={selectedItem.name}
             width={200}
             height={200}
+            unoptimized
             style={{
               width: "100%",
               borderRadius: "8px",
