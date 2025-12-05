@@ -15,6 +15,7 @@ const FullNav: React.FC<{ currentPage: PageName }> = ({ currentPage }) => {
           <Link
             href="/dashboard"
             className={currentPage === "Dashboard" ? "font-bold" : ""}
+            data-testid="cypress-nav-dashboard-link"
           >
             Dashboard
           </Link>
@@ -23,6 +24,7 @@ const FullNav: React.FC<{ currentPage: PageName }> = ({ currentPage }) => {
           <Link
             href="/closet"
             className={currentPage === "Closet" ? "font-bold" : ""}
+            data-testid="cypress-nav-closet-link"
           >
             Manage Closet
           </Link>

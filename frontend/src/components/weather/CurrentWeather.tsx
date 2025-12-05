@@ -49,16 +49,16 @@ export default function CurrentWeather() {
   return (
     <div className="w-full flex flex-row items-center justify-center gap-4">
       <>
-        <p>
+        <p data-testid="cypress-currentweather-datetime">
           {currentWeather?.currentConditions?.datetimeEpoch &&
             new Date(
               currentWeather?.currentConditions?.datetimeEpoch * 1000
             ).toLocaleString()}
         </p>
-        <p>
+        <p data-testid="cypress-currentweather-location">
           {currentWeather?.city}, {currentWeather?.region}
         </p>
-        <p>
+        <p data-testid="cypress-currentweather-temp">
           {currentWeather?.currentConditions?.temp}
           {currentWeather?.selectedUnit}°
         </p>

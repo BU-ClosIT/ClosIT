@@ -1,3 +1,8 @@
+/** Unit tests for frontend components 
+ * It check if the components render correct elements on the screen
+ * 
+ */
+
 describe('cypress demo', () => {
   it('renders logo on the screen', () => {
     cy.visit('http://localhost:3000/dashboard')
@@ -38,3 +43,4 @@ describe('cypress demo', () => {
     .should('exist')
   })
 }) 
+
