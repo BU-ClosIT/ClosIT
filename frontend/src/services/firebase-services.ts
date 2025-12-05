@@ -1,5 +1,5 @@
 import ClosetItem from "../model/closet/ClosetItem";
-import JsonBlob from "../model/JsonBlon";
+import JsonBlob from "../model/JsonBlob";
 import {
   getStorage,
   ref as storageRef,

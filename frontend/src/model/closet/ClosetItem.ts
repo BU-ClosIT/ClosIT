@@ -1,4 +1,4 @@
-import JsonBlob from "../JsonBlon";
+import JsonBlob from "../JsonBlob";
 import Season from "./Seasons";
 import Size from "./Sizes";
 
