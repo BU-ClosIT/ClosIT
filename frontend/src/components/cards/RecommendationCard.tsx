@@ -29,7 +29,6 @@ export default function RecommendationCard() {
     getRec,
   } = recommendation;
 
-  // Controls the AddOutfitModal
   const [isAddOutfitOpen, setAddOutfitOpen] = useState(false);
 
   // Extract item IDs from recommendation
