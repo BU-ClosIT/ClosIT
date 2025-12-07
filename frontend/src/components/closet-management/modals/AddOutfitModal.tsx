@@ -21,7 +21,6 @@ export default function AddOutfitModal({
     itemIds: [] as string[],
   });
 
-  // Sync prop → state whenever modal opens OR defaultItemIds changes
   useEffect(() => {
     if (isOpen) {
       setFormData((prev) => ({
