@@ -1,4 +1,5 @@
 import ClosetItem from "../model/closet/ClosetItem";
+import Outfit from "../model/Outfit";
 import JsonBlob from "../model/JsonBlob";
 import {
   getStorage,
@@ -314,4 +315,50 @@ export class FirebaseServices {
       return "Error Fetching AI Response: " + e;
     }
   }
+
+  public static async setOutfitInCloset({
+    userId,
+    outfit,
+  }: {
+    userId: string;
+    outfit: Outfit;
+  }) {
+    try {
+      const url = "/api/setOutfitInCloset";
+      const resp = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify({
+          userId,
+          outfit,
+        }),
+      });
+
+      const json = await resp.json();
+
+      return json;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  }
+
+  public static async getOutfitsByUserId({ userId }: { userId: string }) {
+    try {
+      const url = "/api/getOutfitsByUserId";
+      const resp = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify({
+          userId,
+        }),
+      });
+
+      const json = await resp.json();
+
+      return json;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  }
+
 }

@@ -9,53 +9,53 @@ import { useUser, useUserReady } from "../../components/providers/UserProvider";
 import { OutfitCard } from "../../components/cards/OutfitCard";
 
 const sampleOutfits: Outfit[] = [
-  {
-    id: "outfit-1",
-    name: "Sample Outfit 1",
-    desc: "sample 1",
-    itemIds: [
-      "-OeOb2N1Xlp7Sf0wlYo5",
-      "-OeOlgbQ1QSbFg6Wk6Zb",
-      "-OesEcXxDZ1JHWSbEsEp",
-      "-OesFgahcq7NHgHoZCN7",
-      "-OesKG599vH_FqGWWInq",
-    ],
-  },
-  {
-    id: "outfit-2",
-    name: "Sample Outfit 2",
-    desc: "outfit 2 desc",
-    itemIds: [
-      "-OesLGT5_R72xYqlsHXh",
-      "-OexiWas3PnyfCkyEQNc",
-      "-Oexij2fHCMpV9IaTQr3",
-      "-OeOb2N1Xlp7Sf0wlYo5",
-      "-OesEcXxDZ1JHWSbEsEp",
-      "-OesKG599vH_FqGWWInq",
-    ],
-  },
-  {
-    id: "outfit-3",
-    name: "Sample Outfit 3",
-    desc: "fit3desc",
-    itemIds: [
-      "-OesLGT5_R72xYqlsHXh",
-      "-OexiWas3PnyfCkyEQNc",
-      "-Oexij2fHCMpV9IaTQr3",
-      "-OesFgahcq7NHgHoZCN7",
-    ],
-  },
-  {
-    id: "outfit-4",
-    name: "Sample Outfit 4",
-    desc: "samplefit 4",
-    itemIds: [
-      "-OeOlgbQ1QSbFg6Wk6Zb",
-      "-OexiWas3PnyfCkyEQNc",
-      "-OesKG599vH_FqGWWInq",
-      "-Oexij2fHCMpV9IaTQr3",
-    ],
-  },
+    {
+        id: "outfit-1",
+        name: "Sample Outfit 1",
+        desc: "sample 1",
+        itemIds: [
+            "-OeOb2N1Xlp7Sf0wlYo5",
+            "-OeOlgbQ1QSbFg6Wk6Zb",
+            "-OesEcXxDZ1JHWSbEsEp",
+            "-OesFgahcq7NHgHoZCN7",
+            "-OesKG599vH_FqGWWInq",
+        ],
+    },
+    {
+        id: "outfit-2",
+        name: "Sample Outfit 2",
+        desc: "outfit 2 desc",
+        itemIds: [
+            "-OesLGT5_R72xYqlsHXh",
+            "-OexiWas3PnyfCkyEQNc",
+            "-Oexij2fHCMpV9IaTQr3",
+            "-OeOb2N1Xlp7Sf0wlYo5",
+            "-OesEcXxDZ1JHWSbEsEp",
+            "-OesKG599vH_FqGWWInq",
+        ],
+    },
+    {
+        id: "outfit-3",
+        name: "Sample Outfit 3",
+        desc: "fit3desc",
+        itemIds: [
+            "-OesLGT5_R72xYqlsHXh",
+            "-OexiWas3PnyfCkyEQNc",
+            "-Oexij2fHCMpV9IaTQr3",
+            "-OesFgahcq7NHgHoZCN7",
+        ],
+    },
+    {
+        id: "outfit-4",
+        name: "Sample Outfit 4",
+        desc: "samplefit 4",
+        itemIds: [
+            "-OeOlgbQ1QSbFg6Wk6Zb",
+            "-OexiWas3PnyfCkyEQNc",
+            "-OesKG599vH_FqGWWInq",
+            "-Oexij2fHCMpV9IaTQr3",
+        ],
+    },
 ];
 
 export default function SavedOutfitsPage() {
@@ -70,29 +70,50 @@ export default function SavedOutfitsPage() {
     useEffect(() => {
         if (!isReady || !user?.id) return;
 
+        // FETCH CLOSET
         const fetchCloset = async () => {
             setLoadingCloset(true);
             try {
-                const response: { items: ClosetItem[] } | ClosetItem[] =
+                const response: ClosetItem[] | { items: ClosetItem[] } =
                     await FirebaseServices.getClosetByUserId({ userId: user.id });
 
                 if (Array.isArray(response)) setUserCloset(response);
-                else if ("items" in response && Array.isArray(response.items)) setUserCloset(response.items);
+                else if ("items" in response && Array.isArray(response.items))
+                    setUserCloset(response.items);
                 else setUserCloset([]);
-            } catch (e) {
-                console.error(e);
+            } catch (err) {
+                console.error("Error fetching closet:", err);
                 setUserCloset([]);
             } finally {
                 setLoadingCloset(false);
             }
         };
 
-        // Load sample outfits for demo
+        // FETCH OUTFITS
+        const fetchOutfits = async () => {
+            setLoadingOutfits(true);
+            try {
+                const outfits: Outfit[] =
+                    await FirebaseServices.getOutfitsByUserId({ userId: user.id });
+
+                setUserOutfits(outfits ?? []);
+            } catch (err) {
+                console.error("Error fetching outfits:", err);
+                setUserOutfits([]);
+            } finally {
+                setLoadingOutfits(false);
+            }
+        };
+
+        fetchCloset();
+        // fetchOutfits(); !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        // Load sample outfits for demo !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
         setUserOutfits(sampleOutfits);
         setLoadingOutfits(false);
 
-        fetchCloset();
     }, [isReady, user?.id]);
+
 
     const closetMap = useMemo(() => {
         const map: Record<string, ClosetItem> = {};

@@ -1,6 +1,7 @@
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import { ClosetItem } from "../model/ClosetItem";
+import { Outfit } from "../model/Outfit";
 import JsonBlob from "../model/JsonBlob";
 
 // a bunch of utils for interacting with the database
@@ -114,4 +115,55 @@ export const storeOrUpdateUserConversation = async ({
   });
   newConv.child("id").set(newConv.key);
   return newConv.key;
+};
+
+export const setOutfitItem = async ({
+  userId,
+  outfitItem,
+  app,
+}: {
+  userId: string;
+  outfitItem: Outfit;
+  app: admin.app.App;
+}) => {
+  functions.logger.log("running setOutfitItem");
+  const db = app.database();
+  const dbRef = db.ref("outfits");
+  const userOutfitSnap = await dbRef.child(`${userId}`).get();
+  if (!userOutfitSnap.exists()) {
+    dbRef.push(`${userId}`);
+  }
+
+  const newItem = dbRef
+    .child(`${userId}`)
+    .child("outfits")
+    .push({ ...outfitItem, createdAt: Date.now(), modifiedAt: Date.now() });
+  newItem.child("id").set(newItem.key);
+  return newItem.key;
+};
+
+export const getOutfitsByUserId = async ({
+  userId,
+  app,
+}: {
+  userId: string;
+  app: admin.app.App;
+}): Promise<Outfit[]> => {
+  functions.logger.log(`running getOutfitsByUserId for userId: ${userId}`);
+  const db = app.database();
+  const dbRef = db.ref("outfits");
+  const userClosetSnap = await dbRef.child(`${userId}/outfits`).get();
+  if (!userClosetSnap.exists()) {
+    functions.logger.log(`no closet found for userId: ${userId}`);
+    return [];
+  }
+
+  const itemsJson: JsonBlob = userClosetSnap.val() as JsonBlob;
+  const Outfits: Outfit[] = [];
+  Object.keys(itemsJson).forEach((key) => {
+    const itemJson = itemsJson[key] as Outfit;
+    Outfits.push(itemJson);
+  });
+
+  return Outfits;
 };

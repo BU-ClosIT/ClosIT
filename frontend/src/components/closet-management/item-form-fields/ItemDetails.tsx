@@ -206,7 +206,6 @@ export default function ItemDetails({
           )}
         </div>
 
-        {/* TODO handle shoe sizes */}
         <div className="flex items-center">
           <label htmlFor="size" className="font-semibold mr-2">
             Size:
