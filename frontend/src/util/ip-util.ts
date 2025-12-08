@@ -8,7 +8,7 @@ export function getClientIpFromHeaders(
   headers: Headers | Record<string, string | undefined>
 ) {
   const get = (name: string) => (headers as Headers).get(name);
-
+  console.log("Headers:", headers);
   return (
     get("x-client-ip") ||
     get("x-nf-client-connection-ip") || // Netlify sometimes sets this
