@@ -8,12 +8,23 @@ import { type NextRequest } from "next/server";
 const ENDPOINT_URL = "https://getweatherbylocation-6p7lfy6g4a-uc.a.run.app/";
 
 export async function GET(req: NextRequest) {
+  const ipFromHeaders = getClientIpFromHeaders(req.headers);
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  if (isValidIPv4(ipFromHeaders) || isValidIPv6(ipFromHeaders)) {
+    headers["x-client-ip"] = ipFromHeaders;
+  }
+
   try {
     const response = await fetch(ENDPOINT_URL, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         authorization: `Bearer ${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`,
+        ...headers,
       },
     });
 
@@ -28,19 +39,8 @@ export async function GET(req: NextRequest) {
       body = text;
     }
 
-    const ipFromHeaders = getClientIpFromHeaders(req.headers);
-
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-    };
-
-    if (isValidIPv4(ipFromHeaders) || isValidIPv6(ipFromHeaders)) {
-      headers["x-client-ip"] = ipFromHeaders;
-    }
-
     return new Response(JSON.stringify(body), {
       status: response.status,
-      headers,
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
