@@ -1,4 +1,8 @@
-import { getClientIpFromHeaders, isValidIPv4 } from "@/src/util/ip-util";
+import {
+  getClientIpFromHeaders,
+  isValidIPv4,
+  isValidIPv6,
+} from "@/src/util/ip-util";
 import { type NextRequest } from "next/server";
 
 const ENDPOINT_URL = "https://getweatherbylocation-6p7lfy6g4a-uc.a.run.app/";
@@ -30,7 +34,7 @@ export async function GET(req: NextRequest) {
       "Content-Type": "application/json",
     };
 
-    if (isValidIPv4(ipFromHeaders)) {
+    if (isValidIPv4(ipFromHeaders) || isValidIPv6(ipFromHeaders)) {
       headers["x-client-ip"] = ipFromHeaders;
     }
 

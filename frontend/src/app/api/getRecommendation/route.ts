@@ -1,4 +1,8 @@
-import { getClientIpFromHeaders, isValidIPv4 } from "../../../util/ip-util";
+import {
+  getClientIpFromHeaders,
+  isValidIPv4,
+  isValidIPv6,
+} from "../../../util/ip-util";
 import { type NextRequest } from "next/server";
 
 // backend firebase endpoint
@@ -33,7 +37,7 @@ export async function POST(req: NextRequest) {
       authorization: `Bearer ${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`,
     };
 
-    if (isValidIPv4(ipFromHeaders)) {
+    if (isValidIPv4(ipFromHeaders) || isValidIPv6(ipFromHeaders)) {
       headers["x-client-ip"] = ipFromHeaders;
     }
 
