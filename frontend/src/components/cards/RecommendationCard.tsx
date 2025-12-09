@@ -1,21 +1,21 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { useUserReady } from "../providers/UserProvider";
+import { useEffect, useState } from "react";
+import { useUser, useUserReady } from "../providers/UserProvider";
 import Loader from "../shared/Loader";
 import { useWeather } from "../providers/WeatherProvider";
 import { ClosetItemCard } from "./ClosetItemCard";
-import {
-  Recommendation,
-  useRecommendation,
-} from "../providers/RecommendationProvider";
+import { useRecommendation } from "../providers/RecommendationProvider";
 import { useTyping } from "@/src/hooks/useTyping";
+import AddOutfitModal from "../../components/closet-management/modals/AddOutfitModal";
+import { FirebaseServices } from "../../../src/services/firebase-services";
 
 export default function RecommendationCard() {
-  const [recResponse, setRecResponse] = useState<Recommendation>();
   const currentWeather = useWeather();
+  const user = useUser();
   const isUserReady = useUserReady();
   const recommendation = useRecommendation();
+  const [toRender, setToRender] = useState<any[]>([]);
   const { typedArr: currentWeatherRecArr, setToType, clear } = useTyping();
 
   const {
@@ -26,17 +26,24 @@ export default function RecommendationCard() {
     getRec,
   } = recommendation;
 
-  // typewriter effect for recommendation
-  useEffect(() => {
-    setToType(rec.content);
-  }, [rec.content]);
+  const [isAddOutfitOpen, setAddOutfitOpen] = useState(false);
 
+  // Extract item IDs from recommendation
+  const itemIds = rec?.outfit.map((i) => i.id) ?? [];
+
+  // Typewriter effect
+  useEffect(() => {
+    console.log("rec changed:", rec);
+    setToType(rec.content);
+    setToRender(rec.outfit);
+  }, [rec.content, rec.outfit]);
+
+  // Fetch recommendation when user + weather ready
   useEffect(() => {
     if (!isUserReady) return;
     (async () => {
       try {
-        const resp = await getRec();
-        setRecResponse(resp);
+        await getRec();
       } catch (err) {
         console.error("Error calling getRec from useEffect:", err);
       }
@@ -45,13 +52,25 @@ export default function RecommendationCard() {
 
   const handleTryAgain = async () => {
     const previous = currentWeatherRecArr.join("");
+
     setPreferences(
-      'Previous recommendation was: "' +
-        previous +
-        '". Please provide a new recommendation.'
+      `Previous recommendation was: "${previous}". Please provide a new recommendation.`
     );
+
     clear();
     await refreshRecommendation();
+  };
+
+  const saveOutfit = async (outfit: any) => {
+    if (!user) {
+      console.error("User not found in context");
+      return;
+    }
+
+    await FirebaseServices.setOutfitInCloset({
+      userId: user.id,
+      outfit,
+    });
   };
 
   return (
@@ -65,7 +84,7 @@ export default function RecommendationCard() {
           </div>
 
           <div className="flex flex-wrap gap-4 justify-center">
-            {recResponse?.outfit.map((item) => (
+            {toRender.map((item) => (
               <ClosetItemCard key={item.id} item={item} />
             ))}
           </div>
@@ -74,12 +93,33 @@ export default function RecommendationCard() {
 
       <div className="flex justify-center">
         <button
-          className="w-40 bg-blue-500 text-white px-4 py-2 rounded mt-4 justify-center align-middle hover:bg-blue-600 transition-colors"
-          onClick={() => handleTryAgain()}
+          className="w-40 bg-blue-500 text-white px-4 py-2 rounded mt-4 hover:bg-blue-600 transition-colors"
+          onClick={handleTryAgain}
         >
           Try Again
         </button>
       </div>
+
+      <div className="flex justify-center mt-4">
+        <button
+          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
+          onClick={() => setAddOutfitOpen(true)}
+        >
+          Save as Outfit
+        </button>
+      </div>
+
+      <AddOutfitModal
+        isOpen={isAddOutfitOpen}
+        onClose={() => setAddOutfitOpen(false)}
+        defaultItemIds={itemIds}
+        defaultDesc={
+          currentWeather?.weather?.currentConditions
+            ? `[${currentWeather.weather.currentConditions.conditions || "Unknown"}/${currentWeather.weather.currentConditions.temp}°${currentWeather.weather.selectedUnit}]\n`
+            : ""
+        }
+        saveOutfit={saveOutfit}
+      />
     </div>
   );
 }

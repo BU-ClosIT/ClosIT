@@ -10,6 +10,8 @@ import updateItemOnRequest from "./on-request/updateItemOnRequest";
 import deleteClosetItemOnRequest from "./on-request/deleteClosetItemOnRequest";
 import addFromPhotoOnRequest from "./on-request/addFromPhotoOnRequest";
 import converseOnRequest from "./on-request/converseOnRequest";
+import setOutfitOnRequest from "./on-request/setOutfitOnRequest";
+import getOutfitsByUserIdOnRequest from "./on-request/getOutfitsByUserIdOnRequest";
 
 const app = admin.initializeApp(firebaseConfigBuilder());
 
@@ -61,3 +63,15 @@ export const addFromPhoto = functions.https.onRequest((request, response) => {
 export const converse = functions.https.onRequest((request, response) => {
   return converseOnRequest({ request, response, app });
 });
+
+export const setOutfit = functions.https.onRequest(
+  (request, response) => {
+    return setOutfitOnRequest({ request, response, app });
+  }
+);
+
+export const getOutfitsByUserId = functions.https.onRequest(
+  (request, response) => {
+    return getOutfitsByUserIdOnRequest({ request, response, app });
+  }
+);

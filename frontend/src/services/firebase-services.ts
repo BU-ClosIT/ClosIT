@@ -1,4 +1,5 @@
 import ClosetItem from "../model/closet/ClosetItem";
+import Outfit from "../model/Outfit";
 import JsonBlob from "../model/JsonBlob";
 import {
   getStorage,
@@ -41,7 +42,6 @@ export class FirebaseServices {
       });
 
       const respJson = await resp.json();
-      console.log("Fetched current weather:", respJson);
       return respJson;
     } catch (e) {
       console.error("Error fetching current weather: " + e);
@@ -198,7 +198,6 @@ export class FirebaseServices {
 
     // Get the download URL
     const downloadURL = await getDownloadURL(fileRef);
-    console.log("File available at", downloadURL);
     const firestore: Firestore = getFirestore(app);
     const uid = userId;
     const col = collection(firestore, `closetItems/${uid}/closet`);
@@ -312,6 +311,51 @@ export class FirebaseServices {
       return JSON.parse(cleanText);
     } catch (e) {
       return "Error Fetching AI Response: " + e;
+    }
+  }
+
+  public static async setOutfitInCloset({
+    userId,
+    outfit,
+  }: {
+    userId: string;
+    outfit: Outfit;
+  }) {
+    try {
+      const url = "/api/setOutfitInCloset";
+      const resp = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify({
+          userId,
+          outfit,
+        }),
+      });
+
+      const json = await resp.json();
+
+      return json;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  }
+
+  public static async getOutfitsByUserId({ userId }: { userId: string }) {
+    try {
+      const url = "/api/getOutfitsByUserId";
+      const resp = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify({
+          userId,
+        }),
+      });
+
+      const json = await resp.json();
+
+      return json;
+    } catch (e) {
+      console.error(e);
+      return null;
     }
   }
 }
