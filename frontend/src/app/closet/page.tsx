@@ -14,6 +14,7 @@ import ClosetLeftPanel from "../../components/closet-management/panels/ClosetLef
 import ClosetRightPanel from "../../components/closet-management/panels/ClosetRightPanel";
 import useIsMobile from "@/src/hooks/useIsMobile";
 import CloseButton from "@/src/components/shared/CloseButton";
+import { useRouter } from "next/navigation";
 
 export default function ClosetPage() {
   const [selectedItem, setSelectedItem] = useState<ClosetItem | null>(null);
@@ -29,7 +30,7 @@ export default function ClosetPage() {
   const [userCloset, setUserCloset] = useState<ClosetItem[]>([]);
 
   const isMobile = useIsMobile();
-
+  const router = useRouter();
   const user = useUser();
   const isReady = useUserReady();
 
@@ -69,8 +70,12 @@ export default function ClosetPage() {
         userId: user.id,
         file,
       });
-      setUserCloset((prev) => [...prev, newItem]);
+      setUserCloset((prev) => {
+        console.log(prev);
+        return [...prev, { ...newItem.itemDetails, id: newItem.id }];
+      });
       setIsUploading(false);
+      router.push(`/closet?id=${newItem.id}`);
       return newItem;
     } catch (e) {
       console.error("Error uploading file and creating item:", e);
