@@ -42,7 +42,6 @@ export class FirebaseServices {
       });
 
       const respJson = await resp.json();
-      console.log("Fetched current weather:", respJson);
       return respJson;
     } catch (e) {
       console.error("Error fetching current weather: " + e);
@@ -199,7 +198,6 @@ export class FirebaseServices {
 
     // Get the download URL
     const downloadURL = await getDownloadURL(fileRef);
-    console.log("File available at", downloadURL);
     const firestore: Firestore = getFirestore(app);
     const uid = userId;
     const col = collection(firestore, `closetItems/${uid}/closet`);
@@ -360,5 +358,4 @@ export class FirebaseServices {
       return null;
     }
   }
-
 }

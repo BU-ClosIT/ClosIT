@@ -87,6 +87,16 @@ const MobileNav: React.FC<{ currentPage: PageName }> = ({ currentPage }) => {
           </li>
           <li className="py-2 border-b border-gray-300 w-full text-center">
             <Link
+              href="/saved-outfits"
+              className={`py-2 hover:underline ${
+                currentPage === "Saved Outfits" ? "font-bold" : ""
+              }`}
+            >
+              Saved Outfits
+            </Link>
+          </li>
+          <li className="py-2 border-b border-gray-300 w-full text-center">
+            <Link
               href="/ai-chat"
               className={`py-2 hover:underline ${
                 currentPage === "AI Chat" ? "font-bold" : ""

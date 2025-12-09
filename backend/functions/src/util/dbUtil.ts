@@ -119,11 +119,11 @@ export const storeOrUpdateUserConversation = async ({
 
 export const setOutfitItem = async ({
   userId,
-  outfitItem,
+  outfit,
   app,
 }: {
   userId: string;
-  outfitItem: Outfit;
+  outfit: Outfit;
   app: admin.app.App;
 }) => {
   functions.logger.log("running setOutfitItem");
@@ -131,7 +131,7 @@ export const setOutfitItem = async ({
   const dbRef = db.ref(`closets/${userId}/outfits`);
 
   const newItem = dbRef.push({
-    ...outfitItem,
+    ...outfit,
     createdAt: Date.now(),
     modifiedAt: Date.now(),
   });

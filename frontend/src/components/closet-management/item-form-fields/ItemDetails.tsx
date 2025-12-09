@@ -40,7 +40,6 @@ export default function ItemDetails({
         userId: user!.id,
         itemId: selectedItem.id,
       });
-      console.log("Item deleted successfully from database");
       setSelectedItem(null);
     } catch (err) {
       console.error("Failed to delete item from database:", err);
@@ -93,7 +92,6 @@ export default function ItemDetails({
         itemId: selectedItem.id,
         updatedFields,
       });
-      console.log("Updated item in database:", response);
     } catch (err) {
       console.error("Failed to update item in database:", err);
       // Optionally revert local state on failure

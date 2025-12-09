@@ -5,7 +5,7 @@ import { isAuthorizedRequest } from "../util/tokenUtil";
 import { setOutfitItem } from "../util/dbUtil";
 
 /** Handles HTTP POST request for setting a new outfit */
-const setOutfitOnRequest= async ({
+const setOutfitOnRequest = async ({
   request,
   response,
   app,
@@ -21,10 +21,10 @@ const setOutfitOnRequest= async ({
   }
 
   try {
-    const { userId, item } = request.body;
+    const { userId, outfit } = request.body;
 
     // set the item in the outfits database
-    const itemId = await setOutfitItem({ userId, outfitItem: item, app });
+    const itemId = await setOutfitItem({ userId, outfit, app });
 
     response.status(200).send({ itemId });
   } catch (error) {
