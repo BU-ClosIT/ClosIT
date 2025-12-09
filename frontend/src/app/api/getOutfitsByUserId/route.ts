@@ -1,5 +1,5 @@
 // Cloud Run endpoint proxy (App Router)
-const ENDPOINT_URL = "https://getclosetbyuserid-6p7lfy6g4a-uc.a.run.app/";
+const ENDPOINT_URL = "https://getoutfitsbyuserid-6p7lfy6g4a-uc.a.run.app/";
 
 export async function POST(req: Request) {
   try {
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
-    console.error("Error proxying to getClosetByUserId service:", err);
+    console.error("Error proxying to getOutfitsByUserId service:", err);
     return new Response(
       JSON.stringify({ error: "proxy_error", message: err?.message }),
       {

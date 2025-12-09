@@ -1,16 +1,16 @@
-// Cloud Run endpoint proxy (App Router)
-const ENDPOINT_URL = "https://getclosetbyuserid-6p7lfy6g4a-uc.a.run.app/";
+const ENDPOINT_URL = "https://setOutfit-6p7lfy6g4a-uc.a.run.app/";
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
     // Read request body (app-router Request)
     let reqBody: unknown = null;
     try {
-      reqBody = await req.json();
+      reqBody = await request.json();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       // If body isn't JSON or is empty, try text
       try {
-        const t = await req.text();
+        const t = await request.text();
         if (t) {
           try {
             reqBody = JSON.parse(t);
@@ -31,25 +31,10 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify(reqBody),
     });
-
-    const text = await response.text();
-
-    // Try to parse JSON, otherwise return the raw text
-    try {
-      const json = JSON.parse(text);
-      return new Response(JSON.stringify(json), {
-        status: response.status,
-        headers: { "Content-Type": "application/json" },
-      });
-    } catch {
-      return new Response(text, {
-        status: response.status,
-        headers: { "Content-Type": "text/plain" },
-      });
-    }
+    return response;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
-    console.error("Error proxying to getClosetByUserId service:", err);
+    console.error("Error proxying to setOutfit service:", err);
     return new Response(
       JSON.stringify({ error: "proxy_error", message: err?.message }),
       {
