@@ -52,8 +52,7 @@ export default function AiChatCard() {
       const resp = await FirebaseServices.converse({
         query: {
           context: newContext,
-          currentWeather:
-            currentWeather?.currentConditions || "No weather data available",
+          currentWeather: currentWeather || "No weather data available",
         },
         userId: user?.id,
       });
