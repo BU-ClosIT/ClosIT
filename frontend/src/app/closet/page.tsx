@@ -42,8 +42,6 @@ export default function ClosetPage() {
         const response: { items: ClosetItem[] } | ClosetItem[] =
           await FirebaseServices.getClosetByUserId({ userId: user.id });
 
-        console.log("Closet response:", response);
-
         if (Array.isArray(response)) {
           setUserCloset(response);
         } else if ("items" in response && Array.isArray(response.items)) {

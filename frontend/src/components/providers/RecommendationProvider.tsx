@@ -77,7 +77,6 @@ export const RecommendationProvider = ({
 
     try {
       hasMadeRecCallRef.current = true;
-      console.log({ context });
       const response: { content: string; outfit: ClosetItem[] } =
         await FirebaseServices.getRecommendation({
           userId: user ? user.id : "",
@@ -86,8 +85,6 @@ export const RecommendationProvider = ({
           currentWeather: JSON.stringify(currentWeather),
         });
       setIsLoading(false);
-
-      console.log("Recommendation response:", response);
       setRecommendation({
         content: response.content,
         outfit: response.outfit,

@@ -36,8 +36,12 @@ export async function POST(req: NextRequest) {
       "Content-Type": "application/json",
       authorization: `Bearer ${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`,
     };
-
-    if (isValidIPv4(ipFromHeaders) || isValidIPv6(ipFromHeaders)) {
+    const isLocalHost =
+      ipFromHeaders === "::1" || ipFromHeaders === "127.0.0.1";
+    if (
+      !isLocalHost &&
+      (isValidIPv4(ipFromHeaders) || isValidIPv6(ipFromHeaders))
+    ) {
       headers["x-client-ip"] = ipFromHeaders;
     }
 
@@ -46,9 +50,7 @@ export async function POST(req: NextRequest) {
       headers,
       body: JSON.stringify(reqBody),
     });
-    console.log("Fetched response from recommendation service");
     const text = await response.text();
-    console.log("Response from recommendation service:", text);
     // Try to parse JSON, otherwise return the raw text
     try {
       const json = JSON.parse(text);

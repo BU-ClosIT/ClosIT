@@ -1,1 +1,1 @@
-export type PageName = "Dashboard" | "Closet" | "AI Chat" | "Profile";
+export type PageName = "Dashboard" | "Closet" | "AI Chat" | "Profile" | "Saved Outfits";

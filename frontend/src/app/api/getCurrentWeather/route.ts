@@ -13,8 +13,11 @@ export async function GET(req: NextRequest) {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };
-
-  if (isValidIPv4(ipFromHeaders) || isValidIPv6(ipFromHeaders)) {
+  const isLocalHost = ipFromHeaders === "::1" || ipFromHeaders === "127.0.0.1";
+  if (
+    !isLocalHost &&
+    (isValidIPv4(ipFromHeaders) || isValidIPv6(ipFromHeaders))
+  ) {
     headers["x-client-ip"] = ipFromHeaders;
   }
 
@@ -29,7 +32,6 @@ export async function GET(req: NextRequest) {
     });
 
     const text = await response.text();
-    console.log("Response from weather service:", text);
 
     let body: unknown;
     try {
