@@ -29,7 +29,7 @@ export default function AddItemFromGalleryModal({
         ) : (
           <div>
             <input
-              className="border border-gray-300 p-2 rounded"
+              className="image-input-field border border-gray-300 p-2 rounded"
               type="file"
               accept="image/*"
               onChange={(e) => {
@@ -38,7 +38,7 @@ export default function AddItemFromGalleryModal({
             />
 
             <button
-              className="mt-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              className="upload-btn mt-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
               onClick={async () => {
                 if (file) {
                   await uploadFile(file);

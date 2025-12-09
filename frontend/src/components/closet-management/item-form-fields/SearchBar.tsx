@@ -7,7 +7,7 @@ export default function SearchBar({
 }) {
   return (
     <input
-      className="mb-2 p-2 w-full border border-gray-300 rounded"
+      className="searchbar mb-2 p-2 w-full border border-gray-300 rounded"
       type="text"
       placeholder="Search by name..."
       value={searchQuery}
