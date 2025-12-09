@@ -113,6 +113,11 @@ export default function RecommendationCard() {
         isOpen={isAddOutfitOpen}
         onClose={() => setAddOutfitOpen(false)}
         defaultItemIds={itemIds}
+        defaultDesc={
+          currentWeather?.weather?.currentConditions
+            ? `[${currentWeather.weather.currentConditions.conditions || "Unknown"}/${currentWeather.weather.currentConditions.temp}°${currentWeather.weather.selectedUnit}]\n`
+            : ""
+        }
         saveOutfit={saveOutfit}
       />
     </div>

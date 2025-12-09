@@ -9,11 +9,13 @@ export default function AddOutfitModal({
   onClose,
   saveOutfit,
   defaultItemIds = [],
+  defaultDesc = "",
 }: {
   isOpen: boolean;
   onClose: () => void;
   saveOutfit: (o: Outfit) => Promise<void>;
   defaultItemIds: string[];
+  defaultDesc?: string;
 }) {
   const [formData, setFormData] = useState({
     name: "",
@@ -21,14 +23,16 @@ export default function AddOutfitModal({
     itemIds: [] as string[],
   });
 
+  // Sync prop → state whenever modal opens OR defaultItemIds/desc changes
   useEffect(() => {
     if (isOpen) {
-      setFormData((prev) => ({
-        ...prev,
+      setFormData({
+        name: "",
+        desc: defaultDesc,
         itemIds: defaultItemIds,
-      }));
+      });
     }
-  }, [isOpen, defaultItemIds]);
+  }, [isOpen, defaultItemIds, defaultDesc]);
 
   if (!isOpen) return null;
 

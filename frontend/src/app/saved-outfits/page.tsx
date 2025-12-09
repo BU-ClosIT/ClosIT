@@ -8,56 +8,6 @@ import { FirebaseServices } from "../../services/firebase-services";
 import { useUser, useUserReady } from "../../components/providers/UserProvider";
 import { OutfitCard } from "../../components/cards/OutfitCard";
 
-const sampleOutfits: Outfit[] = [
-  {
-    id: "outfit-1",
-    name: "Sample Outfit 1",
-    desc: "sample 1",
-    itemIds: [
-      "-OeOb2N1Xlp7Sf0wlYo5",
-      "-OeOlgbQ1QSbFg6Wk6Zb",
-      "-OesEcXxDZ1JHWSbEsEp",
-      "-OesFgahcq7NHgHoZCN7",
-      "-OesKG599vH_FqGWWInq",
-    ],
-  },
-  {
-    id: "outfit-2",
-    name: "Sample Outfit 2",
-    desc: "outfit 2 desc",
-    itemIds: [
-      "-OesLGT5_R72xYqlsHXh",
-      "-OexiWas3PnyfCkyEQNc",
-      "-Oexij2fHCMpV9IaTQr3",
-      "-OeOb2N1Xlp7Sf0wlYo5",
-      "-OesEcXxDZ1JHWSbEsEp",
-      "-OesKG599vH_FqGWWInq",
-    ],
-  },
-  {
-    id: "outfit-3",
-    name: "Sample Outfit 3",
-    desc: "fit3desc",
-    itemIds: [
-      "-OesLGT5_R72xYqlsHXh",
-      "-OexiWas3PnyfCkyEQNc",
-      "-Oexij2fHCMpV9IaTQr3",
-      "-OesFgahcq7NHgHoZCN7",
-    ],
-  },
-  {
-    id: "outfit-4",
-    name: "Sample Outfit 4",
-    desc: "samplefit 4",
-    itemIds: [
-      "-OeOlgbQ1QSbFg6Wk6Zb",
-      "-OexiWas3PnyfCkyEQNc",
-      "-OesKG599vH_FqGWWInq",
-      "-Oexij2fHCMpV9IaTQr3",
-    ],
-  },
-];
-
 export default function SavedOutfitsPage() {
   const user = useUser();
   const isReady = useUserReady();
@@ -109,10 +59,6 @@ export default function SavedOutfitsPage() {
 
     fetchCloset();
     fetchOutfits();
-
-    // Load sample outfits for demo !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-    setUserOutfits(sampleOutfits);
-    setLoadingOutfits(false);
   }, [isReady, user?.id]);
 
   const closetMap = useMemo(() => {
