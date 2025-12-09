@@ -5,20 +5,17 @@ import { useUser, useUserReady } from "../providers/UserProvider";
 import Loader from "../shared/Loader";
 import { useWeather } from "../providers/WeatherProvider";
 import { ClosetItemCard } from "./ClosetItemCard";
-import {
-  Recommendation,
-  useRecommendation,
-} from "../providers/RecommendationProvider";
+import { useRecommendation } from "../providers/RecommendationProvider";
 import { useTyping } from "@/src/hooks/useTyping";
-import AddOutfitModal from "../../components/closet-management/modals/AddOutfitModal"
+import AddOutfitModal from "../../components/closet-management/modals/AddOutfitModal";
 import { FirebaseServices } from "../../../src/services/firebase-services";
 
 export default function RecommendationCard() {
-  const [recResponse, setRecResponse] = useState<Recommendation>();
   const currentWeather = useWeather();
   const user = useUser();
   const isUserReady = useUserReady();
   const recommendation = useRecommendation();
+  const [toRender, setToRender] = useState<any[]>([]);
   const { typedArr: currentWeatherRecArr, setToType, clear } = useTyping();
 
   const {
@@ -32,20 +29,21 @@ export default function RecommendationCard() {
   const [isAddOutfitOpen, setAddOutfitOpen] = useState(false);
 
   // Extract item IDs from recommendation
-  const itemIds = recResponse?.outfit.map((i) => i.id) ?? [];
+  const itemIds = rec?.outfit.map((i) => i.id) ?? [];
 
   // Typewriter effect
   useEffect(() => {
+    console.log("rec changed:", rec);
     setToType(rec.content);
-  }, [rec.content]);
+    setToRender(rec.outfit);
+  }, [rec.content, rec.outfit]);
 
   // Fetch recommendation when user + weather ready
   useEffect(() => {
     if (!isUserReady) return;
     (async () => {
       try {
-        const resp = await getRec();
-        setRecResponse(resp);
+        await getRec();
       } catch (err) {
         console.error("Error calling getRec from useEffect:", err);
       }
@@ -77,7 +75,6 @@ export default function RecommendationCard() {
 
   return (
     <div className="flex flex-col w-full min-h-[200px] bg-white p-4 border rounded-lg shadow-lg my-4 justify-center align-middle max-h-screen">
-
       {isRecLoading ? (
         <Loader />
       ) : (
@@ -87,7 +84,7 @@ export default function RecommendationCard() {
           </div>
 
           <div className="flex flex-wrap gap-4 justify-center">
-            {recResponse?.outfit.map((item) => (
+            {toRender.map((item) => (
               <ClosetItemCard key={item.id} item={item} />
             ))}
           </div>
