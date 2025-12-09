@@ -128,16 +128,13 @@ export const setOutfitItem = async ({
 }) => {
   functions.logger.log("running setOutfitItem");
   const db = app.database();
-  const dbRef = db.ref("outfits");
-  const userOutfitSnap = await dbRef.child(`${userId}`).get();
-  if (!userOutfitSnap.exists()) {
-    dbRef.push(`${userId}`);
-  }
+  const dbRef = db.ref(`closets/${userId}/outfits`);
 
-  const newItem = dbRef
-    .child(`${userId}`)
-    .child("outfits")
-    .push({ ...outfitItem, createdAt: Date.now(), modifiedAt: Date.now() });
+  const newItem = dbRef.push({
+    ...outfitItem,
+    createdAt: Date.now(),
+    modifiedAt: Date.now(),
+  });
   newItem.child("id").set(newItem.key);
   return newItem.key;
 };
@@ -151,19 +148,19 @@ export const getOutfitsByUserId = async ({
 }): Promise<Outfit[]> => {
   functions.logger.log(`running getOutfitsByUserId for userId: ${userId}`);
   const db = app.database();
-  const dbRef = db.ref("outfits");
-  const userClosetSnap = await dbRef.child(`${userId}/outfits`).get();
-  if (!userClosetSnap.exists()) {
-    functions.logger.log(`no closet found for userId: ${userId}`);
+  const dbRef = db.ref(`closets/${userId}/outfits`);
+  const userOutfitsSnap = await dbRef.get();
+  if (!userOutfitsSnap.exists()) {
+    functions.logger.log(`no outfits found for userId: ${userId}`);
     return [];
   }
 
-  const itemsJson: JsonBlob = userClosetSnap.val() as JsonBlob;
-  const Outfits: Outfit[] = [];
+  const itemsJson: JsonBlob = userOutfitsSnap.val() as JsonBlob;
+  const outfits: Outfit[] = [];
   Object.keys(itemsJson).forEach((key) => {
     const itemJson = itemsJson[key] as Outfit;
-    Outfits.push(itemJson);
+    outfits.push(itemJson);
   });
 
-  return Outfits;
+  return outfits;
 };
