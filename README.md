@@ -2,6 +2,8 @@
 
 This is the main repo for Group 5's MET-CS 673 fall semester 2025 project - ClosIT
 
+ClosIT is Gemini powered outfit recommendation application based on weather conditions, events and user preferences. User can try different color combination of outfits, save outfits, edit and delete them.
+
 This repo is split into 2 parts -
 
 ## Frontend
