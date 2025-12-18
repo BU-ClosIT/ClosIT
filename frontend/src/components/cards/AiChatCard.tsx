@@ -127,6 +127,7 @@ export default function AiChatCard() {
 
       <div className="border p-2 w-full shadow-md rounded  overflow-y-auto flex flex-row">
         <input
+          id="ai-input"
           type="text"
           value={input}
           onKeyDown={(e) => {
@@ -144,7 +145,7 @@ export default function AiChatCard() {
             e.preventDefault();
             handleMessage();
           }}
-          className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+          className="ai-chat-submit-btn bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
         >
           Send
         </button>
